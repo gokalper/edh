@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER v16</title>
+<title>EDH RUMBLE TRACKER v16.2</title>
 <style>
 /* THEME VARS */
 :root {
@@ -132,12 +132,25 @@ input, textarea, select, button {
   color:var(--text-primary);
   text-align:center;
 }
+.header-row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:baseline;
+  gap:.75rem 1rem;
+  text-align:center;
+}
 #turnBanner{
   font-size:clamp(.7rem,.5rem + .4vw,.9rem);
   font-weight:700;
   color:var(--gold);
   letter-spacing:.05em;
-  text-align:center;
+}
+#globalTimerBanner{
+  font-size:clamp(.7rem,.5rem + .4vw,.9rem);
+  font-weight:600;
+  color:var(--text-primary);
+  letter-spacing:.05em;
 }
 
 /* CONTENT AREA */
@@ -182,6 +195,16 @@ input, textarea, select, button {
   display:flex;
   flex-direction:column;
   gap:.5rem;
+}
+.respawn-draw-banner{
+  background:rgba(212,169,79,.07);
+  border:1px solid var(--gold);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
+  font-size:.7rem;
+  font-weight:600;
+  line-height:1.3;
+  color:var(--gold);
 }
 .label-sm{
   font-size:.6rem;
@@ -243,7 +266,7 @@ input, textarea, select, button {
   border-color:var(--off);
   background:rgba(85,85,110,.15);
 }
-.cooldown-inline-wrap{
+.cd-info-inline{
   display:flex;
   flex-wrap:wrap;
   align-items:center;
@@ -255,29 +278,10 @@ input, textarea, select, button {
   text-transform:uppercase;
   letter-spacing:.05em;
 }
-.mini-step-row{
-  display:flex;
-  align-items:center;
-  gap:.4rem;
-  font-size:.8rem;
-  font-weight:600;
-}
-.step-btn{
-  background:var(--button-bg);
-  border:1px solid var(--button-border);
-  border-radius:.5rem;
-  font-size:.8rem;
-  font-weight:700;
-  line-height:1;
-  padding:.4rem .6rem;
+.cd-val-box{
   min-width:2rem;
   text-align:center;
-  color:var(--text-primary);
-}
-.step-val{
-  min-width:2.5rem;
-  text-align:center;
-  font-size:.9rem;
+  font-size:.8rem;
   font-weight:700;
   border:1px solid var(--border-soft);
   background:var(--bg-panel);
@@ -287,6 +291,7 @@ input, textarea, select, button {
   color:var(--text-primary);
 }
 
+/* Commander tax row */
 .tax-row{
   display:flex;
   flex-wrap:wrap;
@@ -329,6 +334,7 @@ input, textarea, select, button {
   color:var(--text-primary);
 }
 
+/* TIMERS */
 .timer-row{
   display:flex;
   flex-wrap:wrap;
@@ -407,6 +413,37 @@ input, textarea, select, button {
   line-height:1.2;
   color:var(--text-dim);
 }
+.mini-step-row{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.8rem;
+  font-weight:600;
+}
+.step-btn{
+  background:var(--button-bg);
+  border:1px solid var(--button-border);
+  border-radius:.5rem;
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1;
+  padding:.4rem .6rem;
+  min-width:2rem;
+  text-align:center;
+  color:var(--text-primary);
+}
+.step-val{
+  min-width:2.5rem;
+  text-align:center;
+  font-size:.9rem;
+  font-weight:700;
+  border:1px solid var(--border-soft);
+  background:var(--bg-panel);
+  border-radius:.5rem;
+  padding:.4rem .5rem;
+  line-height:1.2;
+  color:var(--text-primary);
+}
 
 /* END TURN BUTTON */
 .end-turn-btn{
@@ -478,35 +515,6 @@ input, textarea, select, button {
   gap:.5rem .75rem;
   align-items:center;
 }
-.cool-row-inline{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:.5rem .75rem;
-  font-size:.7rem;
-}
-.cool-btn-inline{
-  background:var(--button-bg);
-  border:1px solid var(--button-border);
-  border-radius:.5rem;
-  padding:.4rem .6rem;
-  font-size:.7rem;
-  font-weight:600;
-  color:var(--text-primary);
-  text-align:center;
-}
-.cool-val-box{
-  min-width:2rem;
-  text-align:center;
-  font-size:.8rem;
-  font-weight:700;
-  border:1px solid var(--border-soft);
-  background:var(--bg-panel);
-  border-radius:.5rem;
-  padding:.4rem .5rem;
-  line-height:1.2;
-}
-
 .life-edit-inline{
   display:flex;
   align-items:center;
@@ -535,7 +543,6 @@ input, textarea, select, button {
   padding:.4rem .5rem;
   color:var(--text-primary);
 }
-
 .mini-row{
   display:flex;
   flex-wrap:wrap;
@@ -657,7 +664,6 @@ input, textarea, select, button {
   color:var(--text-primary);
   line-height:1.4;
 }
-
 .row-flex{
   display:flex;
   flex-wrap:wrap;
@@ -777,6 +783,8 @@ input, textarea, select, button {
   font-size:.75rem;
   color:var(--text-primary);
   background:var(--tool-bg);
+  max-height:50vh;
+  overflow-y:auto;
 }
 .tools-grid{
   display:grid;
@@ -845,7 +853,6 @@ input, textarea, select, button {
   color:var(--text-primary);
   width:100%;
 }
-
 .winner-mini-banner{
   border:1px solid var(--gold);
   color:var(--gold);
@@ -858,7 +865,6 @@ input, textarea, select, button {
   display:none;
   word-break:break-word;
 }
-
 .mode-line{
   font-size:.7rem;
   line-height:1.3;
@@ -884,7 +890,21 @@ input, textarea, select, button {
   text-align:center;
 }
 
-/* OVERLAYS (setup, winner, respawn, cooldown-finish) */
+/* Rules text block */
+.rules-scroll-block{
+  max-height:200px;
+  overflow-y:auto;
+  font-size:.7rem;
+  line-height:1.4;
+  white-space:pre-line;
+  background:var(--bg-panel);
+  border:1px solid var(--border-soft);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
+  color:var(--text-primary);
+}
+
+/* OVERLAYS (setup, winner, announce, respawnDraw) */
 .overlay-fullscreen{
   position:fixed;
   inset:0;
@@ -895,7 +915,6 @@ input, textarea, select, button {
   justify-content:center;
   padding:1rem;
 }
-
 .setup-card{
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
@@ -962,10 +981,15 @@ input, textarea, select, button {
   font-weight:600;
   color:var(--text-primary);
 }
+.helper-row{
+  font-size:.65rem;
+  color:var(--text-dim);
+  line-height:1.3;
+  text-align:center;
+}
 
-.winner-card,
-.respawn-card,
-.cooldown-card{
+/* Winner overlay */
+.winner-card{
   background:var(--bg-panel);
   border:2px solid var(--gold);
   border-radius:1rem;
@@ -991,18 +1015,6 @@ input, textarea, select, button {
   color:var(--text-primary);
   line-height:1.4;
 }
-.respawn-q,
-.cooldown-q{
-  font-size:.8rem;
-  font-weight:600;
-  color:var(--text-primary);
-  line-height:1.4;
-}
-.small-hint{
-  font-size:.6rem;
-  color:var(--text-dim);
-  line-height:1.3;
-}
 .overlay-btn{
   background:var(--button-bg);
   border:1px solid var(--button-border);
@@ -1014,21 +1026,37 @@ input, textarea, select, button {
   text-align:center;
 }
 
-/* tiny helper text */
-.helper-row{
-  font-size:.65rem;
-  color:var(--text-dim);
-  line-height:1.3;
+/* Generic announce overlay (KO, respawn, reigning, draw reminder) */
+.announce-card{
+  background:var(--bg-panel);
+  border:2px solid var(--gold);
+  border-radius:1rem;
+  padding:1rem;
+  max-width:320px;
+  width:100%;
   text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  box-shadow:0 0 30px rgba(212,169,79,.6),0 40px 80px rgba(0,0,0,.9);
+  font-size:.8rem;
+  line-height:1.4;
+  color:var(--text-primary);
+}
+.announce-strong{
+  color:var(--gold);
+  font-weight:700;
+  font-size:.9rem;
+  line-height:1.3;
 }
 </style>
 </head>
 <body class="theme-dark">
-
 <div class="app-shell">
 
-  <!-- SETUP OVERLAY (2-step mode + players) -->
+  <!-- SETUP OVERLAY -->
   <div id="setupOverlay" class="overlay-fullscreen">
+    <!-- Step 1 select mode -->
     <div class="setup-card" id="setupStepMode">
       <div class="setup-title">Select Mode</div>
       <div class="setup-row">
@@ -1044,6 +1072,7 @@ input, textarea, select, button {
       <div class="helper-row">You’ll pick player count next.</div>
     </div>
 
+    <!-- Step 2 select players -->
     <div class="setup-card" id="setupStepPlayers" style="display:none;">
       <div class="setup-title">How many players?</div>
       <div class="setup-row">
@@ -1064,43 +1093,28 @@ input, textarea, select, button {
   <div id="winnerOverlay" class="overlay-fullscreen" style="display:none;">
     <div class="winner-card">
       <div class="winner-title" id="winnerTitle">REIGNING RUMBLER!</div>
-      <div class="winner-line" id="winnerTimeLine">Game Time: 00m 00s</div>
-      <div class="winner-line" id="winnerPlayerTimeLine">Winner Active Time: 00m 00s</div>
+      <div class="winner-line" id="winnerTimeLine">Global Time: 00m 00s</div>
+      <div class="winner-line" id="winnerPlayerTimeLine">Winner Player Time: 00m 00s</div>
       <button class="overlay-btn" id="winnerCloseBtn">OK</button>
     </div>
   </div>
 
-  <!-- RESPAWN OVERLAY (for Rumble "last chance before win") -->
-  <div id="respawnOverlay" class="overlay-fullscreen" style="display:none;">
-    <div class="respawn-card">
-      <div class="respawn-q" id="respawnQuestion">Respawn this player?</div>
-      <div class="small-hint" id="respawnHint">
-        They re-enter active with avg life (rounded up), poison 0, and commander tax reset — blocking an auto-win.
-      </div>
-      <button class="overlay-btn" id="respawnYesBtn">Yes, Respawn</button>
-      <button class="overlay-btn" id="respawnNoBtn">No, Eliminate</button>
-    </div>
-  </div>
-
-  <!-- COOLDOWN FINISH OVERLAY (Rumble only) -->
-  <div id="cooldownFinishOverlay" class="overlay-fullscreen" style="display:none;">
-    <div class="cooldown-card">
-      <div class="cooldown-q" id="cooldownFinishQuestion">[Player X] cooldown finished. What happens?</div>
-      <div class="small-hint" id="cooldownFinishHint">
-        Respawn = avg life up / poison 0 / tax reset<br>
-        Keep Cooling = stay out 1 more turn<br>
-        Eliminate = gone forever
-      </div>
-      <button class="overlay-btn" id="cooldownRespawnBtn">Respawn</button>
-      <button class="overlay-btn" id="cooldownKeepBtn">Keep Cooling</button>
-      <button class="overlay-btn" id="cooldownElimBtn">Eliminate</button>
+  <!-- ANNOUNCE OVERLAY (KO, RESPAWN, DRAW REMINDER, REIGNING NOTICE) -->
+  <div id="announceOverlay" class="overlay-fullscreen" style="display:none;">
+    <div class="announce-card">
+      <div class="announce-strong" id="announceMain">Announcement</div>
+      <div id="announceBody">Body text.</div>
+      <button class="overlay-btn" id="announceOkBtn">OK</button>
     </div>
   </div>
 
   <!-- HEADER -->
   <div class="top-header">
     <div class="game-title">EDH RUMBLE TRACKER</div>
-    <div id="turnBanner">▶ PLAYER 1'S TURN ◀</div>
+    <div class="header-row">
+      <div id="turnBanner">▶ PLAYER 1'S TURN ◀</div>
+      <div id="globalTimerBanner">Global: 0:00</div>
+    </div>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -1161,6 +1175,63 @@ input, textarea, select, button {
           </div>
         </div>
 
+        <div class="tool-block">
+          <div class="tool-title">Rumble Rules (Official)</div>
+          <div class="rules-scroll-block" id="rulesBlock">
+Respawn Rumble Rules
+Setup:
+- Normal Commander decks (100-card singleton, color identity).
+- Start 40 life, 0 poison.
+- Commander damage and decking out still permanently eliminate you.
+
+Temporary Death (Cooldown):
+You go on cooldown instead of leaving the game if:
+- Your life is 0 or less.
+- You have 10 or more poison counters.
+- An effect says “you lose the game.”
+“Win the game” effects do nothing in this format.
+Cooldown length is 1 + the number of players already on cooldown when you go out.
+
+Permanent Elimination:
+You are out of the game with no cooldown if:
+- You’ve taken 21 or more combat damage from one commander this game.
+- You would draw a card and can’t (decked out).
+
+Cooldown Rules:
+While on cooldown:
+- You are removed from turn order.
+- You cannot cast, activate, block, attack, respond, or be targeted as a player.
+- Your permanents stay on the battlefield and still function, but you cannot protect them.
+- Other players can attack/remove your board.
+- Your hand, graveyard, command zone, exile, and emblems stay.
+- Triggers that need your choices are ignored. Triggers that don’t need choices still work.
+
+Cooldown Tick:
+After every End Turn, all players on cooldown reduce their cooldown by 1 (down to 0).
+
+Respawn:
+When your cooldown reaches 0, you automatically respawn.
+When you respawn:
+- You become active again.
+- Your life total becomes the average life total of all active players, rounded up.
+- You remove all poison counters.
+- Your commander tax resets.
+- You regain control of anything you still own that survived on the battlefield.
+- You re-enter turn order.
+First Turn After Respawn:
+- You skip the normal draw step.
+- Instead, you draw 1 card at the end of that turn.
+
+Reigning Rumbler:
+If exactly one player is active and everyone else is on cooldown or eliminated, that player becomes the Reigning Rumbler.
+After that player completes their next full turn, if they are still the only active player (nobody else has respawned), that player wins the game.
+
+Regular Mode:
+No cooldown or respawn. 0 life / 10 poison / lose-the-game kills you outright.
+Last surviving player wins immediately.
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1186,17 +1257,19 @@ let winnerName = "";
 let winnerTimeMs = 0;
 let winnerActiveMs = 0;
 
-let pendingRespawnIndex = null;           // for "last chance to stop auto-win"
-let pendingCooldownFinishIndex = null;    // for cooldown finishing
-let pendingCooldownMode = null;
-
 let accordionsOpen = {
   statusEffects:false,
   notes:false,
   lookup:false,
 };
 
+// dropdown persistence for other players
+let otherOpen = {};
+
+// track interval for live timer text only
 let renderIntervalId = null;
+
+let showingAnnounce = false;
 
 /* DOM refs */
 const setupOverlay           = document.getElementById("setupOverlay");
@@ -1212,20 +1285,13 @@ const winnerPlayerTimeLine   = document.getElementById("winnerPlayerTimeLine");
 const winnerCloseBtn         = document.getElementById("winnerCloseBtn");
 const winnerMiniBanner       = document.getElementById("winnerMiniBanner");
 
-const respawnOverlay         = document.getElementById("respawnOverlay");
-const respawnQuestion        = document.getElementById("respawnQuestion");
-const respawnHint            = document.getElementById("respawnHint");
-const respawnYesBtn          = document.getElementById("respawnYesBtn");
-const respawnNoBtn           = document.getElementById("respawnNoBtn");
-
-const cooldownFinishOverlay  = document.getElementById("cooldownFinishOverlay");
-const cooldownFinishQuestion = document.getElementById("cooldownFinishQuestion");
-const cooldownFinishHint     = document.getElementById("cooldownFinishHint");
-const cooldownRespawnBtn     = document.getElementById("cooldownRespawnBtn");
-const cooldownKeepBtn        = document.getElementById("cooldownKeepBtn");
-const cooldownElimBtn        = document.getElementById("cooldownElimBtn");
+const announceOverlay        = document.getElementById("announceOverlay");
+const announceMain           = document.getElementById("announceMain");
+const announceBody           = document.getElementById("announceBody");
+const announceOkBtn          = document.getElementById("announceOkBtn");
 
 const turnBanner             = document.getElementById("turnBanner");
+const globalTimerBanner      = document.getElementById("globalTimerBanner");
 
 const hudArea                = document.getElementById("hudArea");
 const endTurnBtn             = document.getElementById("endTurnBtn");
@@ -1255,19 +1321,40 @@ function msToClock(ms){
   const secs = totalSec % 60;
   return mins + ":" + (secs<10?("0"+secs):secs);
 }
-
 function formatDurationMs(ms){
   const totalSec = Math.floor(ms/1000);
   const mins = Math.floor(totalSec/60);
   const secs = totalSec % 60;
   return mins+"m "+secs+"s";
 }
+function getGameElapsedMs(){
+  if(!gameStartTime) return 0;
+  return Date.now()-gameStartTime;
+}
+
+// average life of all ACTIVE players (not counting the returning player yet)
+function getAvgActiveLifeCeil(excludeIndex){
+  let sum=0;
+  let ct=0;
+  players.forEach((pl,i)=>{
+    if(i===excludeIndex) return;
+    if(pl.status==="active"){
+      sum+=pl.life;
+      ct++;
+    }
+  });
+  if(ct===0){
+    // fail safe: if nobody else is active, give 1 life min
+    return 1;
+  }
+  return Math.ceil(sum/ct);
+}
 
 function makePlayer(defaultName){
   return {
     name: defaultName,
 
-    status:"active",          // "active","cooldown","eliminated" (no cooldown used in regular mode but we still keep field)
+    status:"active",          // "active","cooldown","eliminated"
     cooldownRemaining:0,
 
     life:40,
@@ -1287,7 +1374,7 @@ function makePlayer(defaultName){
 
     commanderTaxSteps:0,
 
-    commanderDamage:[], // victim.commanderDamage[srcIdx] = dmg from srcIdx's commander
+    commanderDamage:[], // victim.commanderDamage[srcIdx] = dmg taken from srcIdx's commander
 
     lookupNameInput:"",
     lastLookupName:"",
@@ -1296,7 +1383,9 @@ function makePlayer(defaultName){
 
     totalActiveMs:0,
     turnStartMs:null,
-    isTiming:false
+    isTiming:false,
+
+    pendingEOTDraw:false // after respawn, skip draw step, draw EOT first turn
   };
 }
 
@@ -1309,21 +1398,6 @@ function syncCommanderDamageArrays(){
       p.commanderDamage.length = players.length;
     }
   });
-}
-
-function computeRespawnLifeDown(idx){
-  const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
-  if(pool.length===0) return 0;
-  let sum=0;
-  pool.forEach(pl=>{ sum+=pl.life; });
-  return Math.floor(sum / pool.length);
-}
-function computeRespawnLifeUp(idx){
-  const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
-  if(pool.length===0) return 0;
-  let sum=0;
-  pool.forEach(pl=>{ sum+=pl.life; });
-  return Math.ceil(sum / pool.length);
 }
 
 function getActivePlayers(){
@@ -1347,12 +1421,11 @@ function stopTimingPlayer(i){
   const p=players[i];
   if(!p.isTiming) return;
   const now=Date.now();
-  const diff= now - (p.turnStartMs||now);
+  const diff = now-(p.turnStartMs||now);
   p.totalActiveMs += diff;
   p.isTiming=false;
   p.turnStartMs=null;
 }
-
 function getPlayerTurnMs(p){
   if(p.isTiming && p.turnStartMs!=null){
     return Date.now()-p.turnStartMs;
@@ -1360,210 +1433,177 @@ function getPlayerTurnMs(p){
   return 0;
 }
 function getPlayerTotalMs(p){
-  // total active time is banked + current running turn
-  return p.totalActiveMs + getPlayerTurnMs(p);
+  return p.totalActiveMs+getPlayerTurnMs(p);
 }
 
-/* Rumble: track reigning candidate */
-function updateReigningCandidate(){
-  if(gameMode!=="rumble"){
-    reigningCandidateIndex=null;
-    reigningCandidateTurnStamp=null;
-    return;
-  }
-  const actives = getActivePlayers();
-  if(actives.length===1){
-    const onlyIdx=actives[0];
-    if(reigningCandidateIndex===null){
-      reigningCandidateIndex=onlyIdx;
-      reigningCandidateTurnStamp=turnCounter;
-    }else if(reigningCandidateIndex!==onlyIdx){
-      reigningCandidateIndex=onlyIdx;
-      reigningCandidateTurnStamp=turnCounter;
-    }
-  }else{
-    reigningCandidateIndex=null;
-    reigningCandidateTurnStamp=null;
-  }
+/* =========================
+   ANNOUNCE OVERLAY HELPERS
+========================= */
+function showAnnounce(mainTxt, bodyTxt){
+  if(showingAnnounce) return;
+  showingAnnounce=true;
+  announceMain.textContent = mainTxt;
+  announceBody.textContent = bodyTxt;
+  announceOverlay.style.display="flex";
 }
+announceOkBtn.addEventListener("click",()=>{
+  announceOverlay.style.display="none";
+  showingAnnounce=false;
+});
+
+/* =========================
+   STATUS / DAMAGE / KOs
+========================= */
 
 function permanentlyEliminate(i){
   const p=players[i];
+  stopTimingPlayer(i);
   p.status="eliminated";
   p.cooldownRemaining=0;
+  p.pendingEOTDraw=false;
   if(reigningCandidateIndex===i){
     reigningCandidateIndex=null;
     reigningCandidateTurnStamp=null;
   }
-  stopTimingPlayer(i);
 }
 
+// Commander damage check (21+ from one source kills immediately, regardless of mode)
 function checkCommanderDamageElim(victimIdx){
   const p = players[victimIdx];
   for(let src=0; src<p.commanderDamage.length; src++){
     if(p.commanderDamage[src] >= 21){
-      // lethal commander damage → elimination / cooldown?
-      if(gameMode==="rumble"){
-        // lethal commander damage ends you permanently (as per variant rule: commander damage is permanent elimination)
-        permanentlyEliminate(victimIdx);
-      }else{
-        permanentlyEliminate(victimIdx);
-      }
+      permanentlyEliminate(victimIdx);
       break;
     }
   }
 }
 
-/* =========================
-   RUMBLE ONLY HELPERS
-========================= */
+// Called whenever lethal normal damage/poison/etc happens
+function knockOutToCooldown(i){
+  const p=players[i];
+  if(gameMode==="regular"){
+    // In Regular mode, lethal just eliminates
+    permanentlyEliminate(i);
+    showAnnounce(
+      (p.name||("Player "+(i+1)))+" eliminated",
+      "Regular mode: 0 life / 10 poison / lose-the-game is final."
+    );
+    return;
+  }
 
-function sendToCooldown(i){
-  if(gameMode!=="rumble") return;
-  const p = players[i];
+  // Rumble mode:
   if(p.status==="eliminated") return;
+  if(p.status==="cooldown") return;
 
-  // leaving turn? if the KO target is current player, stop their clock
   stopTimingPlayer(i);
 
-  let othersCooling=0;
+  // cooldown turns = 1 + number of other cooldown players right now
+  let alreadyCooling=0;
   players.forEach((q,qi)=>{
-    if(qi!==i && q.status==="cooldown") othersCooling++;
+    if(qi!==i && q.status==="cooldown") alreadyCooling++;
   });
 
   p.status="cooldown";
-  p.cooldownRemaining = 1 + othersCooling;
+  p.cooldownRemaining=1+alreadyCooling;
+  p.pendingEOTDraw=false; // if they were in a respawn turn, that's gone
 
   if(reigningCandidateIndex===i){
     reigningCandidateIndex=null;
     reigningCandidateTurnStamp=null;
   }
+
+  showAnnounce(
+    (p.name||("Player "+(i+1)))+" knocked out",
+    "On cooldown for "+p.cooldownRemaining+" turn(s)."
+  );
 }
 
-function fullyRespawnPlayer(i,roundingMode){
-  if(gameMode!=="rumble") return;
+/* =========================
+   RESPAWN
+========================= */
+
+function respawnPlayer(i){
   const p=players[i];
-  let newLife = (roundingMode==="up")
-    ? computeRespawnLifeUp(i)
-    : computeRespawnLifeDown(i);
+  if(p.status!=="cooldown") return;
+  // compute new life using avg of current active players (excluding self)
+  const newLife=getAvgActiveLifeCeil(i);
+
   p.status="active";
   p.cooldownRemaining=0;
   p.poison=0;
   p.life=newLife;
   p.commanderTaxSteps=0;
-  // they come back in, not timing until it's actually their turn again
+  p.pendingEOTDraw=true; // mark special draw rule turn
+  // NOTE: board state is not changed in tracker;
+  // assumption: their permanents still there stay theirs
+
+  showAnnounce(
+    (p.name||("Player "+(i+1)))+" respawned",
+    "Life set to "+newLife+" (avg rounded up), poison = 0, commander tax reset. On their first turn back they skip normal draw and draw 1 at end of that turn."
+  );
 }
 
-function handleCooldownTick(i){
-  // only in rumble
-  const p=players[i];
-  if(p.status!=="cooldown") return false;
+/* =========================
+   RUMBLE: REIGNING RUMBLER
+========================= */
 
-  if(p.cooldownRemaining>0){
-    p.cooldownRemaining -= 1;
+function updateReigningCandidateOnTurnEnd(){
+  if(gameMode!=="rumble" || winnerLocked) return;
+
+  const actives=getActivePlayers();
+  if(actives.length===1){
+    const onlyIdx=actives[0];
+    if(reigningCandidateIndex===null){
+      reigningCandidateIndex=onlyIdx;
+      reigningCandidateTurnStamp=turnCounter;
+      showAnnounce(
+        (players[onlyIdx].name||("Player "+(onlyIdx+1)))+" is now REIGNING RUMBLER",
+        "If no one else returns to active before the end of their next full turn, they win."
+      );
+    }else if(reigningCandidateIndex!==onlyIdx){
+      // new monarch of violence
+      reigningCandidateIndex=onlyIdx;
+      reigningCandidateTurnStamp=turnCounter;
+      showAnnounce(
+        (players[onlyIdx].name||("Player "+(onlyIdx+1)))+" is now REIGNING RUMBLER",
+        "If no one else returns to active before the end of their next full turn, they win."
+      );
+    }
+  }else{
+    // more than one active, crown clears
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
   }
+}
 
-  if(p.cooldownRemaining<=0){
-    pendingCooldownFinishIndex = i;
-    pendingCooldownMode = "normalFinish";
-    showCooldownFinishOverlay(i);
+// check after we advance turn / process cooldown / respawns
+function checkReigningWin(){
+  if(gameMode!=="rumble" || winnerLocked) return false;
+  if(reigningCandidateIndex===null) return false;
+
+  const actives=getActivePlayers();
+  if(actives.length!==1) return false;
+  const onlyIdx=actives[0];
+  if(onlyIdx!==reigningCandidateIndex) return false;
+
+  // Did the reigning candidate survive until after completing
+  // their "next full turn"?
+  // We stamp reigningCandidateTurnStamp when crowned = turnCounter at that moment.
+  // They win if turnCounter > reigningCandidateTurnStamp+1 AND they're still lone.
+  // Reason: reigning stamp at end of some turn T. They take full turn T+1. After T+1 ends -> win.
+  if(turnCounter > (reigningCandidateTurnStamp+1)){
+    lockWinner(onlyIdx,true);
     return true;
   }
   return false;
 }
 
-function showCooldownFinishOverlay(idx){
-  const pl=players[idx];
-  const nm=pl.name||("Player "+(idx+1));
-  cooldownFinishQuestion.textContent=nm+"'s cooldown finished. What happens?";
-  cooldownFinishOverlay.style.display="flex";
-}
-
-cooldownRespawnBtn.addEventListener("click",()=>{
-  if(pendingCooldownFinishIndex!==null){
-    fullyRespawnPlayer(pendingCooldownFinishIndex,"down");
-    reigningCandidateIndex=null;
-    reigningCandidateTurnStamp=null;
-  }
-  pendingCooldownFinishIndex=null;
-  pendingCooldownMode=null;
-  cooldownFinishOverlay.style.display="none";
-  renderAll();
-});
-cooldownKeepBtn.addEventListener("click",()=>{
-  if(pendingCooldownFinishIndex!==null){
-    const p=players[pendingCooldownFinishIndex];
-    p.status="cooldown";
-    p.cooldownRemaining=1;
-  }
-  pendingCooldownFinishIndex=null;
-  pendingCooldownMode=null;
-  cooldownFinishOverlay.style.display="none";
-  renderAll();
-});
-cooldownElimBtn.addEventListener("click",()=>{
-  if(pendingCooldownFinishIndex!==null){
-    permanentlyEliminate(pendingCooldownFinishIndex);
-  }
-  pendingCooldownFinishIndex=null;
-  pendingCooldownMode=null;
-  cooldownFinishOverlay.style.display="none";
-  renderAll();
-});
-
-/* last-chance before Rumble win */
-function maybeOfferRespawnBeforeWin(){
-  if(winnerLocked) return false;
-  if(gameMode!=="rumble") return false;
-
-  const cooling = players
-    .map((pl,i)=>({pl,i}))
-    .filter(o=>o.pl.status==="cooldown");
-
-  if(cooling.length===0){
-    return false;
-  }
-
-  pendingRespawnIndex = cooling[0].i;
-  showRespawnOverlay(pendingRespawnIndex);
-  return true;
-}
-
-function showRespawnOverlay(idx){
-  const p=players[idx];
-  const nm=p.name||("Player "+(idx+1));
-  respawnQuestion.textContent="Respawn "+nm+"?";
-  respawnOverlay.style.display="flex";
-}
-
-respawnYesBtn.addEventListener("click",()=>{
-  if(pendingRespawnIndex!==null){
-    fullyRespawnPlayer(pendingRespawnIndex,"up");
-    reigningCandidateIndex=null;
-    reigningCandidateTurnStamp=null;
-  }
-  pendingRespawnIndex=null;
-  respawnOverlay.style.display="none";
-  renderAll();
-});
-respawnNoBtn.addEventListener("click",()=>{
-  if(pendingRespawnIndex!==null){
-    permanentlyEliminate(pendingRespawnIndex);
-  }
-  pendingRespawnIndex=null;
-  respawnOverlay.style.display="none";
-  renderAll();
-});
-
 /* =========================
-   WIN LOGIC
+   WIN LOGIC (REGULAR & RUMBLE)
 ========================= */
 
 function checkForWinRegular(){
-  if(gameMode!=="regular") return false;
-  if(winnerLocked) return false;
-
-  // who is still not eliminated?
+  if(gameMode!=="regular" || winnerLocked) return false;
   const stillIn = players.filter(p=>p.status!=="eliminated");
   if(stillIn.length===1){
     const idx = players.indexOf(stillIn[0]);
@@ -1573,53 +1613,21 @@ function checkForWinRegular(){
   return false;
 }
 
-function checkForWinRumbleBeforeAdvance(){
-  if(gameMode!=="rumble") return false;
-  if(winnerLocked) return false;
-
-  const actives=getActivePlayers();
-  if(actives.length!==1) return false;
-  const onlyIdx=actives[0];
-
-  const aboutToWin =
-    (reigningCandidateIndex===onlyIdx &&
-     reigningCandidateTurnStamp!==null &&
-     turnCounter > reigningCandidateTurnStamp);
-
-  if(!aboutToWin){
-    return false;
-  }
-
-  // offer cooldown respawn if possible
-  const offered = maybeOfferRespawnBeforeWin();
-  if(offered){
-    return false;
-  }
-
-  lockWinner(onlyIdx,true);
-  return true;
-}
-
 function lockWinner(idx,isRumble){
-  winnerLocked = true;
+  winnerLocked=true;
   winnerName = players[idx].name || ("Player "+(idx+1));
   winnerTimeMs = Date.now()-gameStartTime;
   winnerActiveMs = getPlayerTotalMs(players[idx]);
 
-  showWinnerOverlay(isRumble);
-}
-
-function showWinnerOverlay(isRumble){
   if(isRumble){
     winnerTitle.textContent = winnerName.toUpperCase()+" — REIGNING RUMBLER!";
-  }else{
+  } else {
     winnerTitle.textContent = winnerName+" wins the game!";
   }
-
   winnerTimeLine.textContent =
-    "Game Time: "+formatDurationMs(winnerTimeMs);
+    "Global Time: "+formatDurationMs(winnerTimeMs);
   winnerPlayerTimeLine.textContent =
-    "Winner Active Time: "+formatDurationMs(winnerActiveMs);
+    "Winner Player Time: "+formatDurationMs(winnerActiveMs);
 
   winnerMiniBanner.style.display="block";
   winnerMiniBanner.textContent =
@@ -1629,7 +1637,6 @@ function showWinnerOverlay(isRumble){
 
   winnerOverlay.style.display="flex";
 }
-
 winnerCloseBtn.addEventListener("click",()=>{
   winnerOverlay.style.display="none";
 });
@@ -1638,13 +1645,96 @@ winnerCloseBtn.addEventListener("click",()=>{
    TURN FLOW
 ========================= */
 
+function runEndOfTurnDrawIfNeeded(idx){
+  // If this player was on their first turn after respawn,
+  // they skip normal draw step and instead draw 1 now.
+  const p=players[idx];
+  if(!p) return;
+  if(p.pendingEOTDraw){
+    showAnnounce(
+      (p.name||("Player "+(idx+1)))+" draw reminder",
+      "Draw 1 card now (respawn recovery). You skipped your normal draw this turn."
+    );
+    // after the reminder is acknowledged, we clear in the announceOkBtn
+    // to guarantee we don't clear early, we'll stash who to clear:
+    pendingClearAfterAnnounce = idx;
+  }
+}
+
+// We'll use this to finalize clearing pendingEOTDraw after player acknowledges
+let pendingClearAfterAnnounce = null;
+announceOkBtn.addEventListener("click",()=>{
+  if(pendingClearAfterAnnounce!==null){
+    const p=players[pendingClearAfterAnnounce];
+    if(p){
+      p.pendingEOTDraw=false;
+    }
+    pendingClearAfterAnnounce=null;
+  }
+});
+
+function applyCooldownTickAndRespawns(){
+  // only relevant for rumble
+  if(gameMode!=="rumble") return;
+
+  // 1. tick cooldownRemaining for all cooldown players
+  players.forEach((pl,i)=>{
+    if(pl.status==="cooldown"){
+      if(pl.cooldownRemaining>0){
+        pl.cooldownRemaining -= 1;
+        if(pl.cooldownRemaining<0) pl.cooldownRemaining=0;
+      }
+    }
+  });
+
+  // 2. anyone now at 0 cooldown respawns immediately
+  players.forEach((pl,i)=>{
+    if(pl.status==="cooldown" && pl.cooldownRemaining===0){
+      respawnPlayer(i);
+    }
+  });
+}
+
+function nextActivePlayerClockwise(fromIndex){
+  if(players.length===0) return fromIndex;
+  let idx=fromIndex;
+  let safety=0;
+  do{
+    idx=(idx+1)%players.length;
+    const pl=players[idx];
+    if(pl.status==="active"){
+      return idx;
+    }
+    safety++;
+    if(safety>50) break;
+  }while(true);
+  return fromIndex;
+}
+
 function passTurn(){
   if(winnerLocked){
     renderAll();
     return;
   }
 
-  // regular mode: maybe immediate win condition before passing?
+  // stop timing current active player
+  stopTimingPlayer(turnIndex);
+
+  // handle end-of-turn draw for respawned player if needed
+  runEndOfTurnDrawIfNeeded(turnIndex);
+
+  // increment turnCounter BEFORE cooldown ticks or reigning checks?
+  // We treat "endTurn" as finishing this player's turn.
+  // We'll increment turnCounter now to reflect that we just ended one.
+  turnCounter += 1;
+
+  // TICK COOLDOWNS / RESPAWN
+  applyCooldownTickAndRespawns();
+
+  // update reigningCandidate after these changes
+  updateReigningCandidateOnTurnEnd();
+
+  // In regular mode, we may already have a winner from eliminations:
   if(gameMode==="regular"){
     const didWinReg = checkForWinRegular();
     if(didWinReg){
@@ -1653,59 +1743,20 @@ function passTurn(){
     }
   }
 
-  // rumble check: about to crown reigning rumbler
-  if(gameMode==="rumble"){
-    const didWinRumble = checkForWinRumbleBeforeAdvance();
-    if(didWinRumble){
-      renderAll();
-      return;
-    }
+  // Check Reigning Rumbler win now that turn advanced, cooldown ticked, and respawns happened
+  const didWinRumble = checkReigningWin();
+  if(didWinRumble){
+    renderAll();
+    return;
   }
 
-  // stop timing old active player
-  stopTimingPlayer(turnIndex);
+  // choose next player
+  const newIdx = nextActivePlayerClockwise(turnIndex);
+  turnIndex = newIdx;
 
-  // rotate turnIndex until we find next valid
-  let safety=0;
-  do{
-    turnIndex=(turnIndex+1)%players.length;
-    const pl=players[turnIndex];
-
-    if(pl.status==="eliminated"){
-      // skip
-    } else if(gameMode==="rumble" && pl.status==="cooldown"){
-      // tick their cooldown
-      const triggered = handleCooldownTick(turnIndex);
-      if(triggered){
-        // cooldownFinishOverlay will appear
-        break;
-      } else {
-        // still cooling, skip
-      }
-    } else {
-      // found next active / (in regular, no cooldown status anyway)
-      break;
-    }
-
-    safety++;
-    if(safety>50) break;
-  }while(true);
-
-  turnCounter += 1;
-  updateReigningCandidate();
-
-  // start timing new active player if actually active
+  // start timing new active player
   if(players[turnIndex].status==="active"){
     startTimingPlayer(turnIndex);
-  }
-
-  // after passing, regular mode might now have only 1 left
-  if(gameMode==="regular"){
-    const didWinReg2 = checkForWinRegular();
-    if(didWinReg2){
-      renderAll();
-      return;
-    }
   }
 
   renderAll();
@@ -1741,14 +1792,12 @@ rollD20Btn.addEventListener("click",()=>{
 });
 
 newGameBtn.addEventListener("click",()=>{
-  // same mode, confirm wipe
   if(!confirm("Start a new game in the same mode? This clears all data.")) return;
-  showPlayerCountStep(); // skip mode re-pick, keep gameMode
+  showPlayerCountStep(); // keep mode, repick player count
 });
 changeModeBtn.addEventListener("click",()=>{
-  // confirm wipe + go back to mode select
   if(!confirm("Change mode? This restarts the game.")) return;
-  showModeStep(); // pick mode again
+  showModeStep();
 });
 
 /* =========================
@@ -1767,7 +1816,6 @@ function analyzeOracleText(oracleText,typeLine){
 
     upkeepReminder:"",
     dungeonHint:"",
-    bountyNote:""
   };
 
   const upkeepMatch=oracleText && oracleText.match(/At the beginning of your upkeep[^.]*\./i);
@@ -1778,13 +1826,8 @@ function analyzeOracleText(oracleText,typeLine){
   if(/the initiative/.test(text)
   ||/undercity/.test(text)
   ||/venture into the dungeon/.test(text)){
-    parsed.dungeonHint="Dungeon/Initiative: Track Undercity / dungeon progress each upkeep.";
+    parsed.dungeonHint="Dungeon/Initiative: Track Undercity / dungeon steps each upkeep.";
   }
-
-  if(/bounty counter/.test(text)){
-    parsed.bountyNote="Bounty: Mark target; reward when it dies.";
-  }
-
   return parsed;
 }
 
@@ -1856,11 +1899,6 @@ async function doLookup(idx){
         p.dungeonProgress += (p.dungeonProgress? "\n":"")+parsed.dungeonHint;
       }
     }
-    if(parsed.bountyNote){
-      if(!p.notesText.toLowerCase().includes("bounty")){
-        p.notesText += (p.notesText? "\n":"")+parsed.bountyNote;
-      }
-    }
 
     renderAll();
   }catch(e){
@@ -1872,34 +1910,45 @@ async function doLookup(idx){
 }
 
 /* =========================
-   RENDER
+   RENDER HELPERS
 ========================= */
 
-function renderAll(){
-  syncCommanderDamageArrays();
+function renderGlobalTimerBanner(){
+  globalTimerBanner.textContent = "Global: "+msToClock(getGameElapsedMs());
+}
+function renderTimersOnly(){
+  renderGlobalTimerBanner();
 
-  // update header
-  const cur = players[turnIndex]||{};
-  const nm  = cur.name||("Player "+(turnIndex+1));
-  turnBanner.textContent = "▶ "+nm.toUpperCase()+"'S TURN ◀";
-
-  // update mode text
-  modeStatusText.textContent =
-    (gameMode==="regular"?"Mode 1 — Regular":"Mode 2 — Rumble");
-
-  renderHUD();
-  renderOthers();
-  renderAccordions();
-
-  if(winnerLocked){
-    winnerMiniBanner.style.display="block";
-  }else{
-    // if no winner yet but we had displayed banner before, keep it visible? up to you.
-    // we'll leave whatever is already in banner but hide if game not ended
-    if(!winnerTimeMs){
-      winnerMiniBanner.style.display="none";
+  const p=players[turnIndex];
+  if(p){
+    const hudTimerBlocks = document.querySelectorAll("#hudArea .timer-block");
+    // block0 Turn Time, block1 Player Time, block2 Global Time
+    if(hudTimerBlocks.length>=3){
+      const turnVal=hudTimerBlocks[0].querySelector(".timer-val");
+      if(turnVal){
+        turnVal.textContent=msToClock(getPlayerTurnMs(p));
+      }
+      const playerVal=hudTimerBlocks[1].querySelector(".timer-val");
+      if(playerVal){
+        playerVal.textContent=msToClock(getPlayerTotalMs(p));
+      }
+      const globalVal=hudTimerBlocks[2].querySelector(".timer-val");
+      if(globalVal){
+        globalVal.textContent=msToClock(getGameElapsedMs());
+      }
     }
   }
+
+  // update the Player Time in others list
+  players.forEach((pl,i)=>{
+    if(i===turnIndex) return;
+    const node=document.querySelector(
+      `.other-player-block[data-idx="${i}"] .player-time-val`
+    );
+    if(node){
+      node.textContent=msToClock(getPlayerTotalMs(pl));
+    }
+  });
 }
 
 /* seat glow color */
@@ -1908,11 +1957,37 @@ function getSeatColor(i){
   return cols[i % cols.length];
 }
 
-/* build active player HUD */
+/* =========================
+   RENDER ALL
+========================= */
+
+function renderAll(){
+  syncCommanderDamageArrays();
+
+  const cur = players[turnIndex]||{};
+  const nm  = cur.name||("Player "+(turnIndex+1));
+  turnBanner.textContent = "▶ "+nm.toUpperCase()+"'S TURN ◀";
+
+  modeStatusText.textContent =
+    (gameMode==="regular"?"Mode 1 — Regular":"Mode 2 — Rumble");
+
+  renderHUD();
+  renderOthers();
+  renderAccordions();
+  renderGlobalTimerBanner();
+
+  if(winnerLocked){
+    winnerMiniBanner.style.display="block";
+  }else if(!winnerTimeMs){
+    winnerMiniBanner.style.display="none";
+  }
+}
+
+/* HUD (active player card) */
 function renderHUD(){
   hudArea.innerHTML="";
   const p=players[turnIndex];
-  if(!p){ return; }
+  if(!p) return;
 
   const seatColor=getSeatColor(turnIndex);
 
@@ -1941,9 +2016,7 @@ function renderHUD(){
   nmInput.addEventListener("input",e=>{
     p.name=e.target.value;
   });
-  nmInput.addEventListener("blur",()=>{
-    renderAll();
-  });
+  nmInput.addEventListener("blur",()=>{ renderAll(); });
   nmInput.addEventListener("keydown",ev=>{
     if(ev.key==="Enter"){
       ev.preventDefault();
@@ -1954,71 +2027,50 @@ function renderHUD(){
   const tinyStack=document.createElement("div");
   tinyStack.className="tiny-col-stack";
 
-  // status row
+  // STATUS ROW
   const statusRow=document.createElement("div");
   statusRow.className="tiny-row";
 
-  // build status chip based on mode
   const stChip=document.createElement("div");
   stChip.className="status-chip "+
     (p.status==="active"?"status-active":
      p.status==="cooldown"?"status-cooldown":
                            "status-elim");
+
   stChip.textContent=
     p.status==="active"?"ACTIVE":
     p.status==="cooldown"?"COOLDOWN":
     "ELIMINATED";
 
+  // Tap cycles status only for admin fix (not normal cheating path)
   stChip.title = (gameMode==="rumble")
-    ? "Tap to cycle: Active → Cooldown → Eliminated → Active"
-    : "Tap to cycle: Active → Eliminated → Active";
-
+    ? "Tap to correct: Active ↔ Cooldown ↔ Eliminated"
+    : "Tap to correct: Active ↔ Eliminated";
   stChip.addEventListener("click",()=>{
-    cycleStatus(turnIndex);
+    cycleStatusAdmin(turnIndex);
   });
 
   statusRow.appendChild(stChip);
 
-  // cooldownRemaining only matters in rumble + status=cooldown
-  if(gameMode==="rumble" && p.status==="cooldown"){
+  // show cooldownRemaining if cooling
+  if(p.status==="cooldown" && gameMode==="rumble"){
     const cdWrap=document.createElement("div");
-    cdWrap.className="cooldown-inline-wrap";
+    cdWrap.className="cd-info-inline";
 
     const cdLab=document.createElement("div");
     cdLab.className="cd-label";
-    cdLab.textContent="CD:";
-
-    const cdStepper=document.createElement("div");
-    cdStepper.className="mini-step-row";
-
-    const cdMinus=document.createElement("div");
-    cdMinus.className="step-btn";
-    cdMinus.textContent="-";
-    cdMinus.addEventListener("click",()=>{
-      adjustCooldownRemaining(turnIndex,-1,true);
-    });
+    cdLab.textContent="Cooldown:";
 
     const cdVal=document.createElement("div");
-    cdVal.className="step-val";
+    cdVal.className="cd-val-box";
     cdVal.textContent=p.cooldownRemaining;
 
-    const cdPlus=document.createElement("div");
-    cdPlus.className="step-btn";
-    cdPlus.textContent="+";
-    cdPlus.addEventListener("click",()=>{
-      adjustCooldownRemaining(turnIndex,1,true);
-    });
-
-    cdStepper.appendChild(cdMinus);
-    cdStepper.appendChild(cdVal);
-    cdStepper.appendChild(cdPlus);
-
     cdWrap.appendChild(cdLab);
-    cdWrap.appendChild(cdStepper);
+    cdWrap.appendChild(cdVal);
     statusRow.appendChild(cdWrap);
   }
 
-  // commander tax row
+  // COMMANDER TAX
   const taxRow=document.createElement("div");
   taxRow.className="tax-row";
 
@@ -2053,10 +2105,7 @@ function renderHUD(){
   taxCtrl.appendChild(taxVal);
   taxCtrl.appendChild(taxPlus);
 
-  taxRow.appendChild(taxLabel);
-  taxRow.appendChild(taxCtrl);
-
-  // timer row (Turn Time / Total Time)
+  // TIMERS
   const timeRow=document.createElement("div");
   timeRow.className="timer-row";
 
@@ -2075,23 +2124,44 @@ function renderHUD(){
   tBlock2.className="timer-block";
   const tb2L=document.createElement("div");
   tb2L.className="timer-label";
-  tb2L.textContent="Total Time";
+  tb2L.textContent="Player Time";
   const tb2V=document.createElement("div");
   tb2V.className="timer-val";
   tb2V.textContent=msToClock(getPlayerTotalMs(p));
   tBlock2.appendChild(tb2L);
   tBlock2.appendChild(tb2V);
 
+  const tBlock3=document.createElement("div");
+  tBlock3.className="timer-block";
+  const tb3L=document.createElement("div");
+  tb3L.className="timer-label";
+  tb3L.textContent="Global Time";
+  const tb3V=document.createElement("div");
+  tb3V.className="timer-val";
+  tb3V.textContent=msToClock(getGameElapsedMs());
+  tBlock3.appendChild(tb3L);
+  tBlock3.appendChild(tb3V);
+
   timeRow.appendChild(tBlock1);
   timeRow.appendChild(tBlock2);
+  timeRow.appendChild(tBlock3);
 
-  tinyStack.appendChild(statusRow);
-  tinyStack.appendChild(taxRow);
-  tinyStack.appendChild(timeRow);
+  const tinyStackTop=document.createElement("div");
+  tinyStackTop.appendChild(statusRow);
+  tinyStackTop.appendChild(taxRow);
+  tinyStackTop.appendChild(timeRow);
+
+  // Respawn draw banner
+  if(p.pendingEOTDraw){
+    const reminder=document.createElement("div");
+    reminder.className="respawn-draw-banner";
+    reminder.textContent="Respawn Turn: Skip normal draw step. Draw 1 at END of this turn.";
+    tinyStackTop.appendChild(reminder);
+  }
 
   nameBlock.appendChild(nmLabel);
   nameBlock.appendChild(nmInput);
-  nameBlock.appendChild(tinyStack);
+  nameBlock.appendChild(tinyStackTop);
 
   leftCol.appendChild(nameBlock);
 
@@ -2114,15 +2184,7 @@ function renderHUD(){
   minusBtn.textContent="-";
   minusBtn.addEventListener("click",()=>{
     p.life = p.life-1;
-    if(gameMode==="rumble"){
-      if(p.life<=0){
-        sendToCooldown(turnIndex);
-      }
-    }else{
-      if(p.life<=0){
-        permanentlyEliminate(turnIndex);
-      }
-    }
+    lethalCheck(turnIndex,"life");
     renderAll();
   });
 
@@ -2147,18 +2209,9 @@ function renderHUD(){
 
   grid.appendChild(makeMiniStepperBox("☠ Poison",p.poison,(newVal)=>{
     p.poison=newVal;
-    if(gameMode==="rumble"){
-      if(p.poison>=10){
-        sendToCooldown(turnIndex);
-      }
-    }else{
-      if(p.poison>=10){
-        permanentlyEliminate(turnIndex);
-      }
-    }
+    lethalCheck(turnIndex,"poison");
     renderAll();
   }));
-
   grid.appendChild(makeMiniStepperBox("☢ Rad",p.radiation,(newVal)=>{
     p.radiation=newVal;
     renderAll();
@@ -2231,7 +2284,7 @@ function makeMiniStepperBox(labelText,val,onSet){
   return wrap;
 }
 
-/* render "Other Players" list */
+/* OTHERS LIST */
 function renderOthers(){
   othersArea.innerHTML="";
   const wrap=document.createElement("div");
@@ -2246,6 +2299,7 @@ function renderOthers(){
     if(i===turnIndex) return;
     const block=document.createElement("div");
     block.className="other-player-block";
+    block.setAttribute("data-idx",i);
 
     const top=document.createElement("div");
     top.className="other-player-top";
@@ -2256,15 +2310,20 @@ function renderOthers(){
 
     const chev=document.createElement("span");
     chev.className="other-expand-indicator";
-    chev.textContent="▼";
-
-    top.appendChild(titleSpan);
-    top.appendChild(chev);
 
     const body=document.createElement("div");
     body.className="other-player-body";
 
-    // status line
+    const isOpen=!!otherOpen[i];
+    if(isOpen){
+      body.style.display="flex";
+      chev.textContent="▲";
+    }else{
+      body.style.display="none";
+      chev.textContent="▼";
+    }
+
+    // STATUS LINE
     const statusLine=document.createElement("div");
     statusLine.className="status-line-other";
 
@@ -2272,86 +2331,41 @@ function renderOthers(){
     statusText.textContent="Status: "+pl.status.toUpperCase();
     statusLine.appendChild(statusText);
 
-    if(pl.status==="active"){
-      if(gameMode==="rumble"){
-        const koBtn=document.createElement("div");
-        koBtn.className="cool-btn-inline";
-        koBtn.textContent="Knock Out → Cooldown";
-        koBtn.addEventListener("click",()=>{
-          sendToCooldown(i);
-          renderAll();
-        });
-        statusLine.appendChild(koBtn);
-      }else{
-        const elimBtn=document.createElement("div");
-        elimBtn.className="cool-btn-inline";
-        elimBtn.textContent="Eliminate Player";
-        elimBtn.addEventListener("click",()=>{
-          permanentlyEliminate(i);
-          renderAll();
-        });
-        statusLine.appendChild(elimBtn);
-      }
-    }
-
-    // cooldown row (only rumble, only if cooldown)
-    if(gameMode==="rumble" && pl.status==="cooldown"){
-      const cdWrap=document.createElement("div");
-      cdWrap.className="cool-row-inline";
-
+    if(pl.status==="cooldown" && gameMode==="rumble"){
       const cdLab=document.createElement("div");
       cdLab.className="cd-label";
       cdLab.style.fontSize=".6rem";
       cdLab.style.color="var(--text-dim)";
       cdLab.style.textTransform="uppercase";
       cdLab.style.letterSpacing=".05em";
-      cdLab.textContent="CD Left:";
-
-      const cdStepper=document.createElement("div");
-      cdStepper.className="mini-step-row";
-
-      const cdMinus=document.createElement("div");
-      cdMinus.className="step-btn";
-      cdMinus.textContent="-";
-      cdMinus.addEventListener("click",()=>{
-        adjustCooldownRemaining(i,-1,false);
-      });
-      const cdVal=document.createElement("div");
-      cdVal.className="step-val";
-      cdVal.textContent=pl.cooldownRemaining;
-      const cdPlus=document.createElement("div");
-      cdPlus.className="step-btn";
-      cdPlus.textContent="+";
-      cdPlus.addEventListener("click",()=>{
-        adjustCooldownRemaining(i,1,false);
-      });
-
-      cdStepper.appendChild(cdMinus);
-      cdStepper.appendChild(cdVal);
-      cdStepper.appendChild(cdPlus);
-
-      cdWrap.appendChild(cdLab);
-      cdWrap.appendChild(cdStepper);
-
-      statusLine.appendChild(cdWrap);
+      cdLab.textContent="Cooldown:";
+      const cdNum=document.createElement("div");
+      cdNum.className="cd-val-box";
+      cdNum.textContent=pl.cooldownRemaining;
+      statusLine.appendChild(cdLab);
+      statusLine.appendChild(cdNum);
     }
 
-    // player total time chunk
+    // player time
     const timeBox=document.createElement("div");
-    timeBox.className="cool-row-inline";
+    timeBox.style.display="flex";
+    timeBox.style.flexWrap="wrap";
+    timeBox.style.alignItems="center";
+    timeBox.style.gap=".5rem .75rem";
+
     const tLab=document.createElement("div");
     tLab.className="cd-label";
-    tLab.textContent="Total Time:";
+    tLab.textContent="Player Time:";
     const tVal=document.createElement("div");
-    tVal.className="cool-val-box";
+    tVal.className="cd-val-box player-time-val";
     tVal.textContent=msToClock(getPlayerTotalMs(pl));
     timeBox.appendChild(tLab);
     timeBox.appendChild(tVal);
-    statusLine.appendChild(timeBox);
 
+    statusLine.appendChild(timeBox);
     body.appendChild(statusLine);
 
-    // life / counters
+    // LIFE / +/- CONTROLS
     const lifeCol=document.createElement("div");
     lifeCol.className="mini-col";
 
@@ -2366,16 +2380,8 @@ function renderOthers(){
     minusBtn.className="life-inline-btn";
     minusBtn.textContent="-";
     minusBtn.addEventListener("click",()=>{
-      pl.life = pl.life-1;
-      if(gameMode==="rumble"){
-        if(pl.life<=0){
-          sendToCooldown(i);
-        }
-      }else{
-        if(pl.life<=0){
-          permanentlyEliminate(i);
-        }
-      }
+      pl.life=pl.life-1;
+      lethalCheck(i,"life");
       renderAll();
     });
 
@@ -2387,7 +2393,7 @@ function renderOthers(){
     plusBtn.className="life-inline-btn";
     plusBtn.textContent="+";
     plusBtn.addEventListener("click",()=>{
-      pl.life = pl.life+1;
+      pl.life=pl.life+1;
       renderAll();
     });
 
@@ -2399,34 +2405,23 @@ function renderOthers(){
 
     body.appendChild(lifeCol);
 
-    // poison/rad/exp/storm etc row
+    // poison/rad/exp/storm
     const debuffRow=document.createElement("div");
     debuffRow.className="mini-row";
 
     debuffRow.appendChild(smallStepperBox("☠ Poison",pl.poison,(v)=>{
       pl.poison=v;
-      if(gameMode==="rumble"){
-        if(pl.poison>=10){
-          sendToCooldown(i);
-        }
-      }else{
-        if(pl.poison>=10){
-          permanentlyEliminate(i);
-        }
-      }
+      lethalCheck(i,"poison");
       renderAll();
     }));
-
     debuffRow.appendChild(smallStepperBox("☢ Rad",pl.radiation,(v)=>{
       pl.radiation=v;
       renderAll();
     }));
-
     debuffRow.appendChild(smallStepperBox("★ Exp",pl.experience,(v)=>{
       pl.experience=v;
       renderAll();
     }));
-
     debuffRow.appendChild(smallStepperBox("☁ Storm",pl.storm,(v)=>{
       pl.storm=v;
       renderAll();
@@ -2434,15 +2429,14 @@ function renderOthers(){
 
     body.appendChild(debuffRow);
 
-    // commander damage GRID
+    // COMMANDER DAMAGE GRID
     const cdmgWrap=document.createElement("div");
     cdmgWrap.className="cdmg-section-wrap";
 
     const cdmgLab=document.createElement("div");
     cdmgLab.className="cdmg-label";
     cdmgLab.textContent=
-      "Commander Damage Taken by "+nm+
-      " (21 from any 1 source = elim)";
+      "Commander Damage Taken by "+nm+" (21 from any 1 source = elim)";
     cdmgWrap.appendChild(cdmgLab);
 
     const cdmgGrid=document.createElement("div");
@@ -2466,7 +2460,7 @@ function renderOthers(){
       dmgIn.value=pl.commanderDamage[srcIdx]||0;
       dmgIn.addEventListener("input",e=>{
         let v=parseInt(e.target.value,10);
-        if(isNaN(v)||v<0) v=0;
+        if(isNaN(v)||v<0)v=0;
         pl.commanderDamage[srcIdx]=v;
         checkCommanderDamageElim(i);
         renderAll();
@@ -2481,12 +2475,12 @@ function renderOthers(){
     cdmgWrap.appendChild(cdmgGrid);
     body.appendChild(cdmgWrap);
 
-    // note box
+    // player note box
     const miniNote=document.createElement("div");
     miniNote.className="mini-note-box";
     const mnLab=document.createElement("div");
     mnLab.className="mini-note-label";
-    mnLab.textContent="Note on "+nm+" (Monarch, Goaded, etc.)";
+    mnLab.textContent="Note on "+nm+" (Monarch, Initiative, Goaded, etc.)";
     const mnArea=document.createElement("textarea");
     mnArea.className="mini-area-input";
     mnArea.value=pl.notesText;
@@ -2498,15 +2492,12 @@ function renderOthers(){
     body.appendChild(miniNote);
 
     top.addEventListener("click",()=>{
-      if(body.style.display==="flex"){
-        body.style.display="none";
-        chev.textContent="▼";
-      }else{
-        body.style.display="flex";
-        chev.textContent="▲";
-      }
+      otherOpen[i]=!otherOpen[i];
+      renderOthers();
     });
 
+    top.appendChild(titleSpan);
+    top.appendChild(chev);
     block.appendChild(top);
     block.appendChild(body);
 
@@ -2531,8 +2522,7 @@ function smallStepperBox(labelText,val,onSet){
   minus.className="step-btn";
   minus.textContent="-";
   minus.addEventListener("click",()=>{
-    let v=val-1;
-    if(v<0)v=0;
+    let v=val-1; if(v<0)v=0;
     onSet(v);
   });
 
@@ -2544,8 +2534,7 @@ function smallStepperBox(labelText,val,onSet){
   plus.className="step-btn";
   plus.textContent="+";
   plus.addEventListener("click",()=>{
-    let v=val+1;
-    if(v<0)v=0;
+    let v=val+1; if(v<0)v=0;
     onSet(v);
   });
 
@@ -2558,13 +2547,13 @@ function smallStepperBox(labelText,val,onSet){
   return box;
 }
 
-/* accordions for current player */
+/* ACCORDIONS (status, notes, lookup) */
 function renderAccordions(){
   accordionsArea.innerHTML="";
   const p=players[turnIndex];
-  if(!p){return;}
+  if(!p) return;
 
-  const acc1 = makeAccordion(
+  const acc1=makeAccordion(
     "statusEffects",
     "Status Effects / Titles",
     "Monarch, Initiative, Blessing, Dungeon, Emblems",
@@ -2615,7 +2604,7 @@ function renderAccordions(){
     }
   );
 
-  const acc2 = makeAccordion(
+  const acc2=makeAccordion(
     "notes",
     "Notes / Reminders",
     "Goad, skip draw, bounty, upkeep triggers",
@@ -2625,7 +2614,7 @@ function renderAccordions(){
       notesLabel.textContent="Notes";
       const notesArea=document.createElement("textarea");
       notesArea.className="area-input";
-      notesArea.placeholder="Ex: Goaded Krenko vs Jess; Skip next draw; Bounty on Theo"
+      notesArea.placeholder="Goaded Krenko, Skip next draw, Bounty on Theo..."
       notesArea.value=p.notesText;
       notesArea.addEventListener("input",e=>{
         p.notesText=e.target.value;
@@ -2636,7 +2625,7 @@ function renderAccordions(){
     }
   );
 
-  const acc3 = makeAccordion(
+  const acc3=makeAccordion(
     "lookup",
     "Card Lookup (Scryfall)",
     "Pull card text + auto reminders",
@@ -2686,7 +2675,7 @@ function renderAccordions(){
       }else{
         const hint=document.createElement("div");
         hint.className="small-hint";
-        hint.textContent="Auto-marks Monarch / Initiative and upkeep triggers in Notes.";
+        hint.textContent="Auto-adds Monarch / Initiative and upkeep reminders to Notes.";
         lookResults.appendChild(hint);
       }
 
@@ -2707,7 +2696,6 @@ function makeToggleChip(label,active,onToggle){
   chip.addEventListener("click",()=>{ onToggle(!active); });
   return chip;
 }
-
 function makeAccordion(key,title,hint,fillBodyFn){
   const wrap=document.createElement("div");
   wrap.className="accordion-block";
@@ -2733,9 +2721,6 @@ function makeAccordion(key,title,hint,fillBodyFn){
 
   rightSpan.appendChild(hintEl);
   rightSpan.appendChild(chevron);
-
-  head.appendChild(leftSpan);
-  head.appendChild(rightSpan);
 
   const body=document.createElement("div");
   body.className="accordion-body";
@@ -2767,62 +2752,66 @@ function makeAccordion(key,title,hint,fillBodyFn){
 }
 
 /* =========================
-   STATUS / COOLDOWN ADJUST
+   LETHAL CHECKS
 ========================= */
 
-function cycleStatus(i){
+function lethalCheck(i,source){
   const p=players[i];
-  // stop timing if we leave active
-  if(p.status==="active"){
-    stopTimingPlayer(i);
-  }
+  if(!p) return;
 
+  // If commander damage killed them already, they're eliminated (handled elsewhere)
+  // Otherwise:
+  if(source==="life" && p.life<=0){
+    knockOutToCooldown(i);
+    return;
+  }
+  if(source==="poison" && p.poison>=10){
+    knockOutToCooldown(i);
+    return;
+  }
+  // "you lose the game" style effects aren't auto in UI, but could be future button.
+  // We'll include a helper call if we add that.
+}
+
+/* =========================
+   ADMIN STATUS CYCLE
+   (for corrections only)
+========================= */
+
+function cycleStatusAdmin(i){
+  const p=players[i];
+  // basic correction path, not normal gameplay
   if(gameMode==="rumble"){
     // active -> cooldown -> eliminated -> active
     if(p.status==="active"){
-      // go cooldown
-      let othersCooling=0;
-      players.forEach((q,qi)=>{
-        if(qi!==i && q.status==="cooldown") othersCooling++;
-      });
-      p.status="cooldown";
-      p.cooldownRemaining=1+othersCooling;
+      // send to cooldown w/ standard calc
+      knockOutToCooldown(i);
     }else if(p.status==="cooldown"){
       permanentlyEliminate(i);
+      showAnnounce(
+        (p.name||("Player "+(i+1)))+" eliminated",
+        "Manual correction."
+      );
     }else{
-      // eliminated -> back active (house tool convenience)
+      // revive as active (house fix)
       p.status="active";
       p.cooldownRemaining=0;
-      if(p.life<1){ p.life=1; }
+      p.pendingEOTDraw=false;
     }
   }else{
     // regular: active -> eliminated -> active
     if(p.status==="active"){
       permanentlyEliminate(i);
+      showAnnounce(
+        (p.name||("Player "+(i+1)))+" eliminated",
+        "Manual correction."
+      );
     }else{
       p.status="active";
-      if(p.life<1){ p.life=1; }
+      p.cooldownRemaining=0;
+      p.pendingEOTDraw=false;
     }
   }
-
-  updateReigningCandidate();
-  renderAll();
-}
-
-function adjustCooldownRemaining(i,delta,fromSelfHUD){
-  if(gameMode!=="rumble") return;
-  const p=players[i];
-  if(p.status!=="cooldown") return;
-
-  p.cooldownRemaining += delta;
-  if(p.cooldownRemaining<0) p.cooldownRemaining=0;
-
-  if(p.cooldownRemaining===0){
-    pendingCooldownFinishIndex=i;
-    pendingCooldownMode="normalFinish";
-    showCooldownFinishOverlay(i);
-  }
-
   renderAll();
 }
 
@@ -2840,27 +2829,25 @@ function resetGameStateKeepMode(){
   winnerName="";
   winnerTimeMs=0;
   winnerActiveMs=0;
-  pendingRespawnIndex=null;
-  pendingCooldownFinishIndex=null;
-  pendingCooldownMode=null;
+  otherOpen={};
 
   if(renderIntervalId){
     clearInterval(renderIntervalId);
     renderIntervalId=null;
   }
 
-  setupStepMode.style.display="none";     // keep same mode
+  setupStepMode.style.display="none";
   setupStepPlayers.style.display="flex";
   setupOverlay.style.display="flex";
 }
 
 function showModeStep(){
-  // step 1: pick mode
   players=[];
   gameStartTime=null;
   winnerLocked=false;
   reigningCandidateIndex=null;
   reigningCandidateTurnStamp=null;
+  otherOpen={};
 
   if(renderIntervalId){
     clearInterval(renderIntervalId);
@@ -2871,14 +2858,25 @@ function showModeStep(){
   setupStepPlayers.style.display="none";
   setupOverlay.style.display="flex";
 }
+
 function showPlayerCountStep(){
-  // step 2: pick player count with current gameMode
+  players=[];
+  gameStartTime=null;
+  winnerLocked=false;
+  reigningCandidateIndex=null;
+  reigningCandidateTurnStamp=null;
+  otherOpen={};
+
+  if(renderIntervalId){
+    clearInterval(renderIntervalId);
+    renderIntervalId=null;
+  }
+
   setupStepMode.style.display="none";
   setupStepPlayers.style.display="flex";
   setupOverlay.style.display="flex";
 }
 
-/* mode select buttons */
 setupStepMode.querySelectorAll("[data-mode]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const m=btn.getAttribute("data-mode");
@@ -2887,7 +2885,6 @@ setupStepMode.querySelectorAll("[data-mode]").forEach(btn=>{
   });
 });
 
-/* player count select buttons */
 setupStepPlayers.querySelectorAll("[data-fixedplayers]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const n=parseInt(btn.getAttribute("data-fixedplayers"),10);
@@ -2915,32 +2912,26 @@ function startGameWith(nPlayers){
   winnerName="";
   winnerTimeMs=0;
   winnerActiveMs=0;
-  pendingRespawnIndex=null;
-  pendingCooldownFinishIndex=null;
-  pendingCooldownMode=null;
+  otherOpen={};
 
   gameStartTime=Date.now();
 
   syncCommanderDamageArrays();
-  updateReigningCandidate();
-
-  setupOverlay.style.display="none";
-
-  // timing: start first player's timer if they're active
+  // start timing first player
   if(players[0] && players[0].status==="active"){
     startTimingPlayer(0);
   }
 
+  setupOverlay.style.display="none";
+
   renderAll();
 
-  // start 1s interval to keep Turn Time / Total Time live
   if(renderIntervalId){
     clearInterval(renderIntervalId);
   }
   renderIntervalId=setInterval(()=>{
     if(!winnerLocked){
-      // just refresh timer visuals
-      renderAll();
+      renderTimersOnly();
     }
   },1000);
 }
@@ -2951,6 +2942,10 @@ function startGameWith(nPlayers){
 
 endTurnBtn.addEventListener("click",()=>{
   passTurn();
+});
+
+winnerCloseBtn.addEventListener("click",()=>{
+  winnerOverlay.style.display="none";
 });
 
 </script>
