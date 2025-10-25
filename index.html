@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>EDH RUMBLE TRACKER v15.1</title>
+<style>
+  :root {
+    /* DARK THEME DEFAULT */
+    --bg-main:#0f0f12;
+    --bg-panel:#1a1a22;
+    --bg-accent:#2a2a36;
+    --border-soft:#3a3a4f;
+
+    --text-primary:#f5f5fa;
+    --text-dim:#8a8aa5;
+
+    --gold:#d4a94f;
+    --cyan:#5fd8d8;
+    --magenta:#ff4acb;
+    --lime:#5fd85f;
+    --red:#d85f5f;
+    --off:#55556e;
+
+    --button-bg:#2a2a36;
+    --button-border:#3a3a4f;
+
+    --overlay-bg:rgba(0,0,0,0.8);
+
+    --tool-bg:#1a1a22;
+    --tool-border:#3a3a4f;
+  }
+
+  .theme-light {
+    --bg-main:#ffffff;
+    --bg-panel:#ffffff;
+    --bg-accent:#f4f4fa;
+    --border-soft:#bfbfd4;
+
+    --text-primary:#1a1a22;
+    --text-dim:#5a5a77;
+
+    --gold:#9c7a1f;
+    --cyan:#2a8f8f;
+    --magenta:#b51882;
+    --lime:#2a8f2a;
+    --red:#a63f3f;
+    --off:#8a8aa5;
+
+    --button-bg:#ffffff;
+    --button-border:#bfbfd4;
+
+    --overlay-bg:rgba(0,0,0,0.6);
+
+    --tool-bg:#ffffff;
+    --tool-border:#bfbfd4;
+  }
+
+  .theme-neon {
+    --bg-main:#050509;
+    --bg-panel:#0e0e1a;
+    --bg-accent:#1a1a33;
+    --border-soft:#4a4aff;
+
+    --text-primary:#ffeefe;
+    --text-dim:#ff4aeb;
+
+    --gold:#ffef5a;
+    --cyan:#5fd8ff;
+    --magenta:#ff4acb;
+    --lime:#5CFFB6;
+    --red:#ff4a6b;
+    --off:#4f4f80;
+
+    --button-bg:#1a1a33;
+    --button-border:#4a4aff;
+
+    --overlay-bg:rgba(0,0,30,0.8);
+
+    --tool-bg:#0e0e1a;
+    --tool-border:#4a4aff;
+  }
+
+  *{
+    box-sizing:border-box;
+    font-family:system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body{
+    margin:0;
+    background:var(--bg-main);
+    color:var(--text-primary);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  button{
+    cursor:pointer;
+  }
+
+  input, textarea, select, button {
+    font-family:inherit;
+  }
+
+  /* ====== FULLSCREEN SETUP OVERLAY ====== */
+  #setupOverlay {
+    position:fixed;
+    inset:0;
+    background:var(--overlay-bg);
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1rem;
+  }
+  .setup-card {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.75rem;
+    padding:1rem;
+    max-width:320px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    text-align:center;
+  }
+  .setup-title {
+    font-size:1rem;
+    font-weight:700;
+    color:var(--text-primary);
+    letter-spacing:.05em;
+  }
+  .setup-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    justify-content:center;
+  }
+  .setup-btn {
+    flex:1;
+    min-width:6rem;
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    padding:.6rem .75rem;
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text-primary);
+    text-align:center;
+  }
+  .setup-small {
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
+    align-items:center;
+  }
+  .setup-number-input {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.5rem .6rem;
+    font-size:.8rem;
+    color:var(--text-primary);
+    width:5rem;
+    text-align:center;
+  }
+  .setup-go {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    padding:.5rem .75rem;
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text-primary);
+  }
+
+  /* ====== WINNER MODAL ====== */
+  #winnerOverlay,
+  #respawnOverlay,
+  #cooldownFinishOverlay {
+    position:fixed;
+    inset:0;
+    background:var(--overlay-bg);
+    z-index:10000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:1rem;
+  }
+  .winner-card,
+  .respawn-card,
+  .cooldown-card {
+    background:var(--bg-panel);
+    border:2px solid var(--gold);
+    border-radius:1rem;
+    padding:1rem;
+    max-width:320px;
+    width:100%;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    box-shadow:0 0 30px rgba(212,169,79,.6),0 40px 80px rgba(0,0,0,.9);
+  }
+  .winner-title {
+    font-size:.9rem;
+    font-weight:700;
+    color:var(--gold);
+    line-height:1.3;
+    word-break:break-word;
+  }
+  .winner-line {
+    font-size:.8rem;
+    font-weight:500;
+    color:var(--text-primary);
+    line-height:1.4;
+  }
+  .winner-close,
+  .respawn-yes,
+  .respawn-no,
+  .cooldown-respawn,
+  .cooldown-keep,
+  .cooldown-elim {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    padding:.6rem .75rem;
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text-primary);
+    text-align:center;
+  }
+  .respawn-q,
+  .cooldown-q {
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text-primary);
+    line-height:1.4;
+  }
+  .small-hint {
+    font-size:.6rem;
+    color:var(--text-dim);
+    line-height:1.3;
+  }
+
+  /* ====== TOP HEADER / TURN BANNER ====== */
+  .top-header {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    background:var(--bg-panel);
+    border-bottom:1px solid var(--border-soft);
+    z-index:1000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:.75rem .75rem .5rem;
+    gap:.5rem;
+  }
+  .game-title {
+    font-size:.9rem;
+    font-weight:700;
+    letter-spacing:.05em;
+    color:var(--text-primary);
+    text-align:center;
+  }
+  #turnBanner {
+    font-size:.8rem;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:.05em;
+    text-align:center;
+  }
+
+  /* ====== MAIN CONTENT AREA ====== */
+  .content-area {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+    padding:6.5rem .75rem 7.5rem; /* header+footer space */
+  }
+
+  /* ====== ACTIVE HUD CARD ====== */
+  .hud-card {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.75rem;
+    box-shadow:0 20px 40px rgba(0,0,0,.7);
+    padding:.75rem;
+    display:flex;
+    flex-direction:column;
+    gap:.75rem;
+  }
+
+  .hud-top-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    justify-content:space-between;
+  }
+
+  .hud-col {
+    flex:1 1 220px;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:.6rem;
+  }
+
+  .section-block-inline {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.6rem;
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
+  }
+
+  .row-flex {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem .75rem;
+    align-items:flex-start;
+  }
+
+  .label-sm {
+    font-size:.6rem;
+    font-weight:500;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    line-height:1.2;
+  }
+
+  .text-input,
+  .num-input,
+  .mini-area-input {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    color:var(--text-primary);
+    font-size:.8rem;
+    line-height:1.3;
+  }
+  .text-input {
+    padding:.45rem .5rem;
+    min-width:5rem;
+    font-weight:600;
+    width:100%;
+  }
+
+  .tiny-row {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.5rem .75rem;
+  }
+
+  .status-chip {
+    border-radius:.5rem;
+    padding:.5rem;
+    text-align:center;
+    font-size:.7rem;
+    font-weight:600;
+    line-height:1.3;
+    border:1px solid;
+    cursor:pointer;
+    min-width:5.5rem;
+  }
+  .status-active {
+    color:var(--lime);
+    border-color:var(--lime);
+    background:rgba(95,216,95,.07);
+  }
+  .status-cooldown {
+    color:var(--red);
+    border-color:var(--red);
+    background:rgba(216,95,95,.08);
+  }
+  .status-elim {
+    color:var(--off);
+    border-color:var(--off);
+    background:rgba(85,85,110,.15);
+  }
+
+  .cooldown-box-inline {
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    font-size:.7rem;
+    flex-wrap:wrap;
+  }
+  .cd-label {
+    font-size:.6rem;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .num-input {
+    padding:.45rem .5rem;
+    width:3.5rem;
+    text-align:center;
+    font-weight:600;
+  }
+
+  /* Commander Tax row */
+  .tax-row {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.5rem .75rem;
+    font-size:.7rem;
+  }
+  .tax-label {
+    font-size:.6rem;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .tax-ctrl {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .tax-btn {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    font-size:.8rem;
+    font-weight:700;
+    line-height:1;
+    padding:.4rem .6rem;
+    min-width:2rem;
+    text-align:center;
+    color:var(--text-primary);
+  }
+  .tax-val {
+    min-width:2.5rem;
+    text-align:center;
+    font-size:.9rem;
+    font-weight:700;
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel);
+    border-radius:.5rem;
+    padding:.4rem .5rem;
+    color:var(--text-primary);
+  }
+
+  /* life / counters column */
+  .life-row {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .life-btn {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    font-size:1rem;
+    font-weight:700;
+    line-height:1;
+    padding:.4rem .6rem;
+    min-width:2.2rem;
+    text-align:center;
+    color:var(--text-primary);
+  }
+  .life-value {
+    min-width:3rem;
+    text-align:center;
+    font-size:1.2rem;
+    font-weight:700;
+    color:var(--text-primary);
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.4rem .6rem;
+    line-height:1.2;
+  }
+
+  .mini-counters-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(100px,100%),1fr));
+    gap:.5rem;
+  }
+
+  .mini-counter-box {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.5rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.4rem;
+    font-size:.7rem;
+    text-align:center;
+  }
+  .mini-counter-label {
+    font-size:.65rem;
+    line-height:1.2;
+    color:var(--text-dim);
+  }
+  .mini-step-row {
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    font-size:.8rem;
+    font-weight:600;
+  }
+  .step-btn {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    font-size:.8rem;
+    font-weight:700;
+    line-height:1;
+    padding:.4rem .6rem;
+    min-width:2rem;
+    text-align:center;
+    color:var(--text-primary);
+  }
+  .step-val {
+    min-width:2.5rem;
+    text-align:center;
+    font-size:.9rem;
+    font-weight:700;
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel);
+    border-radius:.5rem;
+    padding:.4rem .5rem;
+    line-height:1.2;
+    color:var(--text-primary);
+  }
+
+  /* END TURN BTN */
+  .end-turn-btn {
+    background:var(--gold);
+    border:none;
+    border-radius:.5rem;
+    padding:.8rem .9rem;
+    font-size:.9rem;
+    font-weight:700;
+    color:#000;
+    text-align:center;
+    box-shadow:0 10px 20px rgba(0,0,0,.6);
+    width:100%;
+    margin-top:.75rem;
+    margin-bottom:.75rem;
+  }
+
+  /* ====== OTHERS SECTION ====== */
+  .others-card {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.75rem;
+    padding:.75rem;
+    display:flex;
+    flex-direction:column;
+    gap:.75rem;
+  }
+  .other-header {
+    font-size:.75rem;
+    font-weight:600;
+    color:var(--text-primary);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .other-player-block {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    overflow:hidden;
+  }
+  .other-player-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:.6rem .75rem;
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text-primary);
+    cursor:pointer;
+  }
+  .other-expand-indicator {
+    font-size:.8rem;
+    color:var(--text-dim);
+    font-weight:400;
+  }
+  .other-player-body {
+    border-top:1px solid var(--border-soft);
+    padding:.75rem;
+    display:none;
+    flex-direction:column;
+    gap:.75rem;
+    font-size:.75rem;
+  }
+  .mini-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem .75rem;
+    align-items:flex-start;
+  }
+  .mini-col {
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+  }
+
+  .life-edit-inline {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .life-inline-btn {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    font-size:.8rem;
+    font-weight:600;
+    line-height:1;
+    padding:.4rem .6rem;
+    min-width:2rem;
+    text-align:center;
+    color:var(--text-primary);
+  }
+  .life-inline-val {
+    min-width:2.5rem;
+    text-align:center;
+    font-size:.9rem;
+    font-weight:700;
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel);
+    border-radius:.5rem;
+    padding:.4rem .5rem;
+    color:var(--text-primary);
+  }
+
+  .cdmg-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem .75rem;
+    font-size:.7rem;
+    align-items:flex-end;
+  }
+  .cdmg-row input {
+    width:3rem;
+    text-align:center;
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.4rem;
+    padding:.4rem .5rem;
+    color:var(--text-primary);
+    font-size:.8rem;
+    font-weight:600;
+  }
+  .cdmg-label {
+    font-size:.6rem;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    line-height:1.2;
+  }
+
+  .mini-note-box {
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+    width:100%;
+  }
+  .mini-note-label {
+    font-size:.6rem;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .mini-area-input {
+    width:100%;
+    min-height:2rem;
+    resize:vertical;
+    font-size:.7rem;
+    padding:.5rem .6rem;
+    line-height:1.3;
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    color:var(--text-primary);
+  }
+
+  /* cooldown / status controls in Other Player */
+  .status-line-other {
+    font-size:.7rem;
+    font-weight:600;
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem .75rem;
+    align-items:center;
+  }
+  .cool-row-inline {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.5rem .75rem;
+    font-size:.7rem;
+  }
+  .cool-btn-inline {
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    padding:.4rem .6rem;
+    font-size:.7rem;
+    font-weight:600;
+    color:var(--text-primary);
+    text-align:center;
+  }
+  .cool-val-box {
+    min-width:2rem;
+    text-align:center;
+    font-size:.8rem;
+    font-weight:700;
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel);
+    border-radius:.5rem;
+    padding:.4rem .5rem;
+    line-height:1.2;
+  }
+
+  /* ====== ACCORDIONS ====== */
+  .accordion-block {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.75rem;
+    overflow:hidden;
+    margin-top:.75rem;
+  }
+  .accordion-head {
+    background:var(--bg-accent);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:.6rem .75rem;
+    cursor:pointer;
+    font-size:.75rem;
+    font-weight:600;
+    color:var(--text-primary);
+    letter-spacing:.05em;
+  }
+  .accordion-head .hint {
+    color:var(--text-dim);
+    font-size:.6rem;
+    font-weight:400;
+    margin-left:.5rem;
+  }
+  .accordion-body {
+    border-top:1px solid var(--border-soft);
+    padding:.75rem;
+    display:none;
+    font-size:.75rem;
+    color:var(--text-primary);
+    line-height:1.4;
+  }
+
+  .toggle-chip {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.4rem .5rem;
+    font-size:.7rem;
+    color:var(--text-primary);
+    text-align:center;
+    cursor:pointer;
+  }
+  .toggle-chip.active {
+    box-shadow:0 0 10px var(--magenta);
+    border-color:var(--text-dim);
+    font-weight:600;
+  }
+
+  .area-input {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.5rem .6rem;
+    width:100%;
+    min-height:3rem;
+    resize:vertical;
+    font-size:.7rem;
+    font-weight:400;
+    color:var(--text-primary);
+    line-height:1.3;
+  }
+
+  .lookup-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+  }
+  .lookup-input {
+    flex:2;
+    min-width:8rem;
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    color:var(--text-primary);
+    font-size:.8rem;
+    line-height:1.3;
+    padding:.45rem .5rem;
+    font-weight:600;
+  }
+  .lookup-btn {
+    flex:1;
+    min-width:5rem;
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    padding:.5rem .6rem;
+    font-size:.7rem;
+    font-weight:600;
+    color:var(--text-primary);
+    text-align:center;
+  }
+  .lookup-results {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    font-size:.7rem;
+    line-height:1.3;
+    color:var(--text-primary);
+    margin-top:.5rem;
+  }
+  .lookup-cardtext {
+    flex:2;
+    min-width:10rem;
+    white-space:pre-line;
+  }
+  .lookup-cardimg {
+    flex:1;
+    min-width:6rem;
+    max-width:140px;
+    border-radius:.5rem;
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel);
+    overflow:hidden;
+  }
+  .lookup-cardimg img {
+    width:100%;
+    height:auto;
+    display:block;
+  }
+
+  /* ====== TOOLS FOOTER (COLLAPSIBLE) ====== */
+  .tools-footer-wrap {
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    background:var(--tool-bg);
+    border-top:1px solid var(--tool-border);
+    z-index:1000;
+  }
+
+  .tools-header-btn {
+    width:100%;
+    background:none;
+    border:none;
+    text-align:center;
+    color:var(--text-primary);
+    font-size:.75rem;
+    font-weight:600;
+    letter-spacing:.05em;
+    padding:.6rem .75rem;
+  }
+
+  .tools-panel {
+    border-top:1px solid var(--tool-border);
+    display:none;
+    padding:.75rem;
+    font-size:.75rem;
+    color:var(--text-primary);
+    background:var(--tool-bg);
+  }
+
+  .tools-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));
+    gap:.75rem;
+  }
+
+  .tool-block {
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.6rem;
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
+  }
+
+  .tool-title {
+    font-size:.65rem;
+    font-weight:500;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+
+  .rng-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+  }
+
+  .rng-btn {
+    flex:1;
+    min-width:4rem;
+    background:var(--button-bg);
+    border:1px solid var(--button-border);
+    border-radius:.5rem;
+    color:var(--text-primary);
+    font-size:.8rem;
+    font-weight:600;
+    padding:.6rem .75rem;
+    text-align:center;
+  }
+
+  .rng-output {
+    font-size:.8rem;
+    font-weight:600;
+    min-height:1em;
+    line-height:1.2;
+    color:var(--gold);
+    word-break:break-word;
+  }
+
+  .global-input {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.45rem .5rem;
+    color:var(--text-primary);
+    font-size:.7rem;
+    min-height:3rem;
+    resize:vertical;
+    line-height:1.3;
+    width:100%;
+  }
+
+  .theme-select {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.5rem .6rem;
+    font-size:.8rem;
+    color:var(--text-primary);
+    width:100%;
+  }
+
+  .winner-mini-banner {
+    border:1px solid var(--gold);
+    color:var(--gold);
+    background:var(--bg-panel);
+    border-radius:.5rem;
+    padding:.6rem .75rem;
+    font-size:.8rem;
+    font-weight:600;
+    line-height:1.4;
+    display:none;
+  }
+</style>
+</head>
+<body class="theme-dark">
+
+<!-- ====== SETUP OVERLAY ====== -->
+<div id="setupOverlay">
+  <div class="setup-card">
+    <div class="setup-title">How many players?</div>
+    <div class="setup-row">
+      <button class="setup-btn" data-fixedplayers="2">2 Players</button>
+      <button class="setup-btn" data-fixedplayers="3">3 Players</button>
+      <button class="setup-btn" data-fixedplayers="4">4 Players</button>
+    </div>
+    <div class="setup-small">
+      <div class="label-sm" style="text-align:center;">Manual Entry</div>
+      <input id="manualPlayerCount" class="setup-number-input" type="number" min="2" max="8" value="5" />
+      <button id="manualStartBtn" class="setup-go">Start</button>
+      <div class="small-hint" style="text-align:center;">Rename yourself on your turn.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== WINNER OVERLAY ====== -->
+<div id="winnerOverlay">
+  <div class="winner-card" id="winnerCard">
+    <div class="winner-title" id="winnerTitle">REIGNING RUMBLER!</div>
+    <div class="winner-line" id="winnerTimeLine">Game Time ⏱ : 00m 00s</div>
+    <button class="winner-close" id="winnerCloseBtn">OK</button>
+  </div>
+</div>
+
+<!-- ====== REIGNING RUMBLER RESPAWN PROMPT OVERLAY ====== -->
+<div id="respawnOverlay">
+  <div class="respawn-card">
+    <div class="respawn-q" id="respawnQuestion">Respawn this player?</div>
+    <div class="small-hint" id="respawnHint">They'll re-enter active with avg life (rounded up), poison 0, and commander tax reset — blocking an auto-win.</div>
+    <button class="respawn-yes" id="respawnYesBtn">Yes, Respawn</button>
+    <button class="respawn-no" id="respawnNoBtn">No, Eliminate</button>
+  </div>
+</div>
+
+<!-- ====== COOLDOWN FINISH PROMPT OVERLAY ====== -->
+<div id="cooldownFinishOverlay">
+  <div class="cooldown-card">
+    <div class="cooldown-q" id="cooldownFinishQuestion">[Player X] cooldown finished. What happens?</div>
+    <div class="small-hint" id="cooldownFinishHint">
+      Respawn = back in (avg life down, poison 0, tax reset)<br>
+      Keep Cooling = stay out 1 more turn<br>
+      Eliminate = gone forever
+    </div>
+    <button class="cooldown-respawn" id="cooldownRespawnBtn">Respawn</button>
+    <button class="cooldown-keep" id="cooldownKeepBtn">Keep Cooling</button>
+    <button class="cooldown-elim" id="cooldownElimBtn">Eliminate</button>
+  </div>
+</div>
+
+<!-- ====== TOP HEADER ====== -->
+<div class="top-header">
+  <div class="game-title">EDH RUMBLE TRACKER</div>
+  <div id="turnBanner">▶ PLAYER 1'S TURN ◀</div>
+</div>
+
+<!-- ====== MAIN CONTENT ====== -->
+<div class="content-area" id="contentArea">
+  <div id="hudArea"></div>
+
+  <button class="end-turn-btn" id="endTurnBtn">End Turn →</button>
+
+  <div id="othersArea"></div>
+
+  <div id="accordionsArea"></div>
+</div>
+
+<!-- ====== TOOLS FOOTER ====== -->
+<div class="tools-footer-wrap">
+  <button class="tools-header-btn" id="toggleToolsBtn">Tools ▼</button>
+  <div class="tools-panel" id="toolsPanel">
+    <div class="tools-grid">
+
+      <div class="tool-block">
+        <div class="tool-title">Theme</div>
+        <select id="themeSelect" class="theme-select">
+          <option value="theme-dark" selected>Dark</option>
+          <option value="theme-light">Light</option>
+          <option value="theme-neon">Neon</option>
+        </select>
+      </div>
+
+      <div class="tool-block">
+        <div class="tool-title">Randomizers</div>
+        <div class="rng-row">
+          <button class="rng-btn" id="flipCoinBtn">Coin Flip</button>
+          <button class="rng-btn" id="rollD6Btn">d6</button>
+          <button class="rng-btn" id="rollD20Btn">d20</button>
+        </div>
+        <div class="rng-output" id="rngOutput"></div>
+      </div>
+
+      <div class="tool-block">
+        <div class="tool-title">Current Plane (Planechase)</div>
+        <textarea id="planeField" class="global-input" placeholder="Plane text / chaos effects..."></textarea>
+      </div>
+
+      <div class="tool-block">
+        <div class="tool-title">Current Scheme (Archenemy)</div>
+        <textarea id="schemeField" class="global-input" placeholder="Scheme text / ongoing..."></textarea>
+      </div>
+
+      <div class="tool-block">
+        <div class="tool-title">Winner</div>
+        <div class="winner-mini-banner" id="winnerMiniBanner"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   GAME STATE
+========================= */
+let players = [];
+let turnIndex = 0;
+let turnCounter = 0;
+let gameStartTime = null;
+
+let reigningCandidateIndex = null;
+let reigningCandidateTurnStamp = null;
+
+let winnerLocked = false;
+let winnerName = "";
+let winnerTimeMs = 0;
+
+let pendingRespawnIndex = null;        // index for "Reigning Rumbler?" respawn/elim overlay
+let pendingCooldownFinishIndex = null; // index for normal cooldown-finished overlay (3-way choice)
+let pendingCooldownMode = null;        // "normalFinish" indicates this is not the Rumbler emergency
+
+// accordion state persistence
+let accordionsOpen = {
+  statusEffects:false,
+  notes:false,
+  lookup:false,
+};
+
+// DOM refs
+const setupOverlay      = document.getElementById("setupOverlay");
+const manualPlayerCount = document.getElementById("manualPlayerCount");
+const manualStartBtn    = document.getElementById("manualStartBtn");
+
+const winnerOverlay     = document.getElementById("winnerOverlay");
+const winnerTitle       = document.getElementById("winnerTitle");
+const winnerTimeLine    = document.getElementById("winnerTimeLine");
+const winnerCloseBtn    = document.getElementById("winnerCloseBtn");
+const winnerMiniBanner  = document.getElementById("winnerMiniBanner");
+
+const respawnOverlay    = document.getElementById("respawnOverlay"); // Rumbler emergency
+const respawnQuestion   = document.getElementById("respawnQuestion");
+const respawnHint       = document.getElementById("respawnHint");
+const respawnYesBtn     = document.getElementById("respawnYesBtn");
+const respawnNoBtn      = document.getElementById("respawnNoBtn");
+
+const cooldownFinishOverlay = document.getElementById("cooldownFinishOverlay"); // normal cooldown end
+const cooldownFinishQuestion= document.getElementById("cooldownFinishQuestion");
+const cooldownFinishHint    = document.getElementById("cooldownFinishHint");
+const cooldownRespawnBtn    = document.getElementById("cooldownRespawnBtn");
+const cooldownKeepBtn       = document.getElementById("cooldownKeepBtn");
+const cooldownElimBtn       = document.getElementById("cooldownElimBtn");
+
+const turnBanner        = document.getElementById("turnBanner");
+
+const hudArea           = document.getElementById("hudArea");
+const endTurnBtn        = document.getElementById("endTurnBtn");
+const othersArea        = document.getElementById("othersArea");
+const accordionsArea    = document.getElementById("accordionsArea");
+
+const toggleToolsBtn    = document.getElementById("toggleToolsBtn");
+const toolsPanel        = document.getElementById("toolsPanel");
+
+const themeSelect       = document.getElementById("themeSelect");
+const flipCoinBtn       = document.getElementById("flipCoinBtn");
+const rollD6Btn         = document.getElementById("rollD6Btn");
+const rollD20Btn        = document.getElementById("rollD20Btn");
+const rngOutput         = document.getElementById("rngOutput");
+
+/* =========================
+   UTILITIES
+========================= */
+function makePlayer(defaultName){
+  return {
+    name: defaultName,
+    status:"active",            // "active","cooldown","eliminated"
+    cooldownRemaining:0,
+
+    life:40,
+    poison:0,
+    radiation:0,
+    energy:0,
+    experience:0,
+    storm:0,
+
+    hasMonarch:false,
+    hasInitiative:false,
+    hasCitysBlessing:false,
+
+    dungeonProgress:"",
+    emblemsText:"",
+    notesText:"",
+
+    commanderTaxSteps:0,        // number of +2 bumps on commander recast
+
+    commanderDamage:[],         // per attacker index
+
+    lookupNameInput:"",
+    lastLookupName:"",
+    lastLookupResult:"",
+    lastLookupImg:""
+  };
+}
+
+function syncCommanderDamageArrays(){
+  players.forEach(p=>{
+    while(p.commanderDamage.length < players.length){
+      p.commanderDamage.push(0);
+    }
+    if(p.commanderDamage.length > players.length){
+      p.commanderDamage.length = players.length;
+    }
+  });
+}
+
+// avg life rounded DOWN (normal respawn after serving cooldown)
+function computeRespawnLifeDown(idx){
+  const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
+  if(pool.length===0) return 0;
+  let sum=0;
+  pool.forEach(pl=>{ sum+=pl.life; });
+  return Math.floor(sum / pool.length);
+}
+
+// avg life rounded UP (emergency respawn to stop instant win)
+function computeRespawnLifeUp(idx){
+  const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
+  if(pool.length===0) return 0;
+  let sum=0;
+  pool.forEach(pl=>{ sum+=pl.life; });
+  return Math.ceil(sum / pool.length);
+}
+
+function formatDuration(ms){
+  const totalSec = Math.floor(ms/1000);
+  const mins = Math.floor(totalSec/60);
+  const secs = totalSec%60;
+  return mins+"m "+secs+"s";
+}
+
+// fully respawn player with chosen mode (down or up)
+function fullyRespawnPlayer(i, mode /* "down" | "up" */){
+  const p = players[i];
+  let newLife = 0;
+  if(mode==="up"){
+    newLife = computeRespawnLifeUp(i);
+  }else{
+    newLife = computeRespawnLifeDown(i);
+  }
+  p.status="active";
+  p.cooldownRemaining=0;
+  p.poison=0;
+  p.life=newLife;
+  p.commanderTaxSteps=0; // commander tax resets on respawn
+}
+
+// permanent elimination
+function permanentlyEliminate(i){
+  const p = players[i];
+  p.status="eliminated";
+  p.cooldownRemaining=0;
+  if(reigningCandidateIndex===i){
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
+  }
+}
+
+// lethal commander damage check
+function checkCommanderDamageElim(victimIdx){
+  const p = players[victimIdx];
+  for(let src=0; src<p.commanderDamage.length; src++){
+    if(p.commanderDamage[src] >= 21){
+      permanentlyEliminate(victimIdx);
+      break;
+    }
+  }
+}
+
+// list active players
+function getActivePlayers(){
+  let arr=[];
+  players.forEach((pl,i)=>{
+    if(pl.status==="active"){
+      arr.push(i);
+    }
+  });
+  return arr;
+}
+
+// update Reigning Candidate tracking
+function updateReigningCandidate(){
+  const actives = getActivePlayers();
+  if(actives.length===1){
+    const onlyIdx = actives[0];
+    if(reigningCandidateIndex===null){
+      reigningCandidateIndex = onlyIdx;
+      reigningCandidateTurnStamp = turnCounter;
+    }else if(reigningCandidateIndex!==onlyIdx){
+      reigningCandidateIndex = onlyIdx;
+      reigningCandidateTurnStamp = turnCounter;
+    }
+  }else{
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
+  }
+}
+
+// send player to cooldown
+function sendToCooldown(i){
+  const p = players[i];
+  if(p.status==="eliminated") return;
+
+  let othersCooling=0;
+  players.forEach((q,qi)=>{
+    if(qi!==i && q.status==="cooldown") othersCooling++;
+  });
+
+  p.status="cooldown";
+  p.cooldownRemaining = 1 + othersCooling;
+
+  if(reigningCandidateIndex===i){
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
+  }
+}
+
+// called to tick someone's cooldown when their slot "passes"
+function handleCooldownTick(i){
+  const p=players[i];
+  if(p.status!=="cooldown") return false;
+
+  if(p.cooldownRemaining>0){
+    p.cooldownRemaining -= 1;
+  }
+
+  if(p.cooldownRemaining<=0){
+    // cooldown just ended for this player
+    pendingCooldownFinishIndex = i;
+    pendingCooldownMode = "normalFinish";
+    showCooldownFinishOverlay(i);
+    return true;
+  }
+  return false;
+}
+
+/* =========================
+   COOLDOWN FINISH PROMPT (normal)
+========================= */
+function showCooldownFinishOverlay(idx){
+  const pl = players[idx];
+  const nm = pl.name || ("Player "+(idx+1));
+  cooldownFinishQuestion.textContent = nm+"'s cooldown finished. What happens?";
+
+  cooldownFinishOverlay.style.display="flex";
+}
+
+// button: Respawn (normal DOWN life)
+cooldownRespawnBtn.addEventListener("click",()=>{
+  if(pendingCooldownFinishIndex!==null){
+    fullyRespawnPlayer(pendingCooldownFinishIndex,"down"); // normal re-entry
+    // they are active again, so throne might be contested
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
+  }
+  pendingCooldownFinishIndex=null;
+  pendingCooldownMode=null;
+  cooldownFinishOverlay.style.display="none";
+  renderAll();
+});
+
+// button: Keep Cooling (stay out, CD -> 1)
+cooldownKeepBtn.addEventListener("click",()=>{
+  if(pendingCooldownFinishIndex!==null){
+    const p = players[pendingCooldownFinishIndex];
+    p.status="cooldown";
+    p.cooldownRemaining=1;
+  }
+  pendingCooldownFinishIndex=null;
+  pendingCooldownMode=null;
+  cooldownFinishOverlay.style.display="none";
+  renderAll();
+});
+
+// button: Eliminate forever
+cooldownElimBtn.addEventListener("click",()=>{
+  if(pendingCooldownFinishIndex!==null){
+    permanentlyEliminate(pendingCooldownFinishIndex);
+  }
+  pendingCooldownFinishIndex=null;
+  pendingCooldownMode=null;
+  cooldownFinishOverlay.style.display="none";
+  renderAll();
+});
+
+/* =========================
+   REIGNING RUMBLER RESPAWN PROMPT (emergency before win)
+========================= */
+function maybeOfferRespawnBeforeWin(){
+  if(winnerLocked) return false;
+
+  // find cooldown players still out
+  const cooling = players
+    .map((pl,i)=>({pl,i}))
+    .filter(obj=>obj.pl.status==="cooldown");
+
+  if(cooling.length===0){
+    return false;
+  }
+
+  // Offer first one at a time
+  pendingRespawnIndex = cooling[0].i;
+  showRespawnOverlay(pendingRespawnIndex);
+  return true;
+}
+
+function showRespawnOverlay(idx){
+  const p = players[idx];
+  const nm = p.name || ("Player "+(idx+1));
+  respawnQuestion.textContent = "Respawn "+nm+"?";
+  respawnHint.textContent = "They'll re-enter active with avg life (rounded up), poison 0, commander tax reset, and block an auto-win.";
+  respawnOverlay.style.display="flex";
+}
+
+// YES emergency respawn (rounded UP life)
+respawnYesBtn.addEventListener("click",()=>{
+  if(pendingRespawnIndex!==null){
+    fullyRespawnPlayer(pendingRespawnIndex,"up"); // emergency heroic return
+    // Now there's >1 active, so no instant win
+    reigningCandidateIndex=null;
+    reigningCandidateTurnStamp=null;
+  }
+  pendingRespawnIndex=null;
+  respawnOverlay.style.display="none";
+  renderAll();
+});
+
+// NO eliminate them forever
+respawnNoBtn.addEventListener("click",()=>{
+  if(pendingRespawnIndex!==null){
+    permanentlyEliminate(pendingRespawnIndex);
+  }
+  pendingRespawnIndex=null;
+  respawnOverlay.style.display="none";
+  renderAll();
+});
+
+/* =========================
+   WIN CHECK / TURN PASSING
+========================= */
+function checkForWinBeforeAdvance(){
+  if(winnerLocked) return false;
+
+  const actives = getActivePlayers();
+  if(actives.length!==1) return false;
+  const onlyIdx = actives[0];
+
+  const aboutToWin =
+    (reigningCandidateIndex===onlyIdx &&
+     reigningCandidateTurnStamp!==null &&
+     turnCounter > reigningCandidateTurnStamp);
+
+  if(!aboutToWin){
+    return false;
+  }
+
+  // Before win, we allow cooldown players to emergency-respawn
+  const offered = maybeOfferRespawnBeforeWin();
+  if(offered){
+    return false;
+  }
+
+  // nobody to save the game -> crown winner
+  winnerLocked = true;
+  winnerName = players[onlyIdx].name || ("Player "+(onlyIdx+1));
+  winnerTimeMs = Date.now() - gameStartTime;
+  showWinnerOverlay();
+  return true;
+}
+
+function showWinnerOverlay(){
+  winnerTitle.textContent = (winnerName.toUpperCase()+" — REIGNING RUMBLER!");
+  winnerTimeLine.textContent = "Game Time ⏱ : "+formatDuration(winnerTimeMs);
+  winnerMiniBanner.style.display="block";
+  winnerMiniBanner.textContent = winnerName+" — REIGNING RUMBLER! ("+formatDuration(winnerTimeMs)+")";
+  winnerOverlay.style.display="flex";
+}
+
+winnerCloseBtn.addEventListener("click",()=>{
+  winnerOverlay.style.display="none";
+});
+
+/* turn passing */
+function passTurn(){
+  if(winnerLocked){
+    renderAll();
+    return;
+  }
+
+  // check if current board state gives a winner (will show Rumbler prompt if needed)
+  const didWin = checkForWinBeforeAdvance();
+  if(didWin){
+    renderAll();
+    return;
+  }
+
+  // rotate turn index
+  let safety=0;
+  do{
+    turnIndex = (turnIndex+1)%players.length;
+    const pl = players[turnIndex];
+
+    if(pl.status==="eliminated"){
+      // skip eliminated
+    } else if(pl.status==="cooldown"){
+      // tick their cooldown and possibly ask "Cooldown Finished?"
+      const triggeredPrompt = handleCooldownTick(turnIndex);
+      if(triggeredPrompt){
+        // we surfaced cooldownFinishOverlay.
+        // break here to decide their fate.
+        break;
+      } else {
+        // still cooling, keep skipping
+      }
+    } else {
+      // active, we actually land here
+      break;
+    }
+
+    safety++;
+    if(safety>50) break;
+  } while(true);
+
+  turnCounter += 1;
+  updateReigningCandidate();
+  renderAll();
+}
+
+/* =========================
+   THEME / TOOLS
+========================= */
+toggleToolsBtn.addEventListener("click",()=>{
+  if(toolsPanel.style.display==="block"){
+    toolsPanel.style.display="none";
+    toggleToolsBtn.textContent="Tools ▼";
+  } else {
+    toolsPanel.style.display="block";
+    toggleToolsBtn.textContent="Tools ▲";
+  }
+});
+
+themeSelect.addEventListener("change",()=>{
+  document.body.classList.remove("theme-dark","theme-light","theme-neon");
+  document.body.classList.add(themeSelect.value);
+});
+
+flipCoinBtn.addEventListener("click",()=>{
+  const val = (Math.random()<0.5) ? "Heads" : "Tails";
+  rngOutput.textContent="Coin: "+val;
+});
+rollD6Btn.addEventListener("click",()=>{
+  const val = Math.floor(Math.random()*6)+1;
+  rngOutput.textContent="d6: "+val;
+});
+rollD20Btn.addEventListener("click",()=>{
+  const val = Math.floor(Math.random()*20)+1;
+  rngOutput.textContent="d20: "+val;
+});
+
+/* =========================
+   SCRYFALL LOOKUP
+========================= */
+function analyzeOracleText(oracleText,typeLine){
+  const text = (oracleText||"").toLowerCase();
+  const tline= (typeLine||"").toLowerCase();
+
+  const parsed = {
+    wantsMonarch:/become the monarch|you become the monarch/.test(text),
+    wantsInitiative:/take the initiative|you take the initiative/.test(text),
+    wantsCitysBlessing:/city's blessing/.test(text),
+    wantsExp:/experience counter/.test(text),
+    planeswalkerHint:/planeswalker/.test(tline),
+
+    upkeepReminder:"",
+    dungeonHint:"",
+    bountyNote:""
+  };
+
+  const upkeepMatch = oracleText && oracleText.match(/At the beginning of your upkeep[^.]*\./i);
+  if(upkeepMatch){
+    parsed.upkeepReminder = "UPKEEP: "+upkeepMatch[0].trim();
+  }
+
+  if(/the initiative/.test(text)
+   ||/undercity/.test(text)
+   ||/venture into the dungeon/.test(text)){
+    parsed.dungeonHint="Dungeon/Initiative: Track Undercity / dungeon progress each upkeep.";
+  }
+
+  if(/bounty counter/.test(text)){
+    parsed.bountyNote="Bounty: Mark target; reward when it dies.";
+  }
+
+  return parsed;
+}
+
+async function doLookup(idx){
+  const p = players[idx];
+  const rawName = p.lookupNameInput||"";
+  if(!rawName.trim()){
+    p.lastLookupResult = "Enter a card name first.";
+    renderAll();
+    return;
+  }
+  const url = "https://api.scryfall.com/cards/named?fuzzy="+encodeURIComponent(rawName.trim());
+  try{
+    const resp = await fetch(url);
+    if(!resp.ok){
+      p.lastLookupName = "";
+      p.lastLookupResult = "Card not found.";
+      p.lastLookupImg = "";
+      renderAll();
+      return;
+    }
+    const data = await resp.json();
+
+    const oracle = data.oracle_text||"";
+    const typeLine = data.type_line||"";
+
+    p.lastLookupName   = data.name||rawName.trim();
+    p.lastLookupResult = (typeLine? typeLine+"\n":"") + (oracle?oracle:"");
+
+    let imgUrl="";
+    if(data.image_uris && data.image_uris.normal){
+      imgUrl = data.image_uris.normal;
+    } else if(Array.isArray(data.card_faces)
+           && data.card_faces[0]
+           && data.card_faces[0].image_uris){
+      imgUrl = data.card_faces[0].image_uris.normal || "";
+    }
+    p.lastLookupImg = imgUrl;
+
+    const parsed = analyzeOracleText(oracle,typeLine);
+    if(parsed.wantsMonarch){ p.hasMonarch=true; }
+    if(parsed.wantsInitiative){
+      p.hasInitiative=true;
+      if(!p.dungeonProgress.toLowerCase().includes("undercity")
+      && !p.dungeonProgress.toLowerCase().includes("dungeon")){
+        p.dungeonProgress += (p.dungeonProgress? "\n":"")
+        +"Initiative: Progress Undercity each upkeep.";
+      }
+    }
+    if(parsed.wantsCitysBlessing){ p.hasCitysBlessing=true; }
+    if(parsed.wantsExp){
+      if(!p.notesText.toLowerCase().includes("experience counter")){
+        p.notesText += (p.notesText? "\n":"")
+        +"This uses Experience counters. Track them.";
+      }
+    }
+    if(parsed.planeswalkerHint){
+      if(!p.notesText.toLowerCase().includes("track loyalty")){
+        p.notesText += (p.notesText? "\n":"")
+        +"If this is your commander, track loyalty like life.";
+      }
+    }
+    if(parsed.upkeepReminder){
+      if(!p.notesText.toLowerCase().includes(parsed.upkeepReminder.toLowerCase())){
+        p.notesText += (p.notesText? "\n":"")+parsed.upkeepReminder;
+      }
+    }
+    if(parsed.dungeonHint){
+      if(!p.dungeonProgress.toLowerCase().includes("dungeon")){
+        p.dungeonProgress += (p.dungeonProgress? "\n":"")+parsed.dungeonHint;
+      }
+    }
+    if(parsed.bountyNote){
+      if(!p.notesText.toLowerCase().includes("bounty")){
+        p.notesText += (p.notesText? "\n":"")+parsed.bountyNote;
+      }
+    }
+
+    // keep accordionsOpen.lookup as-is so it stays open
+    renderAll();
+  }catch(e){
+    p.lastLookupName   = rawName.trim();
+    p.lastLookupResult = "Lookup failed (offline?).";
+    p.lastLookupImg    = "";
+    renderAll();
+  }
+}
+
+/* =========================
+   RENDERING
+========================= */
+function renderAll(){
+  syncCommanderDamageArrays();
+
+  const cur = players[turnIndex] || {};
+  const nm = cur.name || ("Player "+(turnIndex+1));
+  turnBanner.textContent = "▶ "+nm.toUpperCase()+"'S TURN ◀";
+
+  renderHUD();
+  renderOthers();
+  renderAccordions();
+
+  if(winnerLocked){
+    winnerMiniBanner.style.display="block";
+    winnerMiniBanner.textContent = winnerName+" — REIGNING RUMBLER! ("+formatDuration(winnerTimeMs)+")";
+  }
+}
+
+// Glow color per seat
+function getSeatColor(i){
+  const cols=["var(--gold)","var(--cyan)","var(--magenta)","var(--lime)"];
+  return cols[i % cols.length];
+}
+
+/* ----- HUD RENDER ----- */
+function renderHUD(){
+  hudArea.innerHTML="";
+  const p = players[turnIndex];
+  const seatColor = getSeatColor(turnIndex);
+
+  const card = document.createElement("div");
+  card.className="hud-card";
+  card.style.border="1px solid "+seatColor;
+  card.style.boxShadow="0 0 20px "+seatColor+"80, 0 30px 60px rgba(0,0,0,.9)";
+
+  const topRow = document.createElement("div");
+  topRow.className="hud-top-row";
+
+  // LEFT COL
+  const leftCol = document.createElement("div");
+  leftCol.className="hud-col";
+
+  const nameBlock = document.createElement("div");
+  nameBlock.className="section-block-inline";
+
+  const nmLabel = document.createElement("div");
+  nmLabel.className="label-sm";
+  nmLabel.textContent="Your Name";
+
+  const nmInput = document.createElement("input");
+  nmInput.className="text-input";
+  nmInput.value=p.name;
+  // new behavior: update live but don't re-render until blur / enter
+  nmInput.addEventListener("input",e=>{
+    p.name=e.target.value;
+  });
+  nmInput.addEventListener("blur",()=>{
+    renderAll();
+  });
+  nmInput.addEventListener("keydown",ev=>{
+    if(ev.key==="Enter"){
+      ev.preventDefault();
+      nmInput.blur(); // triggers renderAll after final name chosen
+    }
+  });
+
+  const statRow = document.createElement("div");
+  statRow.className="tiny-row";
+
+  // status chip
+  const statusPill = document.createElement("div");
+  statusPill.className="status-chip "+(
+    p.status==="active"    ? "status-active" :
+    p.status==="cooldown"  ? "status-cooldown" :
+                             "status-elim"
+  );
+  statusPill.textContent =
+    p.status==="active"   ? "ACTIVE" :
+    p.status==="cooldown" ? "COOLDOWN" :
+                            "ELIMINATED";
+  statusPill.title="Tap to cycle: Active → Cooldown → Eliminated → Active";
+  statusPill.addEventListener("click",()=>{
+    cycleStatus(turnIndex);
+  });
+  statRow.appendChild(statusPill);
+
+  // If cooling, show cooldownRemaining edit
+  if(p.status==="cooldown"){
+    const cdWrap = document.createElement("div");
+    cdWrap.className="cooldown-box-inline";
+
+    const cdLab = document.createElement("div");
+    cdLab.className="cd-label";
+    cdLab.textContent="CD:";
+
+    // stepper for cooldownRemaining
+    const cdStepper = document.createElement("div");
+    cdStepper.className="mini-step-row";
+
+    const cdMinus = document.createElement("div");
+    cdMinus.className="step-btn";
+    cdMinus.textContent="-";
+    cdMinus.addEventListener("click",()=>{
+      adjustCooldownRemaining(turnIndex,-1,true);
+    });
+
+    const cdVal = document.createElement("div");
+    cdVal.className="step-val";
+    cdVal.textContent=p.cooldownRemaining;
+
+    const cdPlus = document.createElement("div");
+    cdPlus.className="step-btn";
+    cdPlus.textContent="+";
+    cdPlus.addEventListener("click",()=>{
+      adjustCooldownRemaining(turnIndex,1,true);
+    });
+
+    cdStepper.appendChild(cdMinus);
+    cdStepper.appendChild(cdVal);
+    cdStepper.appendChild(cdPlus);
+
+    cdWrap.appendChild(cdLab);
+    cdWrap.appendChild(cdStepper);
+    statRow.appendChild(cdWrap);
+  }
+
+  // Commander Tax row
+  const taxRow = document.createElement("div");
+  taxRow.className="tax-row";
+
+  const taxLabel = document.createElement("div");
+  taxLabel.className="tax-label";
+  taxLabel.textContent="Commander Tax: +2 ×";
+
+  const taxCtrl = document.createElement("div");
+  taxCtrl.className="tax-ctrl";
+
+  const taxMinus = document.createElement("div");
+  taxMinus.className="tax-btn";
+  taxMinus.textContent="-";
+  taxMinus.addEventListener("click",()=>{
+    if(p.commanderTaxSteps>0) p.commanderTaxSteps--;
+    renderAll();
+  });
+
+  const taxVal = document.createElement("div");
+  taxVal.className="tax-val";
+  taxVal.textContent=p.commanderTaxSteps;
+
+  const taxPlus = document.createElement("div");
+  taxPlus.className="tax-btn";
+  taxPlus.textContent="+";
+  taxPlus.addEventListener("click",()=>{
+    p.commanderTaxSteps++;
+    renderAll();
+  });
+
+  taxCtrl.appendChild(taxMinus);
+  taxCtrl.appendChild(taxVal);
+  taxCtrl.appendChild(taxPlus);
+
+  taxRow.appendChild(taxLabel);
+  taxRow.appendChild(taxCtrl);
+
+  nameBlock.appendChild(nmLabel);
+  nameBlock.appendChild(nmInput);
+  nameBlock.appendChild(statRow);
+  nameBlock.appendChild(taxRow);
+
+  leftCol.appendChild(nameBlock);
+
+  // RIGHT COL
+  const rightCol = document.createElement("div");
+  rightCol.className="hud-col";
+
+  const vitalsBlock = document.createElement("div");
+  vitalsBlock.className="section-block-inline";
+
+  const lfLabel = document.createElement("div");
+  lfLabel.className="label-sm";
+  lfLabel.textContent="Life Total";
+
+  const lfRow = document.createElement("div");
+  lfRow.className="life-row";
+
+  const minusBtn = document.createElement("div");
+  minusBtn.className="life-btn";
+  minusBtn.textContent="-";
+  minusBtn.addEventListener("click",()=>{
+    p.life = p.life-1;
+    if(p.life<=0){
+      // Knockout if they hit 0 or below
+      sendToCooldown(turnIndex);
+    }
+    renderAll();
+  });
+
+  const lifeVal = document.createElement("div");
+  lifeVal.className="life-value";
+  lifeVal.textContent=p.life;
+
+  const plusBtn = document.createElement("div");
+  plusBtn.className="life-btn";
+  plusBtn.textContent="+";
+  plusBtn.addEventListener("click",()=>{
+    p.life = p.life+1;
+    renderAll();
+  });
+
+  lfRow.appendChild(minusBtn);
+  lfRow.appendChild(lifeVal);
+  lfRow.appendChild(plusBtn);
+
+  const grid = document.createElement("div");
+  grid.className="mini-counters-grid";
+
+  grid.appendChild(makeMiniStepperBox("☠ Poison",p.poison,(newVal)=>{
+    p.poison=newVal;
+    if(p.poison>=10){
+      sendToCooldown(turnIndex);
+    }
+    renderAll();
+  }));
+
+  grid.appendChild(makeMiniStepperBox("☢ Rad",p.radiation,(newVal)=>{
+    p.radiation=newVal;
+    renderAll();
+  }));
+  grid.appendChild(makeMiniStepperBox("⚡ Energy",p.energy,(newVal)=>{
+    p.energy=newVal;
+    renderAll();
+  }));
+  grid.appendChild(makeMiniStepperBox("★ Exp",p.experience,(newVal)=>{
+    p.experience=newVal;
+    renderAll();
+  }));
+  grid.appendChild(makeMiniStepperBox("☁ Storm",p.storm,(newVal)=>{
+    p.storm=newVal;
+    renderAll();
+  }));
+
+  vitalsBlock.appendChild(lfLabel);
+  vitalsBlock.appendChild(lfRow);
+  vitalsBlock.appendChild(grid);
+
+  rightCol.appendChild(vitalsBlock);
+
+  topRow.appendChild(leftCol);
+  topRow.appendChild(rightCol);
+  card.appendChild(topRow);
+
+  hudArea.appendChild(card);
+}
+
+function makeMiniStepperBox(labelText,val,onSet){
+  const wrap = document.createElement("div");
+  wrap.className="mini-counter-box";
+
+  const lab = document.createElement("div");
+  lab.className="mini-counter-label";
+  lab.textContent=labelText;
+
+  const row = document.createElement("div");
+  row.className="mini-step-row";
+
+  const minus = document.createElement("div");
+  minus.className="step-btn";
+  minus.textContent="-";
+  minus.addEventListener("click",()=>{
+    let v = val-1;
+    if(v<0) v=0;
+    onSet(v);
+  });
+
+  const mid = document.createElement("div");
+  mid.className="step-val";
+  mid.textContent=val;
+
+  const plus = document.createElement("div");
+  plus.className="step-btn";
+  plus.textContent="+";
+  plus.addEventListener("click",()=>{
+    let v = val+1;
+    if(v<0)v=0;
+    onSet(v);
+  });
+
+  row.appendChild(minus);
+  row.appendChild(mid);
+  row.appendChild(plus);
+
+  wrap.appendChild(lab);
+  wrap.appendChild(row);
+  return wrap;
+}
+
+/* ----- OTHERS RENDER ----- */
+function renderOthers(){
+  othersArea.innerHTML="";
+  const wrap = document.createElement("div");
+  wrap.className="others-card";
+
+  const hdr = document.createElement("div");
+  hdr.className="other-header";
+  hdr.textContent="Other Players";
+  wrap.appendChild(hdr);
+
+  players.forEach((pl,i)=>{
+    if(i===turnIndex) return;
+
+    const block = document.createElement("div");
+    block.className="other-player-block";
+
+    const top = document.createElement("div");
+    top.className="other-player-top";
+    const nm = pl.name || ("Player "+(i+1));
+    top.textContent = nm;
+
+    const chev = document.createElement("span");
+    chev.className="other-expand-indicator";
+    chev.textContent="▼";
+    top.appendChild(chev);
+
+    const body = document.createElement("div");
+    body.className="other-player-body";
+
+    // status / cooldown controls
+    const statusLine=document.createElement("div");
+    statusLine.className="status-line-other";
+
+    const statusText=document.createElement("div");
+    statusText.textContent="Status: "+pl.status.toUpperCase();
+    statusLine.appendChild(statusText);
+
+    // if ACTIVE, allow Knock Out → Cooldown
+    if(pl.status==="active"){
+      const koBtn=document.createElement("div");
+      koBtn.className="cool-btn-inline";
+      koBtn.textContent="Knock Out → Cooldown";
+      koBtn.addEventListener("click",()=>{
+        sendToCooldown(i);
+        renderAll();
+      });
+      statusLine.appendChild(koBtn);
+    }
+
+    // if COOLDOWN, show cooldownRemaining stepper & also allow force eliminate or quick respawn-down
+    if(pl.status==="cooldown"){
+      const cdWrap = document.createElement("div");
+      cdWrap.className="cool-row-inline";
+
+      const cdLab = document.createElement("div");
+      cdLab.className="cd-label";
+      cdLab.style.fontSize=".6rem";
+      cdLab.style.color="var(--text-dim)";
+      cdLab.style.textTransform="uppercase";
+      cdLab.style.letterSpacing=".05em";
+      cdLab.textContent="CD Left:";
+
+      const cdStepper = document.createElement("div");
+      cdStepper.className="mini-step-row";
+
+      const cdMinus = document.createElement("div");
+      cdMinus.className="step-btn";
+      cdMinus.textContent="-";
+      cdMinus.addEventListener("click",()=>{
+        adjustCooldownRemaining(i,-1,false);
+      });
+      const cdVal = document.createElement("div");
+      cdVal.className="step-val";
+      cdVal.textContent=pl.cooldownRemaining;
+      const cdPlus = document.createElement("div");
+      cdPlus.className="step-btn";
+      cdPlus.textContent="+";
+      cdPlus.addEventListener("click",()=>{
+        adjustCooldownRemaining(i,1,false);
+      });
+
+      cdStepper.appendChild(cdMinus);
+      cdStepper.appendChild(cdVal);
+      cdStepper.appendChild(cdPlus);
+
+      cdWrap.appendChild(cdLab);
+      cdWrap.appendChild(cdStepper);
+
+      statusLine.appendChild(cdWrap);
+    }
+
+    // build life editor for them
+    const lifeCol = document.createElement("div");
+    lifeCol.className="mini-col";
+
+    const lifeLab = document.createElement("div");
+    lifeLab.className="label-sm";
+    lifeLab.textContent="Life Total ("+nm+")";
+    const lifeRow = document.createElement("div");
+    lifeRow.className="life-edit-inline";
+
+    const minusBtn = document.createElement("div");
+    minusBtn.className="life-inline-btn";
+    minusBtn.textContent="-";
+    minusBtn.addEventListener("click",()=>{
+      pl.life = pl.life-1;
+      if(pl.life<=0){
+        sendToCooldown(i);
+      }
+      renderAll();
+    });
+
+    const lifeVal = document.createElement("div");
+    lifeVal.className="life-inline-val";
+    lifeVal.textContent=pl.life;
+
+    const plusBtn = document.createElement("div");
+    plusBtn.className="life-inline-btn";
+    plusBtn.textContent="+";
+    plusBtn.addEventListener("click",()=>{
+      pl.life = pl.life+1;
+      renderAll();
+    });
+
+    lifeRow.appendChild(minusBtn);
+    lifeRow.appendChild(lifeVal);
+    lifeRow.appendChild(plusBtn);
+    lifeCol.appendChild(lifeLab);
+    lifeCol.appendChild(lifeRow);
+
+    // poison / rad / exp / storm steppers for them
+    const debuffRow = document.createElement("div");
+    debuffRow.className="mini-row";
+
+    debuffRow.appendChild(smallStepperBox("☠ Poison",pl.poison,(v)=>{
+      pl.poison=v;
+      if(pl.poison>=10){
+        sendToCooldown(i);
+      }
+      renderAll();
+    }));
+    debuffRow.appendChild(smallStepperBox("☢ Rad",pl.radiation,(v)=>{
+      pl.radiation=v;
+      renderAll();
+    }));
+    debuffRow.appendChild(smallStepperBox("★ Exp",pl.experience,(v)=>{
+      pl.experience=v;
+      renderAll();
+    }));
+    debuffRow.appendChild(smallStepperBox("☁ Storm",pl.storm,(v)=>{
+      pl.storm=v;
+      renderAll();
+    }));
+
+    // commander damage (current player → them)
+    const cdmgWrap = document.createElement("div");
+    cdmgWrap.className="mini-col";
+    const cdmgLab = document.createElement("div");
+    cdmgLab.className="cdmg-label";
+    cdmgLab.textContent="Cmdr Dmg FROM "+(players[turnIndex].name||("P"+(turnIndex+1)))+" → "+nm+" (21 = elim)";
+
+    const cdmgRow = document.createElement("div");
+    cdmgRow.className="cdmg-row";
+
+    const dmgIn = document.createElement("input");
+    dmgIn.type="number";
+    dmgIn.min="0";
+    dmgIn.value=pl.commanderDamage[turnIndex] || 0;
+    dmgIn.addEventListener("input",e=>{
+      let v=parseInt(e.target.value,10);
+      if(isNaN(v)||v<0)v=0;
+      pl.commanderDamage[turnIndex]=v;
+      checkCommanderDamageElim(i);
+      renderAll();
+    });
+
+    cdmgRow.appendChild(dmgIn);
+    cdmgWrap.appendChild(cdmgLab);
+    cdmgWrap.appendChild(cdmgRow);
+
+    // notes for that player
+    const miniNote = document.createElement("div");
+    miniNote.className="mini-note-box";
+    const mnLab = document.createElement("div");
+    mnLab.className="mini-note-label";
+    mnLab.textContent="Note on "+nm+" (Monarch, Goaded, etc.)";
+    const mnArea = document.createElement("textarea");
+    mnArea.className="mini-area-input";
+    mnArea.value=pl.notesText;
+    mnArea.addEventListener("input",e=>{
+      pl.notesText=e.target.value;
+    });
+    miniNote.appendChild(mnLab);
+    miniNote.appendChild(mnArea);
+
+    body.appendChild(statusLine);
+    body.appendChild(lifeCol);
+    body.appendChild(debuffRow);
+    body.appendChild(cdmgWrap);
+    body.appendChild(miniNote);
+
+    top.addEventListener("click",()=>{
+      if(body.style.display==="flex"){
+        body.style.display="none";
+        chev.textContent="▼";
+      }else{
+        body.style.display="flex";
+        chev.textContent="▲";
+      }
+    });
+
+    block.appendChild(top);
+    block.appendChild(body);
+
+    wrap.appendChild(block);
+  });
+
+  othersArea.appendChild(wrap);
+}
+
+function smallStepperBox(labelText,val,onSet){
+  const box = document.createElement("div");
+  box.className="mini-col";
+
+  const l = document.createElement("div");
+  l.className="label-sm";
+  l.textContent=labelText;
+
+  const row = document.createElement("div");
+  row.className="mini-step-row";
+
+  const minus = document.createElement("div");
+  minus.className="step-btn";
+  minus.textContent="-";
+  minus.addEventListener("click",()=>{
+    let v=val-1;
+    if(v<0)v=0;
+    onSet(v);
+  });
+
+  const mid = document.createElement("div");
+  mid.className="step-val";
+  mid.textContent=val;
+
+  const plus = document.createElement("div");
+  plus.className="step-btn";
+  plus.textContent="+";
+  plus.addEventListener("click",()=>{
+    let v=val+1;
+    if(v<0)v=0;
+    onSet(v);
+  });
+
+  row.appendChild(minus);
+  row.appendChild(mid);
+  row.appendChild(plus);
+
+  box.appendChild(l);
+  box.appendChild(row);
+  return box;
+}
+
+/* ----- ACCORDIONS RENDER ----- */
+function renderAccordions(){
+  accordionsArea.innerHTML="";
+  const p = players[turnIndex];
+
+  // 1. Status Effects / Titles
+  const acc1 = makeAccordion(
+    "statusEffects",
+    "Status Effects / Titles",
+    "Monarch, Initiative, Blessing, Dungeon, Emblems",
+    (body)=>{
+      const togglesRow = document.createElement("div");
+      togglesRow.className="row-flex";
+
+      togglesRow.appendChild(makeToggleChip("Monarch",p.hasMonarch, val=>{
+        p.hasMonarch=val; renderAll();
+      }));
+      togglesRow.appendChild(makeToggleChip("Initiative",p.hasInitiative, val=>{
+        p.hasInitiative=val; renderAll();
+      }));
+      togglesRow.appendChild(makeToggleChip("Blessing",p.hasCitysBlessing, val=>{
+        p.hasCitysBlessing=val; renderAll();
+      }));
+
+      body.appendChild(togglesRow);
+
+      const dLabel=document.createElement("div");
+      dLabel.className="label-sm";
+      dLabel.textContent="Dungeon / Undercity / Progress";
+
+      const dArea=document.createElement("textarea");
+      dArea.className="area-input";
+      dArea.placeholder="Initiative, Undercity steps, dungeon rooms..."
+      dArea.value=p.dungeonProgress;
+      dArea.addEventListener("input",e=>{
+        p.dungeonProgress=e.target.value;
+      });
+
+      const eLabel=document.createElement("div");
+      eLabel.className="label-sm";
+      eLabel.textContent="Emblems / Globals";
+
+      const eArea=document.createElement("textarea");
+      eArea.className="area-input";
+      eArea.placeholder="Emblems, static buffs, city-wide effects..."
+      eArea.value=p.emblemsText;
+      eArea.addEventListener("input",e=>{
+        p.emblemsText=e.target.value;
+      });
+
+      body.appendChild(dLabel);
+      body.appendChild(dArea);
+      body.appendChild(eLabel);
+      body.appendChild(eArea);
+    }
+  );
+
+  // 2. Notes / Reminders
+  const acc2 = makeAccordion(
+    "notes",
+    "Notes / Reminders",
+    "Goad, skip draw, bounty, upkeep triggers",
+    (body)=>{
+      const notesLabel=document.createElement("div");
+      notesLabel.className="label-sm";
+      notesLabel.textContent="Notes";
+      const notesArea=document.createElement("textarea");
+      notesArea.className="area-input";
+      notesArea.placeholder="Ex: Goaded Krenko vs Jess; Skip next draw step; Bounty on Theo"
+      notesArea.value=p.notesText;
+      notesArea.addEventListener("input",e=>{
+        p.notesText=e.target.value;
+      });
+
+      body.appendChild(notesLabel);
+      body.appendChild(notesArea);
+    }
+  );
+
+  // 3. Card Lookup (Scryfall)
+  const acc3 = makeAccordion(
+    "lookup",
+    "Card Lookup (Scryfall)",
+    "Pull card text + auto reminders",
+    (body)=>{
+      const lookRow=document.createElement("div");
+      lookRow.className="lookup-row";
+
+      const lookInput=document.createElement("input");
+      lookInput.className="lookup-input";
+      lookInput.placeholder="Search card..."
+      lookInput.value=p.lookupNameInput;
+      lookInput.addEventListener("input",e=>{
+        p.lookupNameInput=e.target.value;
+      });
+
+      const lookBtn=document.createElement("button");
+      lookBtn.className="lookup-btn";
+      lookBtn.textContent="Lookup";
+      lookBtn.addEventListener("click",()=>{
+        doLookup(turnIndex);
+      });
+
+      lookRow.appendChild(lookInput);
+      lookRow.appendChild(lookBtn);
+
+      const lookResults=document.createElement("div");
+      lookResults.className="lookup-results";
+
+      if(p.lastLookupName || p.lastLookupResult){
+        const textDiv=document.createElement("div");
+        textDiv.className="lookup-cardtext";
+        textDiv.textContent=
+          (p.lastLookupName? p.lastLookupName+"\n":"")+
+          (p.lastLookupResult||"");
+
+        lookResults.appendChild(textDiv);
+
+        if(p.lastLookupImg){
+          const imgWrap=document.createElement("div");
+          imgWrap.className="lookup-cardimg";
+          const img=document.createElement("img");
+          img.src=p.lastLookupImg;
+          img.alt=p.lastLookupName||"card art";
+          imgWrap.appendChild(img);
+          lookResults.appendChild(imgWrap);
+        }
+      }else{
+        const hint=document.createElement("div");
+        hint.className="small-hint";
+        hint.textContent="Will auto-mark Monarch / Initiative and upkeep triggers in Notes.";
+        lookResults.appendChild(hint);
+      }
+
+      body.appendChild(lookRow);
+      body.appendChild(lookResults);
+    }
+  );
+
+  accordionsArea.appendChild(acc1);
+  accordionsArea.appendChild(acc2);
+  accordionsArea.appendChild(acc3);
+}
+
+function makeToggleChip(label,active,onToggle){
+  const chip=document.createElement("div");
+  chip.className="toggle-chip"+(active?" active":"");
+  chip.textContent=active?(label+" ✓"):label;
+  chip.addEventListener("click",()=>{ onToggle(!active); });
+  return chip;
+}
+
+// Make accordion w/ persistent open state
+function makeAccordion(key,title,hint,fillBodyFn){
+  const wrap=document.createElement("div");
+  wrap.className="accordion-block";
+
+  const head=document.createElement("div");
+  head.className="accordion-head";
+
+  const leftSpan=document.createElement("div");
+  leftSpan.textContent=title;
+
+  const rightSpan=document.createElement("div");
+  rightSpan.style.display="flex";
+  rightSpan.style.gap=".5rem";
+  rightSpan.style.alignItems="center";
+
+  const hintEl=document.createElement("div");
+  hintEl.className="hint";
+  hintEl.textContent=hint;
+
+  const chevron=document.createElement("div");
+  chevron.style.color="var(--text-dim)";
+  chevron.style.fontSize=".8rem";
+
+  rightSpan.appendChild(hintEl);
+  rightSpan.appendChild(chevron);
+
+  head.appendChild(leftSpan);
+  head.appendChild(rightSpan);
+
+  const body=document.createElement("div");
+  body.className="accordion-body";
+
+  fillBodyFn(body);
+
+  // initial open/close from accordionsOpen
+  if(accordionsOpen[key]){
+    body.style.display="block";
+    chevron.textContent="▲";
+  } else {
+    body.style.display="none";
+    chevron.textContent="▼";
+  }
+
+  head.addEventListener("click",()=>{
+    accordionsOpen[key] = !accordionsOpen[key];
+    if(accordionsOpen[key]){
+      body.style.display="block";
+      chevron.textContent="▲";
+    }else{
+      body.style.display="none";
+      chevron.textContent="▼";
+    }
+  });
+
+  wrap.appendChild(head);
+  wrap.appendChild(body);
+
+  return wrap;
+}
+
+/* =========================
+   STATUS CYCLER / CD ADJUST
+========================= */
+function cycleStatus(i){
+  const p=players[i];
+  if(p.status==="active"){
+    // go to cooldown
+    let othersCooling=0;
+    players.forEach((q,qi)=>{
+      if(qi!==i && q.status==="cooldown") othersCooling++;
+    });
+    p.status="cooldown";
+    p.cooldownRemaining=1+othersCooling;
+  } else if(p.status==="cooldown"){
+    // go eliminated
+    permanentlyEliminate(i);
+  } else {
+    // eliminated -> back active (table correction)
+    p.status="active";
+    p.cooldownRemaining=0;
+    if(p.life<1){ p.life=1; }
+  }
+  updateReigningCandidate();
+  renderAll();
+}
+
+// adjust cooldownRemaining from HUD or Others panel
+// if "fromSelfHUD" is true, we are editing the currently active player's HUD
+// this path shouldn't instantly prompt cooldown-finish unless CD hits 0.
+function adjustCooldownRemaining(i,delta,fromSelfHUD){
+  const p=players[i];
+  if(p.status!=="cooldown") return;
+
+  p.cooldownRemaining += delta;
+  if(p.cooldownRemaining<0) p.cooldownRemaining=0;
+
+  if(p.cooldownRemaining===0){
+    // cooldown done right now → show normal cooldown finish prompt.
+    pendingCooldownFinishIndex = i;
+    pendingCooldownMode = "normalFinish";
+    showCooldownFinishOverlay(i);
+  }
+
+  renderAll();
+}
+
+/* =========================
+   INIT
+========================= */
+function startGameWith(nPlayers){
+  players=[];
+  for(let i=0;i<nPlayers;i++){
+    players.push(makePlayer("Player "+(i+1)));
+  }
+  turnIndex=0;
+  turnCounter=0;
+  reigningCandidateIndex=null;
+  reigningCandidateTurnStamp=null;
+  winnerLocked=false;
+  winnerName="";
+  winnerTimeMs=0;
+  pendingRespawnIndex=null;
+  pendingCooldownFinishIndex=null;
+  pendingCooldownMode=null;
+
+  gameStartTime=Date.now();
+
+  syncCommanderDamageArrays();
+  updateReigningCandidate();
+
+  setupOverlay.style.display="none";
+  renderAll();
+}
+
+document.querySelectorAll("[data-fixedplayers]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const n=parseInt(btn.getAttribute("data-fixedplayers"),10);
+    startGameWith(n);
+  });
+});
+
+manualStartBtn.addEventListener("click",()=>{
+  let n=parseInt(manualPlayerCount.value,10);
+  if(isNaN(n)||n<2)n=2;
+  if(n>8)n=8;
+  startGameWith(n);
+});
+
+endTurnBtn.addEventListener("click",()=>{
+  passTurn();
+});
+</script>
+</body>
+</html>
