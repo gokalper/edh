@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER v16.3.2</title>
+<title>EDH RUMBLE TRACKER v16.3.3</title>
 <style>
 /* THEME VARS */
 :root {
@@ -338,6 +338,7 @@ input, textarea, select, button {
 .timer-row{
   display:flex;
   flex-wrap:wrap;
+  justify-content:space-evenly; /* re-center now that Global is gone */
   gap:.75rem 1rem;
   font-size:.7rem;
   line-height:1.3;
@@ -647,12 +648,22 @@ input, textarea, select, button {
   font-weight:600;
   color:var(--text-primary);
   letter-spacing:.05em;
+  position:relative;
 }
 .accordion-head .hint{
   color:var(--text-dim);
   font-size:.6rem;
   font-weight:400;
   margin-left:.5rem;
+}
+.accordion-head .accent-bar{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:var(--gold);
+  box-shadow:0 0 8px var(--gold);
 }
 .accordion-body{
   border-top:1px solid var(--border-soft);
@@ -1184,8 +1195,8 @@ input, textarea, select, button {
             </div>
           </div>
           <div class="lookup-preview-block" id="globalLookupPreview">
-            <div class="lookup-cardtext" id="globalLookupText"></div>
-            <div class="lookup-cardimg" id="globalLookupImg" style="display:none;">
+            <div class="global-cardtext" id="globalLookupText"></div>
+            <div class="global-cardimg" id="globalLookupImg" style="display:none;">
               <img id="globalLookupImgTag" alt="card art"/>
             </div>
           </div>
@@ -1204,59 +1215,70 @@ input, textarea, select, button {
         </div>
 
         <div class="tool-block">
-          <div class="tool-title">Rumble Rules (Official)</div>
+          <div class="tool-title">Rumble Rules</div>
           <div class="rules-scroll-block" id="rulesBlock">
-Respawn Rumble Rules
-Setup:
-- Normal Commander decks (100-card singleton, color identity).
-- Start 40 life, 0 poison.
-- Commander damage and decking out still permanently eliminate you.
+Rumble Rules
 
-Temporary Death (Cooldown):
-You go on cooldown instead of leaving the game if:
+Setup
+- Use normal Commander deck rules (100-card singleton, color identity).
+- Start at 40 life and 0 poison.
+- Commander damage and decking out can still eliminate you permanently.
+
+Knockout (Cooldown Instead of Death)
+In Rumble, you do not leave the game immediately if you die. Instead, you go on cooldown if:
 - Your life is 0 or less.
 - You have 10 or more poison counters.
 - An effect says “you lose the game.”
-“Win the game” effects do nothing in this format.
-Cooldown length is 1 + the number of players already on cooldown when you go out.
 
-Permanent Elimination:
-You are out of the game with no cooldown if:
-- You’ve taken 21 or more combat damage from one commander this game.
-- You would draw a card and can’t (decked out).
+“Win the game” effects do nothing in Rumble.
 
-Cooldown Rules:
-While on cooldown:
-- You are removed from turn order.
-- You cannot cast, activate, block, attack, respond, or be targeted as a player.
-- Your permanents stay on the battlefield and still function, but you cannot protect them.
-- Other players can attack/remove your board.
-- Your hand, graveyard, command zone, exile, and emblems stay.
-- Triggers that need your choices are ignored. Triggers that don’t need choices still work.
+Cooldown Duration
+When you go on cooldown, you leave turn order and become inactive. Your cooldown starts at:
+1 + the number of players who were already on cooldown at that moment.
 
-Cooldown Tick:
-After every End Turn, all players on cooldown reduce their cooldown by 1 (down to 0).
+Permanent Elimination
+You are eliminated with no cooldown if:
+- You have taken 21 or more combat damage from a single commander this game.
+- You would draw a card and cannot (you’re decked out).
 
-Respawn:
-When your cooldown reaches 0, you automatically respawn.
+Eliminated players are out of the game permanently.
+
+While on Cooldown
+- You are removed from turn order. You do not take turns.
+- You cannot cast spells, activate abilities, block, attack, or respond.
+- You cannot be targeted or affected as a player.
+- Your battlefield stays. Permanents you control remain on the table and keep working if they don’t need you to make choices.
+- Other players can still interact with (and destroy/exile/steal/etc.) those permanents. You can’t protect them.
+- Your hand, graveyard, command zone, exile, emblems, etc. all still exist.
+- Any trigger or effect that would require you to choose, pay, or respond is ignored. Passive/static effects keep applying.
+
+Cooldown Tick
+At the end of every turn (after End Turn is pressed), all cooldown players reduce their cooldown by 1. When a player’s cooldown reaches 0, they immediately respawn.
+
+Respawn
 When you respawn:
-- You become active again.
-- Your life total becomes the average life total of all active players, rounded up.
-- You remove all poison counters.
+- Your status returns to active.
+- Your life total becomes the average life total of all currently active players (rounded up).
+- Your poison counters are removed.
 - Your commander tax resets.
-- You regain control of anything you still own that survived on the battlefield.
+- Any permanents you still own that survived on the battlefield stay under your control.
 - You re-enter turn order.
-First Turn After Respawn:
-- You skip the normal draw step.
+- You are marked for a recovery draw.
+
+Recovery Draw
+On your first turn after you respawn:
+- You skip your normal draw step.
 - Instead, you draw 1 card at the end of that turn.
 
-Reigning Rumbler:
-If exactly one player is active and everyone else is on cooldown or eliminated, that player becomes the Reigning Rumbler.
-After that player completes their next full turn, if they are still the only active player (nobody else has respawned), that player wins the game.
+Reigning Rumbler
+If exactly one player is active and every other player is either on cooldown or eliminated, that lone active player becomes the Reigning Rumbler.
+After they finish their next full turn, if they are still the only active player (nobody else has respawned), that player wins the game.
 
-Regular Mode:
-No cooldown or respawn. 0 life / 10 poison / lose-the-game kills you outright.
-Last surviving player wins immediately.
+Regular Mode
+Regular mode is normal Commander:
+- Hitting 0 life, getting 10 poison, or “you lose the game” eliminates you immediately.
+- There is no cooldown or respawn.
+- Last remaining player wins immediately.
           </div>
         </div>
 
@@ -1414,7 +1436,7 @@ function makePlayer(defaultName){
     emblemsText:"",
     notesText:"",
 
-    // NEW: lookup helpers for per-player board-state stuff
+    // lookup helpers
     dungeonLookupName:"",
     dungeonPreviewText:"",
     dungeonPreviewImg:"",
@@ -1628,8 +1650,6 @@ function checkReigningWin(){
 
   // crowned at turnCounter = reigningCandidateTurnStamp
   // They must survive as sole active through their next full turn:
-  // After we incremented turnCounter on their next completed turn,
-  // turnCounter will be > reigningCandidateTurnStamp+1
   if(turnCounter>(reigningCandidateTurnStamp+1)){
     lockWinner(onlyIdx,true);
     return true;
@@ -1892,7 +1912,7 @@ async function lookupDungeonForPlayer(i){
     p.dungeonPreviewText = cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
     p.dungeonPreviewImg  = imgUrl||"";
 
-    // also seed/append dungeonProgress with the first lines so player can track steps
+    // also seed progress with title if not already present
     if(!p.dungeonProgress.toLowerCase().includes(cardName.toLowerCase())){
       p.dungeonProgress += (p.dungeonProgress? "\n":"")+"Dungeon: "+cardName;
     }
@@ -1909,7 +1929,6 @@ async function lookupEmblemForPlayer(i){
   const rawName=p.emblemLookupName||"";
   let data=await scryfallFuzzy(rawName);
 
-  // If first hit isn't an emblem, we may try with "emblem"
   function isEmblemCard(d){
     if(!d) return false;
     const layout=(d.layout||"").toLowerCase();
@@ -1917,7 +1936,6 @@ async function lookupEmblemForPlayer(i){
   }
 
   if(!isEmblemCard(data)){
-    // fallback attempt "NAME emblem"
     if(rawName.trim()){
       data=await scryfallFuzzy(rawName+" emblem");
     }
@@ -1931,7 +1949,7 @@ async function lookupEmblemForPlayer(i){
   }
 
   if(!isEmblemCard(data)){
-    p.emblemPreviewText="No emblem form found. (If this is from a planeswalker ultimate, try that planeswalker name + 'emblem')";
+    p.emblemPreviewText="No emblem form found. (Try planeswalker name + 'emblem')";
     p.emblemPreviewImg="";
     renderAll();
     return;
@@ -1946,7 +1964,6 @@ async function lookupEmblemForPlayer(i){
     cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
   p.emblemPreviewImg  = imgUrl||"";
 
-  // also append to emblemsText so table has persistent reminder
   if(!p.emblemsText.toLowerCase().includes(cardName.toLowerCase())){
     p.emblemsText += (p.emblemsText? "\n":"")+"Emblem: "+cardName+" — "+oracle;
   }
@@ -1965,11 +1982,9 @@ async function lookupPlaneGlobal(){
     return;
   }
   const typeLine=data.type_line||"";
-  const layout=data.layout||"";
   const oracle=data.oracle_text||"";
   const nm=data.name||name.trim();
 
-  // it's okay if it's Plane or Phenomenon, we just dump it
   currentPlaneText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
 
   const imgUrl=extractCardImage(data);
@@ -1988,11 +2003,9 @@ async function lookupSchemeGlobal(){
     return;
   }
   const typeLine=data.type_line||"";
-  const layout=data.layout||"";
   const oracle=data.oracle_text||"";
   const nm=data.name||name.trim();
 
-  // Archenemy schemes have type 'Scheme', we just surface it.
   currentSchemeText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
 
   const imgUrl=extractCardImage(data);
@@ -2011,13 +2024,11 @@ function renderTimersOnly(){
   const p=players[turnIndex];
   if(p){
     const hudTimerBlocks = document.querySelectorAll("#hudArea .timer-block");
-    if(hudTimerBlocks.length>=3){
+    if(hudTimerBlocks.length>=2){
       const turnVal=hudTimerBlocks[0].querySelector(".timer-val");
       if(turnVal){ turnVal.textContent=msToClock(getPlayerTurnMs(p)); }
       const playerVal=hudTimerBlocks[1].querySelector(".timer-val");
       if(playerVal){ playerVal.textContent=msToClock(getPlayerTotalMs(p)); }
-      const globalVal=hudTimerBlocks[2].querySelector(".timer-val");
-      if(globalVal){ globalVal.textContent=msToClock(getGameElapsedMs()); }
     }
   }
   // update Player Time in Others
@@ -2177,7 +2188,7 @@ function renderHUD(){
   taxCtrl.appendChild(taxVal);
   taxCtrl.appendChild(taxPlus);
 
-  // Timers
+  // Timers (Turn Time / Player Time only)
   const timeRow=document.createElement("div");
   timeRow.className="timer-row";
 
@@ -2203,20 +2214,8 @@ function renderHUD(){
   tBlock2.appendChild(tb2L);
   tBlock2.appendChild(tb2V);
 
-  const tBlock3=document.createElement("div");
-  tBlock3.className="timer-block";
-  const tb3L=document.createElement("div");
-  tb3L.className="timer-label";
-  tb3L.textContent="Global Time";
-  const tb3V=document.createElement("div");
-  tb3V.className="timer-val";
-  tb3V.textContent=msToClock(getGameElapsedMs());
-  tBlock3.appendChild(tb3L);
-  tBlock3.appendChild(tb3V);
-
   timeRow.appendChild(tBlock1);
   timeRow.appendChild(tBlock2);
-  timeRow.appendChild(tBlock3);
 
   const tinyStackTop=document.createElement("div");
   tinyStackTop.appendChild(statusRow);
@@ -2620,7 +2619,6 @@ function smallStepperBox(labelText,val,onSet){
 
 /* =========================
    ACCORDIONS
-   (Status Effects / Titles + Notes)
 ========================= */
 function makeToggleChip(label,active,onToggle){
   const chip=document.createElement("div");
@@ -2631,15 +2629,37 @@ function makeToggleChip(label,active,onToggle){
 }
 
 function renderAccordions(){
-  accordionsArea.innerHTML="";
+  // Hard purge to prevent ghost accordions
+  while (accordionsArea.firstChild) {
+    accordionsArea.removeChild(accordionsArea.firstChild);
+  }
 
-  // STATUS EFFECTS / TITLES accordion (Board State Control Center)
+  // STATUS EFFECTS / TITLES
   const statusAcc = renderStatusAccordion();
-  if(statusAcc) accordionsArea.appendChild(statusAcc);
+  if (statusAcc) {
+    const headLabel = statusAcc.querySelector(".accordion-head");
+    if (headLabel && headLabel.textContent.trim() !== "") {
+      accordionsArea.appendChild(statusAcc);
+    }
+  }
 
-  // NOTES / REMINDERS accordion
+  // NOTES / REMINDERS
   const notesAcc = renderNotesAccordion();
-  if(notesAcc) accordionsArea.appendChild(notesAcc);
+  if (notesAcc) {
+    const headLabel = notesAcc.querySelector(".accordion-head");
+    if (headLabel && headLabel.textContent.trim() !== "") {
+      accordionsArea.appendChild(notesAcc);
+    }
+  }
+
+  // Extra paranoia: hide anything malformed
+  const zombieAccordions = accordionsArea.querySelectorAll(".accordion-block");
+  zombieAccordions.forEach(acc => {
+    const hdr = acc.querySelector(".accordion-head");
+    if (!hdr || hdr.textContent.trim() === "") {
+      acc.style.display = "none";
+    }
+  });
 }
 
 function renderStatusAccordion(){
@@ -2651,6 +2671,10 @@ function renderStatusAccordion(){
 
   const head=document.createElement("div");
   head.className="accordion-head";
+
+  const accent=document.createElement("div");
+  accent.className="accent-bar";
+  head.appendChild(accent);
 
   const leftSpan=document.createElement("div");
   leftSpan.textContent="Status Effects / Titles";
@@ -2969,6 +2993,9 @@ function renderStatusAccordion(){
     renderAccordions();
   });
 
+  head.insertBefore(leftSpan, head.firstChild.nextSibling);
+  head.appendChild(rightSpan);
+
   wrap.appendChild(head);
   wrap.appendChild(body);
   return wrap;
@@ -2983,6 +3010,10 @@ function renderNotesAccordion(){
 
   const head=document.createElement("div");
   head.className="accordion-head";
+
+  const accent=document.createElement("div");
+  accent.className="accent-bar";
+  head.appendChild(accent);
 
   const leftSpan=document.createElement("div");
   leftSpan.textContent="Notes / Reminders";
@@ -3033,6 +3064,9 @@ function renderNotesAccordion(){
     accordionsOpen.notes=!accordionsOpen.notes;
     renderAccordions();
   });
+
+  head.insertBefore(leftSpan, head.firstChild.nextSibling);
+  head.appendChild(rightSpan);
 
   wrap.appendChild(head);
   wrap.appendChild(body);
