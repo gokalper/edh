@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER v16.2</title>
+<title>EDH RUMBLE TRACKER v16.3.2</title>
 <style>
 /* THEME VARS */
 :root {
@@ -153,11 +153,11 @@ input, textarea, select, button {
   letter-spacing:.05em;
 }
 
-/* CONTENT AREA */
+/* CONTENT */
 .content-area{
   flex:1;
   overflow-y:auto;
-  padding:1rem .75rem 5rem; /* bottom pad so footer doesn't cover */
+  padding:1rem .75rem 5rem;
   display:flex;
   flex-direction:column;
   gap:.75rem;
@@ -227,7 +227,7 @@ input, textarea, select, button {
   width:100%;
 }
 
-/* STATUS + TAX + TIMERS */
+/* STATUS/TAX/TIMERS */
 .tiny-col-stack{
   display:flex;
   flex-direction:column;
@@ -291,7 +291,7 @@ input, textarea, select, button {
   color:var(--text-primary);
 }
 
-/* Commander tax row */
+/* Commander Tax */
 .tax-row{
   display:flex;
   flex-wrap:wrap;
@@ -505,8 +505,6 @@ input, textarea, select, button {
   gap:.75rem;
   font-size:.75rem;
 }
-
-/* LINES INSIDE OTHER PLAYER */
 .status-line-other{
   font-size:.7rem;
   font-weight:600;
@@ -605,7 +603,7 @@ input, textarea, select, button {
   font-weight:600;
 }
 
-/* PLAYER NOTES IN OTHERS */
+/* PLAYER NOTE IN OTHERS */
 .mini-note-box{
   display:flex;
   flex-direction:column;
@@ -663,11 +661,14 @@ input, textarea, select, button {
   font-size:.75rem;
   color:var(--text-primary);
   line-height:1.4;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
 }
 .row-flex{
   display:flex;
   flex-wrap:wrap;
-  gap:.5rem .75rem;
+  gap:.5rem .5rem;
 }
 .toggle-chip{
   background:var(--bg-accent);
@@ -684,6 +685,13 @@ input, textarea, select, button {
   border-color:var(--text-dim);
   font-weight:600;
 }
+.subsection-label{
+  font-size:.6rem;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  line-height:1.2;
+}
 .area-input{
   background:var(--bg-accent);
   border:1px solid var(--border-soft);
@@ -697,16 +705,21 @@ input, textarea, select, button {
   color:var(--text-primary);
   line-height:1.3;
 }
-
-/* SCRYFALL LOOKUP */
 .lookup-row{
   display:flex;
   flex-wrap:wrap;
   gap:.5rem;
+  align-items:flex-end;
+}
+.lookup-col{
+  flex:1;
+  min-width:8rem;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
 }
 .lookup-input{
-  flex:2;
-  min-width:8rem;
+  width:100%;
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
@@ -717,8 +730,6 @@ input, textarea, select, button {
   font-weight:600;
 }
 .lookup-btn{
-  flex:1;
-  min-width:5rem;
   background:var(--button-bg);
   border:1px solid var(--button-border);
   border-radius:.5rem;
@@ -727,20 +738,24 @@ input, textarea, select, button {
   font-weight:600;
   color:var(--text-primary);
   text-align:center;
+  min-width:5rem;
 }
-.lookup-results{
+.lookup-preview-block{
   display:flex;
   flex-wrap:wrap;
   gap:.75rem;
   font-size:.7rem;
   line-height:1.3;
   color:var(--text-primary);
-  margin-top:.5rem;
 }
 .lookup-cardtext{
   flex:2;
   min-width:10rem;
   white-space:pre-line;
+  background:var(--bg-panel);
+  border:1px solid var(--border-soft);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
 }
 .lookup-cardimg{
   flex:1;
@@ -750,6 +765,7 @@ input, textarea, select, button {
   border:1px solid var(--border-soft);
   background:var(--bg-panel);
   overflow:hidden;
+  align-self:flex-start;
 }
 .lookup-cardimg img{
   width:100%;
@@ -832,18 +848,6 @@ input, textarea, select, button {
   color:var(--gold);
   word-break:break-word;
 }
-.global-input{
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  padding:.45rem .5rem;
-  color:var(--text-primary);
-  font-size:.7rem;
-  min-height:3rem;
-  resize:vertical;
-  line-height:1.3;
-  width:100%;
-}
 .theme-select{
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
@@ -852,6 +856,28 @@ input, textarea, select, button {
   font-size:.8rem;
   color:var(--text-primary);
   width:100%;
+}
+.global-cardtext{
+  background:var(--bg-panel);
+  border:1px solid var(--border-soft);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
+  white-space:pre-line;
+  font-size:.7rem;
+  line-height:1.3;
+  color:var(--text-primary);
+}
+.global-cardimg{
+  border:1px solid var(--border-soft);
+  border-radius:.5rem;
+  background:var(--bg-panel);
+  overflow:hidden;
+  max-width:140px;
+}
+.global-cardimg img{
+  display:block;
+  width:100%;
+  height:auto;
 }
 .winner-mini-banner{
   border:1px solid var(--gold);
@@ -889,8 +915,6 @@ input, textarea, select, button {
   color:var(--text-primary);
   text-align:center;
 }
-
-/* Rules text block */
 .rules-scroll-block{
   max-height:200px;
   overflow-y:auto;
@@ -904,7 +928,7 @@ input, textarea, select, button {
   color:var(--text-primary);
 }
 
-/* OVERLAYS (setup, winner, announce, respawnDraw) */
+/* OVERLAYS */
 .overlay-fullscreen{
   position:fixed;
   inset:0;
@@ -1026,7 +1050,7 @@ input, textarea, select, button {
   text-align:center;
 }
 
-/* Generic announce overlay (KO, respawn, reigning, draw reminder) */
+/* Announce overlay */
 .announce-card{
   background:var(--bg-panel);
   border:2px solid var(--gold);
@@ -1056,7 +1080,6 @@ input, textarea, select, button {
 
   <!-- SETUP OVERLAY -->
   <div id="setupOverlay" class="overlay-fullscreen">
-    <!-- Step 1 select mode -->
     <div class="setup-card" id="setupStepMode">
       <div class="setup-title">Select Mode</div>
       <div class="setup-row">
@@ -1072,7 +1095,6 @@ input, textarea, select, button {
       <div class="helper-row">You’ll pick player count next.</div>
     </div>
 
-    <!-- Step 2 select players -->
     <div class="setup-card" id="setupStepPlayers" style="display:none;">
       <div class="setup-title">How many players?</div>
       <div class="setup-row">
@@ -1099,7 +1121,7 @@ input, textarea, select, button {
     </div>
   </div>
 
-  <!-- ANNOUNCE OVERLAY (KO, RESPAWN, DRAW REMINDER, REIGNING NOTICE) -->
+  <!-- ANNOUNCE OVERLAY -->
   <div id="announceOverlay" class="overlay-fullscreen" style="display:none;">
     <div class="announce-card">
       <div class="announce-strong" id="announceMain">Announcement</div>
@@ -1128,7 +1150,7 @@ input, textarea, select, button {
     <div id="accordionsArea"></div>
   </div>
 
-  <!-- FOOTER / TOOLS -->
+  <!-- TOOLS / FOOTER -->
   <div class="tools-footer-wrap">
     <button class="tools-header-btn" id="toggleToolsBtn">Tools ▼</button>
     <div class="tools-panel" id="toolsPanel">
@@ -1154,13 +1176,19 @@ input, textarea, select, button {
         </div>
 
         <div class="tool-block">
-          <div class="tool-title">Current Plane (Planechase)</div>
-          <textarea id="planeField" class="global-input" placeholder="Plane text / chaos effects..."></textarea>
-        </div>
-
-        <div class="tool-block">
-          <div class="tool-title">Current Scheme (Archenemy)</div>
-          <textarea id="schemeField" class="global-input" placeholder="Scheme text / ongoing..."></textarea>
+          <div class="tool-title">Card Lookup (Scryfall)</div>
+          <div class="lookup-row">
+            <div class="lookup-col">
+              <input id="globalLookupInput" class="lookup-input" placeholder="Any card..." />
+              <button id="globalLookupBtn" class="lookup-btn">Lookup</button>
+            </div>
+          </div>
+          <div class="lookup-preview-block" id="globalLookupPreview">
+            <div class="lookup-cardtext" id="globalLookupText"></div>
+            <div class="lookup-cardimg" id="globalLookupImg" style="display:none;">
+              <img id="globalLookupImgTag" alt="card art"/>
+            </div>
+          </div>
         </div>
 
         <div class="tool-block">
@@ -1236,14 +1264,14 @@ Last surviving player wins immediately.
     </div>
   </div>
 
-</div> <!-- end .app-shell -->
+</div> <!-- /app-shell -->
 
 <script>
 /* =========================
    GLOBAL STATE
 ========================= */
 
-let gameMode = null; // "regular" or "rumble"
+let gameMode = null; // "regular" | "rumble"
 let players = [];
 let turnIndex = 0;
 let turnCounter = 0;
@@ -1258,18 +1286,26 @@ let winnerTimeMs = 0;
 let winnerActiveMs = 0;
 
 let accordionsOpen = {
-  statusEffects:false,
-  notes:false,
-  lookup:false,
+  statusEffects:false, // default closed
+  notes:true           // default open
 };
 
-// dropdown persistence for other players
+// dropdown persistence for other players list
 let otherOpen = {};
 
-// track interval for live timer text only
 let renderIntervalId = null;
-
 let showingAnnounce = false;
+
+let pendingClearAfterAnnounce = null;
+
+/* GLOBAL PLANE / SCHEME STATE */
+let currentPlaneName   = "";
+let currentPlaneText   = "";
+let currentPlaneImg    = "";
+
+let currentSchemeName  = "";
+let currentSchemeText  = "";
+let currentSchemeImg   = "";
 
 /* DOM refs */
 const setupOverlay           = document.getElementById("setupOverlay");
@@ -1311,6 +1347,13 @@ const modeStatusText         = document.getElementById("modeStatusText");
 const newGameBtn             = document.getElementById("newGameBtn");
 const changeModeBtn          = document.getElementById("changeModeBtn");
 
+const globalLookupInput      = document.getElementById("globalLookupInput");
+const globalLookupBtn        = document.getElementById("globalLookupBtn");
+const globalLookupText       = document.getElementById("globalLookupText");
+const globalLookupPreview    = document.getElementById("globalLookupPreview");
+const globalLookupImg        = document.getElementById("globalLookupImg");
+const globalLookupImgTag     = document.getElementById("globalLookupImgTag");
+
 /* =========================
    UTILITIES
 ========================= */
@@ -1332,8 +1375,8 @@ function getGameElapsedMs(){
   return Date.now()-gameStartTime;
 }
 
-// average life of all ACTIVE players (not counting the returning player yet)
 function getAvgActiveLifeCeil(excludeIndex){
+  // average life of all current active players (not counting the respawner)
   let sum=0;
   let ct=0;
   players.forEach((pl,i)=>{
@@ -1344,7 +1387,6 @@ function getAvgActiveLifeCeil(excludeIndex){
     }
   });
   if(ct===0){
-    // fail safe: if nobody else is active, give 1 life min
     return 1;
   }
   return Math.ceil(sum/ct);
@@ -1372,20 +1414,24 @@ function makePlayer(defaultName){
     emblemsText:"",
     notesText:"",
 
+    // NEW: lookup helpers for per-player board-state stuff
+    dungeonLookupName:"",
+    dungeonPreviewText:"",
+    dungeonPreviewImg:"",
+
+    emblemLookupName:"",
+    emblemPreviewText:"",
+    emblemPreviewImg:"",
+
     commanderTaxSteps:0,
 
-    commanderDamage:[], // victim.commanderDamage[srcIdx] = dmg taken from srcIdx's commander
-
-    lookupNameInput:"",
-    lastLookupName:"",
-    lastLookupResult:"",
-    lastLookupImg:"",
+    commanderDamage:[], // victim.commanderDamage[srcIdx] = dmg
 
     totalActiveMs:0,
     turnStartMs:null,
     isTiming:false,
 
-    pendingEOTDraw:false // after respawn, skip draw step, draw EOT first turn
+    pendingEOTDraw:false // after respawn
   };
 }
 
@@ -1401,7 +1447,7 @@ function syncCommanderDamageArrays(){
 }
 
 function getActivePlayers(){
-  let arr=[];
+  const arr=[];
   players.forEach((pl,i)=>{
     if(pl.status==="active"){
       arr.push(i);
@@ -1410,7 +1456,7 @@ function getActivePlayers(){
   return arr;
 }
 
-/* timing helpers */
+/* timing */
 function startTimingPlayer(i){
   const p=players[i];
   if(p.status!=="active") return;
@@ -1449,12 +1495,19 @@ function showAnnounce(mainTxt, bodyTxt){
 announceOkBtn.addEventListener("click",()=>{
   announceOverlay.style.display="none";
   showingAnnounce=false;
+  // if we had a pending EOT draw clear waiting:
+  if(pendingClearAfterAnnounce!==null){
+    const p=players[pendingClearAfterAnnounce];
+    if(p){
+      p.pendingEOTDraw=false;
+    }
+    pendingClearAfterAnnounce=null;
+  }
 });
 
 /* =========================
-   STATUS / DAMAGE / KOs
+   KO / ELIM / COOLDOWN
 ========================= */
-
 function permanentlyEliminate(i){
   const p=players[i];
   stopTimingPlayer(i);
@@ -1467,7 +1520,7 @@ function permanentlyEliminate(i){
   }
 }
 
-// Commander damage check (21+ from one source kills immediately, regardless of mode)
+// commander damage kill
 function checkCommanderDamageElim(victimIdx){
   const p = players[victimIdx];
   for(let src=0; src<p.commanderDamage.length; src++){
@@ -1478,11 +1531,11 @@ function checkCommanderDamageElim(victimIdx){
   }
 }
 
-// Called whenever lethal normal damage/poison/etc happens
 function knockOutToCooldown(i){
   const p=players[i];
+
   if(gameMode==="regular"){
-    // In Regular mode, lethal just eliminates
+    // Regular: lethal means gone
     permanentlyEliminate(i);
     showAnnounce(
       (p.name||("Player "+(i+1)))+" eliminated",
@@ -1491,13 +1544,13 @@ function knockOutToCooldown(i){
     return;
   }
 
-  // Rumble mode:
+  // Rumble:
   if(p.status==="eliminated") return;
   if(p.status==="cooldown") return;
 
   stopTimingPlayer(i);
 
-  // cooldown turns = 1 + number of other cooldown players right now
+  // cooldown = 1 + other cooldown players
   let alreadyCooling=0;
   players.forEach((q,qi)=>{
     if(qi!==i && q.status==="cooldown") alreadyCooling++;
@@ -1505,7 +1558,7 @@ function knockOutToCooldown(i){
 
   p.status="cooldown";
   p.cooldownRemaining=1+alreadyCooling;
-  p.pendingEOTDraw=false; // if they were in a respawn turn, that's gone
+  p.pendingEOTDraw=false;
 
   if(reigningCandidateIndex===i){
     reigningCandidateIndex=null;
@@ -1521,11 +1574,11 @@ function knockOutToCooldown(i){
 /* =========================
    RESPAWN
 ========================= */
-
 function respawnPlayer(i){
   const p=players[i];
   if(p.status!=="cooldown") return;
-  // compute new life using avg of current active players (excluding self)
+
+  // new life based on avg of active (excluding them)
   const newLife=getAvgActiveLifeCeil(i);
 
   p.status="active";
@@ -1533,35 +1586,24 @@ function respawnPlayer(i){
   p.poison=0;
   p.life=newLife;
   p.commanderTaxSteps=0;
-  p.pendingEOTDraw=true; // mark special draw rule turn
-  // NOTE: board state is not changed in tracker;
-  // assumption: their permanents still there stay theirs
+  p.pendingEOTDraw=true;
 
   showAnnounce(
     (p.name||("Player "+(i+1)))+" respawned",
-    "Life set to "+newLife+" (avg rounded up), poison = 0, commander tax reset. On their first turn back they skip normal draw and draw 1 at end of that turn."
+    "Life "+newLife+" (avg rounded up), poison = 0, commander tax reset.\nIMPORTANT: On their first turn back they skip normal draw and instead draw 1 at END of that turn."
   );
 }
 
 /* =========================
-   RUMBLE: REIGNING RUMBLER
+   REIGNING RUMBLER LOGIC
 ========================= */
-
 function updateReigningCandidateOnTurnEnd(){
   if(gameMode!=="rumble" || winnerLocked) return;
 
   const actives=getActivePlayers();
   if(actives.length===1){
     const onlyIdx=actives[0];
-    if(reigningCandidateIndex===null){
-      reigningCandidateIndex=onlyIdx;
-      reigningCandidateTurnStamp=turnCounter;
-      showAnnounce(
-        (players[onlyIdx].name||("Player "+(onlyIdx+1)))+" is now REIGNING RUMBLER",
-        "If no one else returns to active before the end of their next full turn, they win."
-      );
-    }else if(reigningCandidateIndex!==onlyIdx){
-      // new monarch of violence
+    if(reigningCandidateIndex===null || reigningCandidateIndex!==onlyIdx){
       reigningCandidateIndex=onlyIdx;
       reigningCandidateTurnStamp=turnCounter;
       showAnnounce(
@@ -1570,13 +1612,11 @@ function updateReigningCandidateOnTurnEnd(){
       );
     }
   }else{
-    // more than one active, crown clears
     reigningCandidateIndex=null;
     reigningCandidateTurnStamp=null;
   }
 }
 
-// check after we advance turn / process cooldown / respawns
 function checkReigningWin(){
   if(gameMode!=="rumble" || winnerLocked) return false;
   if(reigningCandidateIndex===null) return false;
@@ -1586,12 +1626,11 @@ function checkReigningWin(){
   const onlyIdx=actives[0];
   if(onlyIdx!==reigningCandidateIndex) return false;
 
-  // Did the reigning candidate survive until after completing
-  // their "next full turn"?
-  // We stamp reigningCandidateTurnStamp when crowned = turnCounter at that moment.
-  // They win if turnCounter > reigningCandidateTurnStamp+1 AND they're still lone.
-  // Reason: reigning stamp at end of some turn T. They take full turn T+1. After T+1 ends -> win.
-  if(turnCounter > (reigningCandidateTurnStamp+1)){
+  // crowned at turnCounter = reigningCandidateTurnStamp
+  // They must survive as sole active through their next full turn:
+  // After we incremented turnCounter on their next completed turn,
+  // turnCounter will be > reigningCandidateTurnStamp+1
+  if(turnCounter>(reigningCandidateTurnStamp+1)){
     lockWinner(onlyIdx,true);
     return true;
   }
@@ -1599,11 +1638,11 @@ function checkReigningWin(){
 }
 
 /* =========================
-   WIN LOGIC (REGULAR & RUMBLE)
+   WIN CHECKS
 ========================= */
-
 function checkForWinRegular(){
   if(gameMode!=="regular" || winnerLocked) return false;
+  // last non-eliminated wins
   const stillIn = players.filter(p=>p.status!=="eliminated");
   if(stillIn.length===1){
     const idx = players.indexOf(stillIn[0]);
@@ -1644,10 +1683,7 @@ winnerCloseBtn.addEventListener("click",()=>{
 /* =========================
    TURN FLOW
 ========================= */
-
 function runEndOfTurnDrawIfNeeded(idx){
-  // If this player was on their first turn after respawn,
-  // they skip normal draw step and instead draw 1 now.
   const p=players[idx];
   if(!p) return;
   if(p.pendingEOTDraw){
@@ -1655,39 +1691,22 @@ function runEndOfTurnDrawIfNeeded(idx){
       (p.name||("Player "+(idx+1)))+" draw reminder",
       "Draw 1 card now (respawn recovery). You skipped your normal draw this turn."
     );
-    // after the reminder is acknowledged, we clear in the announceOkBtn
-    // to guarantee we don't clear early, we'll stash who to clear:
     pendingClearAfterAnnounce = idx;
   }
 }
 
-// We'll use this to finalize clearing pendingEOTDraw after player acknowledges
-let pendingClearAfterAnnounce = null;
-announceOkBtn.addEventListener("click",()=>{
-  if(pendingClearAfterAnnounce!==null){
-    const p=players[pendingClearAfterAnnounce];
-    if(p){
-      p.pendingEOTDraw=false;
-    }
-    pendingClearAfterAnnounce=null;
-  }
-});
-
 function applyCooldownTickAndRespawns(){
-  // only relevant for rumble
   if(gameMode!=="rumble") return;
 
-  // 1. tick cooldownRemaining for all cooldown players
-  players.forEach((pl,i)=>{
-    if(pl.status==="cooldown"){
-      if(pl.cooldownRemaining>0){
-        pl.cooldownRemaining -= 1;
-        if(pl.cooldownRemaining<0) pl.cooldownRemaining=0;
-      }
+  // Tick cooldown for all cooldown players
+  players.forEach((pl)=>{
+    if(pl.status==="cooldown" && pl.cooldownRemaining>0){
+      pl.cooldownRemaining -= 1;
+      if(pl.cooldownRemaining<0) pl.cooldownRemaining=0;
     }
   });
 
-  // 2. anyone now at 0 cooldown respawns immediately
+  // Respawn anyone now at 0
   players.forEach((pl,i)=>{
     if(pl.status==="cooldown" && pl.cooldownRemaining===0){
       respawnPlayer(i);
@@ -1717,44 +1736,38 @@ function passTurn(){
     return;
   }
 
-  // stop timing current active player
+  // Stop timing the player whose turn is ending
   stopTimingPlayer(turnIndex);
 
-  // handle end-of-turn draw for respawned player if needed
+  // End-of-turn draw for respawn turn?
   runEndOfTurnDrawIfNeeded(turnIndex);
 
-  // increment turnCounter BEFORE cooldown ticks or reigning checks?
-  // We treat "endTurn" as finishing this player's turn.
-  // We'll increment turnCounter now to reflect that we just ended one.
+  // We've just finished a turn => increment turnCounter
   turnCounter += 1;
 
-  // TICK COOLDOWNS / RESPAWN
+  // Cooldown tick / respawns happen after the turn ends
   applyCooldownTickAndRespawns();
 
-  // update reigningCandidate after these changes
+  // Update/crown/check reigning candidate AFTER cooldown tick
   updateReigningCandidateOnTurnEnd();
 
-  // In regular mode, we may already have a winner from eliminations:
   if(gameMode==="regular"){
-    const didWinReg = checkForWinRegular();
-    if(didWinReg){
+    if(checkForWinRegular()){
       renderAll();
       return;
     }
   }
 
-  // Check Reigning Rumbler win now that turn advanced, cooldown ticked, and respawns happened
-  const didWinRumble = checkReigningWin();
-  if(didWinRumble){
+  if(checkReigningWin()){
     renderAll();
     return;
   }
 
-  // choose next player
+  // Advance to next active player
   const newIdx = nextActivePlayerClockwise(turnIndex);
   turnIndex = newIdx;
 
-  // start timing new active player
+  // Start timing new active player
   if(players[turnIndex].status==="active"){
     startTimingPlayer(turnIndex);
   }
@@ -1765,7 +1778,6 @@ function passTurn(){
 /* =========================
    THEME / TOOLS
 ========================= */
-
 toggleToolsBtn.addEventListener("click",()=>{
   if(toolsPanel.style.display==="block"){
     toolsPanel.style.display="none";
@@ -1793,7 +1805,7 @@ rollD20Btn.addEventListener("click",()=>{
 
 newGameBtn.addEventListener("click",()=>{
   if(!confirm("Start a new game in the same mode? This clears all data.")) return;
-  showPlayerCountStep(); // keep mode, repick player count
+  showPlayerCountStep(); // keep mode, restart count
 });
 changeModeBtn.addEventListener("click",()=>{
   if(!confirm("Change mode? This restarts the game.")) return;
@@ -1801,145 +1813,214 @@ changeModeBtn.addEventListener("click",()=>{
 });
 
 /* =========================
-   SCRYFALL LOOKUP
+   SCRYFALL HELPERS
 ========================= */
-
-function analyzeOracleText(oracleText,typeLine){
-  const text=(oracleText||"").toLowerCase();
-  const tline=(typeLine||"").toLowerCase();
-  const parsed={
-    wantsMonarch:/become the monarch|you become the monarch/.test(text),
-    wantsInitiative:/take the initiative|you take the initiative/.test(text),
-    wantsCitysBlessing:/city's blessing/.test(text),
-    wantsExp:/experience counter/.test(text),
-    planeswalkerHint:/planeswalker/.test(tline),
-
-    upkeepReminder:"",
-    dungeonHint:"",
-  };
-
-  const upkeepMatch=oracleText && oracleText.match(/At the beginning of your upkeep[^.]*\./i);
-  if(upkeepMatch){
-    parsed.upkeepReminder="UPKEEP: "+upkeepMatch[0].trim();
+async function scryfallFuzzy(name){
+  if(!name.trim()) return null;
+  const url="https://api.scryfall.com/cards/named?fuzzy="+encodeURIComponent(name.trim());
+  try{
+    const resp=await fetch(url);
+    if(!resp.ok) return null;
+    return await resp.json();
+  }catch(e){
+    return null;
   }
-
-  if(/the initiative/.test(text)
-  ||/undercity/.test(text)
-  ||/venture into the dungeon/.test(text)){
-    parsed.dungeonHint="Dungeon/Initiative: Track Undercity / dungeon steps each upkeep.";
+}
+function extractCardImage(data){
+  if(!data) return "";
+  if(data.image_uris && data.image_uris.normal){
+    return data.image_uris.normal;
   }
-  return parsed;
+  if(Array.isArray(data.card_faces)
+   && data.card_faces[0]
+   && data.card_faces[0].image_uris){
+    return data.card_faces[0].image_uris.normal||"";
+  }
+  return "";
 }
 
-async function doLookup(idx){
-  const p=players[idx];
-  const rawName=p.lookupNameInput||"";
-  if(!rawName.trim()){
-    p.lastLookupResult="Enter a card name first.";
+/* --- Global lookup (Tools panel) --- */
+async function lookupAnyCardGlobal(){
+  const rawName = globalLookupInput.value||"";
+  const data = await scryfallFuzzy(rawName);
+  if(!data){
+    globalLookupText.textContent="Not found / offline.";
+    globalLookupImg.style.display="none";
+    globalLookupImgTag.removeAttribute("src");
+    return;
+  }
+  const typeLine=data.type_line||"";
+  const oracle=data.oracle_text||"";
+  const nm=data.name||rawName.trim();
+
+  globalLookupText.textContent = (typeLine?typeLine+"\n":"")+oracle;
+  const imgUrl=extractCardImage(data);
+  if(imgUrl){
+    globalLookupImgTag.src=imgUrl;
+    globalLookupImg.style.display="block";
+  }else{
+    globalLookupImg.style.display="none";
+    globalLookupImgTag.removeAttribute("src");
+  }
+}
+
+globalLookupBtn.addEventListener("click",()=>{
+  lookupAnyCardGlobal();
+});
+
+/* --- Dungeon lookup (per-player) --- */
+async function lookupDungeonForPlayer(i){
+  const p=players[i];
+  const rawName=p.dungeonLookupName||"";
+  const data=await scryfallFuzzy(rawName);
+  if(!data){
+    p.dungeonPreviewText="Not found / offline.";
+    p.dungeonPreviewImg="";
     renderAll();
     return;
   }
-  const url="https://api.scryfall.com/cards/named?fuzzy="+encodeURIComponent(rawName.trim());
-  try{
-    const resp=await fetch(url);
-    if(!resp.ok){
-      p.lastLookupName="";
-      p.lastLookupResult="Card not found.";
-      p.lastLookupImg="";
-      renderAll();
-      return;
-    }
-    const data=await resp.json();
-    const oracle=data.oracle_text||"";
-    const typeLine=data.type_line||"";
+  const typeLine=data.type_line||"";
+  const layout=data.layout||"";
+  const oracle=data.oracle_text||"";
+  const cardName=data.name||rawName.trim();
 
-    p.lastLookupName=data.name||rawName.trim();
-    p.lastLookupResult=(typeLine?typeLine+"\n":"")+(oracle?oracle:"");
+  // accept if it's clearly a Dungeon
+  if(typeLine.toLowerCase().includes("dungeon")
+     || layout.toLowerCase()==="dungeon"){
+    const imgUrl=extractCardImage(data);
 
-    let imgUrl="";
-    if(data.image_uris && data.image_uris.normal){
-      imgUrl=data.image_uris.normal;
-    }else if(Array.isArray(data.card_faces)
-          && data.card_faces[0]
-          && data.card_faces[0].image_uris){
-      imgUrl=data.card_faces[0].image_uris.normal||"";
-    }
-    p.lastLookupImg=imgUrl;
+    p.dungeonPreviewText = cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
+    p.dungeonPreviewImg  = imgUrl||"";
 
-    const parsed=analyzeOracleText(oracle,typeLine);
-    if(parsed.wantsMonarch){ p.hasMonarch=true; }
-    if(parsed.wantsInitiative){
-      p.hasInitiative=true;
-      if(!p.dungeonProgress.toLowerCase().includes("undercity")
-      && !p.dungeonProgress.toLowerCase().includes("dungeon")){
-        p.dungeonProgress += (p.dungeonProgress? "\n":"")
-          +"Initiative: Progress Undercity each upkeep.";
-      }
+    // also seed/append dungeonProgress with the first lines so player can track steps
+    if(!p.dungeonProgress.toLowerCase().includes(cardName.toLowerCase())){
+      p.dungeonProgress += (p.dungeonProgress? "\n":"")+"Dungeon: "+cardName;
     }
-    if(parsed.wantsCitysBlessing){ p.hasCitysBlessing=true; }
-    if(parsed.wantsExp){
-      if(!p.notesText.toLowerCase().includes("experience counter")){
-        p.notesText += (p.notesText? "\n":"")
-          +"This uses Experience counters. Track them.";
-      }
-    }
-    if(parsed.planeswalkerHint){
-      if(!p.notesText.toLowerCase().includes("track loyalty")){
-        p.notesText += (p.notesText? "\n":"")
-          +"If this is your commander, track loyalty like life.";
-      }
-    }
-    if(parsed.upkeepReminder){
-      if(!p.notesText.toLowerCase().includes(parsed.upkeepReminder.toLowerCase())){
-        p.notesText += (p.notesText? "\n":"")+parsed.upkeepReminder;
-      }
-    }
-    if(parsed.dungeonHint){
-      if(!p.dungeonProgress.toLowerCase().includes("dungeon")){
-        p.dungeonProgress += (p.dungeonProgress? "\n":"")+parsed.dungeonHint;
-      }
-    }
-
-    renderAll();
-  }catch(e){
-    p.lastLookupName=rawName.trim();
-    p.lastLookupResult="Lookup failed (offline?).";
-    p.lastLookupImg="";
-    renderAll();
+  } else {
+    p.dungeonPreviewText = "Not a Dungeon card (try exact dungeon name).";
+    p.dungeonPreviewImg  = "";
   }
+  renderAll();
+}
+
+/* --- Emblem lookup (per-player) --- */
+async function lookupEmblemForPlayer(i){
+  const p=players[i];
+  const rawName=p.emblemLookupName||"";
+  let data=await scryfallFuzzy(rawName);
+
+  // If first hit isn't an emblem, we may try with "emblem"
+  function isEmblemCard(d){
+    if(!d) return false;
+    const layout=(d.layout||"").toLowerCase();
+    return layout==="emblem";
+  }
+
+  if(!isEmblemCard(data)){
+    // fallback attempt "NAME emblem"
+    if(rawName.trim()){
+      data=await scryfallFuzzy(rawName+" emblem");
+    }
+  }
+
+  if(!data){
+    p.emblemPreviewText="Not found / offline.";
+    p.emblemPreviewImg="";
+    renderAll();
+    return;
+  }
+
+  if(!isEmblemCard(data)){
+    p.emblemPreviewText="No emblem form found. (If this is from a planeswalker ultimate, try that planeswalker name + 'emblem')";
+    p.emblemPreviewImg="";
+    renderAll();
+    return;
+  }
+
+  const typeLine=data.type_line||"";
+  const oracle=data.oracle_text||"";
+  const cardName=data.name||rawName.trim();
+  const imgUrl=extractCardImage(data);
+
+  p.emblemPreviewText =
+    cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
+  p.emblemPreviewImg  = imgUrl||"";
+
+  // also append to emblemsText so table has persistent reminder
+  if(!p.emblemsText.toLowerCase().includes(cardName.toLowerCase())){
+    p.emblemsText += (p.emblemsText? "\n":"")+"Emblem: "+cardName+" — "+oracle;
+  }
+
+  renderAll();
+}
+
+/* --- Plane lookup (global) --- */
+async function lookupPlaneGlobal(){
+  const name=(currentPlaneName||"");
+  const data=await scryfallFuzzy(name);
+  if(!data){
+    currentPlaneText="Not found / offline.";
+    currentPlaneImg="";
+    renderAll();
+    return;
+  }
+  const typeLine=data.type_line||"";
+  const layout=data.layout||"";
+  const oracle=data.oracle_text||"";
+  const nm=data.name||name.trim();
+
+  // it's okay if it's Plane or Phenomenon, we just dump it
+  currentPlaneText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
+
+  const imgUrl=extractCardImage(data);
+  currentPlaneImg=imgUrl||"";
+  renderAll();
+}
+
+/* --- Scheme lookup (global) --- */
+async function lookupSchemeGlobal(){
+  const name=(currentSchemeName||"");
+  const data=await scryfallFuzzy(name);
+  if(!data){
+    currentSchemeText="Not found / offline.";
+    currentSchemeImg="";
+    renderAll();
+    return;
+  }
+  const typeLine=data.type_line||"";
+  const layout=data.layout||"";
+  const oracle=data.oracle_text||"";
+  const nm=data.name||name.trim();
+
+  // Archenemy schemes have type 'Scheme', we just surface it.
+  currentSchemeText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
+
+  const imgUrl=extractCardImage(data);
+  currentSchemeImg=imgUrl||"";
+  renderAll();
 }
 
 /* =========================
    RENDER HELPERS
 ========================= */
-
 function renderGlobalTimerBanner(){
   globalTimerBanner.textContent = "Global: "+msToClock(getGameElapsedMs());
 }
 function renderTimersOnly(){
   renderGlobalTimerBanner();
-
   const p=players[turnIndex];
   if(p){
     const hudTimerBlocks = document.querySelectorAll("#hudArea .timer-block");
-    // block0 Turn Time, block1 Player Time, block2 Global Time
     if(hudTimerBlocks.length>=3){
       const turnVal=hudTimerBlocks[0].querySelector(".timer-val");
-      if(turnVal){
-        turnVal.textContent=msToClock(getPlayerTurnMs(p));
-      }
+      if(turnVal){ turnVal.textContent=msToClock(getPlayerTurnMs(p)); }
       const playerVal=hudTimerBlocks[1].querySelector(".timer-val");
-      if(playerVal){
-        playerVal.textContent=msToClock(getPlayerTotalMs(p));
-      }
+      if(playerVal){ playerVal.textContent=msToClock(getPlayerTotalMs(p)); }
       const globalVal=hudTimerBlocks[2].querySelector(".timer-val");
-      if(globalVal){
-        globalVal.textContent=msToClock(getGameElapsedMs());
-      }
+      if(globalVal){ globalVal.textContent=msToClock(getGameElapsedMs()); }
     }
   }
-
-  // update the Player Time in others list
+  // update Player Time in Others
   players.forEach((pl,i)=>{
     if(i===turnIndex) return;
     const node=document.querySelector(
@@ -1951,15 +2032,10 @@ function renderTimersOnly(){
   });
 }
 
-/* seat glow color */
 function getSeatColor(i){
   const cols=["var(--gold)","var(--cyan)","var(--magenta)","var(--lime)"];
   return cols[i % cols.length];
 }
-
-/* =========================
-   RENDER ALL
-========================= */
 
 function renderAll(){
   syncCommanderDamageArrays();
@@ -1983,7 +2059,7 @@ function renderAll(){
   }
 }
 
-/* HUD (active player card) */
+/* HUD (active player info) */
 function renderHUD(){
   hudArea.innerHTML="";
   const p=players[turnIndex];
@@ -1999,7 +2075,7 @@ function renderHUD(){
   const topRow=document.createElement("div");
   topRow.className="hud-top-row";
 
-  /* LEFT COL */
+  // LEFT COL
   const leftCol=document.createElement("div");
   leftCol.className="hud-col";
 
@@ -2027,22 +2103,19 @@ function renderHUD(){
   const tinyStack=document.createElement("div");
   tinyStack.className="tiny-col-stack";
 
-  // STATUS ROW
+  // status chip + cooldown info
   const statusRow=document.createElement("div");
   statusRow.className="tiny-row";
 
   const stChip=document.createElement("div");
   stChip.className="status-chip "+
     (p.status==="active"?"status-active":
-     p.status==="cooldown"?"status-cooldown":
-                           "status-elim");
-
+     p.status==="cooldown"?"status-cooldown":"status-elim");
   stChip.textContent=
     p.status==="active"?"ACTIVE":
     p.status==="cooldown"?"COOLDOWN":
     "ELIMINATED";
 
-  // Tap cycles status only for admin fix (not normal cheating path)
   stChip.title = (gameMode==="rumble")
     ? "Tap to correct: Active ↔ Cooldown ↔ Eliminated"
     : "Tap to correct: Active ↔ Eliminated";
@@ -2052,7 +2125,6 @@ function renderHUD(){
 
   statusRow.appendChild(stChip);
 
-  // show cooldownRemaining if cooling
   if(p.status==="cooldown" && gameMode==="rumble"){
     const cdWrap=document.createElement("div");
     cdWrap.className="cd-info-inline";
@@ -2070,7 +2142,7 @@ function renderHUD(){
     statusRow.appendChild(cdWrap);
   }
 
-  // COMMANDER TAX
+  // Commander Tax
   const taxRow=document.createElement("div");
   taxRow.className="tax-row";
 
@@ -2105,7 +2177,7 @@ function renderHUD(){
   taxCtrl.appendChild(taxVal);
   taxCtrl.appendChild(taxPlus);
 
-  // TIMERS
+  // Timers
   const timeRow=document.createElement("div");
   timeRow.className="timer-row";
 
@@ -2151,7 +2223,6 @@ function renderHUD(){
   tinyStackTop.appendChild(taxRow);
   tinyStackTop.appendChild(timeRow);
 
-  // Respawn draw banner
   if(p.pendingEOTDraw){
     const reminder=document.createElement("div");
     reminder.className="respawn-draw-banner";
@@ -2162,10 +2233,9 @@ function renderHUD(){
   nameBlock.appendChild(nmLabel);
   nameBlock.appendChild(nmInput);
   nameBlock.appendChild(tinyStackTop);
-
   leftCol.appendChild(nameBlock);
 
-  /* RIGHT COL */
+  // RIGHT COL
   const rightCol=document.createElement("div");
   rightCol.className="hud-col";
 
@@ -2257,8 +2327,7 @@ function makeMiniStepperBox(labelText,val,onSet){
   minus.className="step-btn";
   minus.textContent="-";
   minus.addEventListener("click",()=>{
-    let v=val-1;
-    if(v<0)v=0;
+    let v=val-1; if(v<0)v=0;
     onSet(v);
   });
 
@@ -2270,8 +2339,7 @@ function makeMiniStepperBox(labelText,val,onSet){
   plus.className="step-btn";
   plus.textContent="+";
   plus.addEventListener("click",()=>{
-    let v=val+1;
-    if(v<0)v=0;
+    let v=val+1; if(v<0)v=0;
     onSet(v);
   });
 
@@ -2284,7 +2352,7 @@ function makeMiniStepperBox(labelText,val,onSet){
   return wrap;
 }
 
-/* OTHERS LIST */
+/* OTHERS */
 function renderOthers(){
   othersArea.innerHTML="";
   const wrap=document.createElement("div");
@@ -2323,7 +2391,7 @@ function renderOthers(){
       chev.textContent="▼";
     }
 
-    // STATUS LINE
+    // Status line
     const statusLine=document.createElement("div");
     statusLine.className="status-line-other";
 
@@ -2339,14 +2407,15 @@ function renderOthers(){
       cdLab.style.textTransform="uppercase";
       cdLab.style.letterSpacing=".05em";
       cdLab.textContent="Cooldown:";
+
       const cdNum=document.createElement("div");
       cdNum.className="cd-val-box";
       cdNum.textContent=pl.cooldownRemaining;
+
       statusLine.appendChild(cdLab);
       statusLine.appendChild(cdNum);
     }
 
-    // player time
     const timeBox=document.createElement("div");
     timeBox.style.display="flex";
     timeBox.style.flexWrap="wrap";
@@ -2356,6 +2425,7 @@ function renderOthers(){
     const tLab=document.createElement("div");
     tLab.className="cd-label";
     tLab.textContent="Player Time:";
+
     const tVal=document.createElement("div");
     tVal.className="cd-val-box player-time-val";
     tVal.textContent=msToClock(getPlayerTotalMs(pl));
@@ -2365,7 +2435,7 @@ function renderOthers(){
     statusLine.appendChild(timeBox);
     body.appendChild(statusLine);
 
-    // LIFE / +/- CONTROLS
+    // Life / +/- controls
     const lifeCol=document.createElement("div");
     lifeCol.className="mini-col";
 
@@ -2402,7 +2472,6 @@ function renderOthers(){
     lifeRow.appendChild(plusBtn);
     lifeCol.appendChild(lifeLab);
     lifeCol.appendChild(lifeRow);
-
     body.appendChild(lifeCol);
 
     // poison/rad/exp/storm
@@ -2426,17 +2495,15 @@ function renderOthers(){
       pl.storm=v;
       renderAll();
     }));
-
     body.appendChild(debuffRow);
 
-    // COMMANDER DAMAGE GRID
+    // Commander damage grid
     const cdmgWrap=document.createElement("div");
     cdmgWrap.className="cdmg-section-wrap";
 
     const cdmgLab=document.createElement("div");
     cdmgLab.className="cdmg-label";
-    cdmgLab.textContent=
-      "Commander Damage Taken by "+nm+" (21 from any 1 source = elim)";
+    cdmgLab.textContent="Commander Damage Taken by "+nm+" (21 from any 1 source = elim)";
     cdmgWrap.appendChild(cdmgLab);
 
     const cdmgGrid=document.createElement("div");
@@ -2475,7 +2542,7 @@ function renderOthers(){
     cdmgWrap.appendChild(cdmgGrid);
     body.appendChild(cdmgWrap);
 
-    // player note box
+    // Player notes in Others
     const miniNote=document.createElement("div");
     miniNote.className="mini-note-box";
     const mnLab=document.createElement("div");
@@ -2496,8 +2563,12 @@ function renderOthers(){
       renderOthers();
     });
 
+    const chevWrap=document.createElement("span");
+    chevWrap.appendChild(chev);
+
     top.appendChild(titleSpan);
-    top.appendChild(chev);
+    top.appendChild(chevWrap);
+
     block.appendChild(top);
     block.appendChild(body);
 
@@ -2541,154 +2612,16 @@ function smallStepperBox(labelText,val,onSet){
   row.appendChild(minus);
   row.appendChild(mid);
   row.appendChild(plus);
-
   box.appendChild(l);
   box.appendChild(row);
+
   return box;
 }
 
-/* ACCORDIONS (status, notes, lookup) */
-function renderAccordions(){
-  accordionsArea.innerHTML="";
-  const p=players[turnIndex];
-  if(!p) return;
-
-  const acc1=makeAccordion(
-    "statusEffects",
-    "Status Effects / Titles",
-    "Monarch, Initiative, Blessing, Dungeon, Emblems",
-    (body)=>{
-      const togglesRow=document.createElement("div");
-      togglesRow.className="row-flex";
-
-      togglesRow.appendChild(makeToggleChip("Monarch",p.hasMonarch,val=>{
-        p.hasMonarch=val; renderAll();
-      }));
-      togglesRow.appendChild(makeToggleChip("Initiative",p.hasInitiative,val=>{
-        p.hasInitiative=val; renderAll();
-      }));
-      togglesRow.appendChild(makeToggleChip("Blessing",p.hasCitysBlessing,val=>{
-        p.hasCitysBlessing=val; renderAll();
-      }));
-
-      body.appendChild(togglesRow);
-
-      const dLabel=document.createElement("div");
-      dLabel.className="label-sm";
-      dLabel.textContent="Dungeon / Undercity / Progress";
-
-      const dArea=document.createElement("textarea");
-      dArea.className="area-input";
-      dArea.placeholder="Initiative, Undercity steps, dungeon rooms..."
-      dArea.value=p.dungeonProgress;
-      dArea.addEventListener("input",e=>{
-        p.dungeonProgress=e.target.value;
-      });
-
-      const eLabel=document.createElement("div");
-      eLabel.className="label-sm";
-      eLabel.textContent="Emblems / Globals";
-
-      const eArea=document.createElement("textarea");
-      eArea.className="area-input";
-      eArea.placeholder="Emblems, static buffs, city-wide effects..."
-      eArea.value=p.emblemsText;
-      eArea.addEventListener("input",e=>{
-        p.emblemsText=e.target.value;
-      });
-
-      body.appendChild(dLabel);
-      body.appendChild(dArea);
-      body.appendChild(eLabel);
-      body.appendChild(eArea);
-    }
-  );
-
-  const acc2=makeAccordion(
-    "notes",
-    "Notes / Reminders",
-    "Goad, skip draw, bounty, upkeep triggers",
-    (body)=>{
-      const notesLabel=document.createElement("div");
-      notesLabel.className="label-sm";
-      notesLabel.textContent="Notes";
-      const notesArea=document.createElement("textarea");
-      notesArea.className="area-input";
-      notesArea.placeholder="Goaded Krenko, Skip next draw, Bounty on Theo..."
-      notesArea.value=p.notesText;
-      notesArea.addEventListener("input",e=>{
-        p.notesText=e.target.value;
-      });
-
-      body.appendChild(notesLabel);
-      body.appendChild(notesArea);
-    }
-  );
-
-  const acc3=makeAccordion(
-    "lookup",
-    "Card Lookup (Scryfall)",
-    "Pull card text + auto reminders",
-    (body)=>{
-      const lookRow=document.createElement("div");
-      lookRow.className="lookup-row";
-
-      const lookInput=document.createElement("input");
-      lookInput.className="lookup-input";
-      lookInput.placeholder="Search card..."
-      lookInput.value=p.lookupNameInput;
-      lookInput.addEventListener("input",e=>{
-        p.lookupNameInput=e.target.value;
-      });
-
-      const lookBtn=document.createElement("button");
-      lookBtn.className="lookup-btn";
-      lookBtn.textContent="Lookup";
-      lookBtn.addEventListener("click",()=>{
-        doLookup(turnIndex);
-      });
-
-      lookRow.appendChild(lookInput);
-      lookRow.appendChild(lookBtn);
-
-      const lookResults=document.createElement("div");
-      lookResults.className="lookup-results";
-
-      if(p.lastLookupName || p.lastLookupResult){
-        const textDiv=document.createElement("div");
-        textDiv.className="lookup-cardtext";
-        textDiv.textContent=
-          (p.lastLookupName? p.lastLookupName+"\n":"")+
-          (p.lastLookupResult||"");
-
-        lookResults.appendChild(textDiv);
-
-        if(p.lastLookupImg){
-          const imgWrap=document.createElement("div");
-          imgWrap.className="lookup-cardimg";
-          const img=document.createElement("img");
-          img.src=p.lastLookupImg;
-          img.alt=p.lastLookupName||"card art";
-          imgWrap.appendChild(img);
-          lookResults.appendChild(imgWrap);
-        }
-      }else{
-        const hint=document.createElement("div");
-        hint.className="small-hint";
-        hint.textContent="Auto-adds Monarch / Initiative and upkeep reminders to Notes.";
-        lookResults.appendChild(hint);
-      }
-
-      body.appendChild(lookRow);
-      body.appendChild(lookResults);
-    }
-  );
-
-  accordionsArea.appendChild(acc1);
-  accordionsArea.appendChild(acc2);
-  accordionsArea.appendChild(acc3);
-}
-
+/* =========================
+   ACCORDIONS
+   (Status Effects / Titles + Notes)
+========================= */
 function makeToggleChip(label,active,onToggle){
   const chip=document.createElement("div");
   chip.className="toggle-chip"+(active?" active":"");
@@ -2696,7 +2629,23 @@ function makeToggleChip(label,active,onToggle){
   chip.addEventListener("click",()=>{ onToggle(!active); });
   return chip;
 }
-function makeAccordion(key,title,hint,fillBodyFn){
+
+function renderAccordions(){
+  accordionsArea.innerHTML="";
+
+  // STATUS EFFECTS / TITLES accordion (Board State Control Center)
+  const statusAcc = renderStatusAccordion();
+  if(statusAcc) accordionsArea.appendChild(statusAcc);
+
+  // NOTES / REMINDERS accordion
+  const notesAcc = renderNotesAccordion();
+  if(notesAcc) accordionsArea.appendChild(notesAcc);
+}
+
+function renderStatusAccordion(){
+  const p=players[turnIndex];
+  if(!p) return null;
+
   const wrap=document.createElement("div");
   wrap.className="accordion-block";
 
@@ -2704,7 +2653,7 @@ function makeAccordion(key,title,hint,fillBodyFn){
   head.className="accordion-head";
 
   const leftSpan=document.createElement("div");
-  leftSpan.textContent=title;
+  leftSpan.textContent="Status Effects / Titles";
 
   const rightSpan=document.createElement("div");
   rightSpan.style.display="flex";
@@ -2713,7 +2662,7 @@ function makeAccordion(key,title,hint,fillBodyFn){
 
   const hintEl=document.createElement("div");
   hintEl.className="hint";
-  hintEl.textContent=hint;
+  hintEl.textContent="Monarch, Initiative, Dungeons, Emblems, Plane, Scheme";
 
   const chevron=document.createElement("div");
   chevron.style.color="var(--text-dim)";
@@ -2725,10 +2674,290 @@ function makeAccordion(key,title,hint,fillBodyFn){
   const body=document.createElement("div");
   body.className="accordion-body";
 
-  fillBodyFn(body);
+  // Monarch / Initiative / Blessing toggles
+  const toggleSection=document.createElement("div");
+  toggleSection.style.display="flex";
+  toggleSection.style.flexWrap="wrap";
+  toggleSection.style.gap=".5rem .5rem";
 
-  if(accordionsOpen[key]){
-    body.style.display="block";
+  toggleSection.appendChild(
+    makeToggleChip("Monarch",p.hasMonarch,(val)=>{
+      p.hasMonarch=val; renderAll();
+    })
+  );
+  toggleSection.appendChild(
+    makeToggleChip("Initiative",p.hasInitiative,(val)=>{
+      p.hasInitiative=val; renderAll();
+    })
+  );
+  toggleSection.appendChild(
+    makeToggleChip("Blessing",p.hasCitysBlessing,(val)=>{
+      p.hasCitysBlessing=val; renderAll();
+    })
+  );
+
+  // Dungeon / Undercity / Progress + Dungeon Lookup
+  const dungeonBlock=document.createElement("div");
+  dungeonBlock.style.display="flex";
+  dungeonBlock.style.flexDirection="column";
+  dungeonBlock.style.gap=".5rem";
+
+  const dungeonLabel=document.createElement("div");
+  dungeonLabel.className="subsection-label";
+  dungeonLabel.textContent="Dungeon / Undercity / Progress";
+
+  const dungeonArea=document.createElement("textarea");
+  dungeonArea.className="area-input";
+  dungeonArea.placeholder="Initiative, Undercity steps, dungeon rooms..."
+  dungeonArea.value=p.dungeonProgress;
+  dungeonArea.addEventListener("input",e=>{
+    p.dungeonProgress=e.target.value;
+  });
+
+  const dungeonLookupRow=document.createElement("div");
+  dungeonLookupRow.className="lookup-row";
+
+  const dungeonCol=document.createElement("div");
+  dungeonCol.className="lookup-col";
+
+  const dungeonInput=document.createElement("input");
+  dungeonInput.className="lookup-input";
+  dungeonInput.placeholder="Lookup Dungeon..."
+  dungeonInput.value=p.dungeonLookupName;
+  dungeonInput.addEventListener("input",e=>{
+    p.dungeonLookupName=e.target.value;
+  });
+
+  const dungeonBtn=document.createElement("button");
+  dungeonBtn.className="lookup-btn";
+  dungeonBtn.textContent="Lookup Dungeon";
+  dungeonBtn.addEventListener("click",()=>{
+    lookupDungeonForPlayer(turnIndex);
+  });
+
+  dungeonCol.appendChild(dungeonInput);
+  dungeonCol.appendChild(dungeonBtn);
+  dungeonLookupRow.appendChild(dungeonCol);
+
+  const dungeonPreview=document.createElement("div");
+  dungeonPreview.className="lookup-preview-block";
+
+  if(p.dungeonPreviewText || p.dungeonPreviewImg){
+    const txt=document.createElement("div");
+    txt.className="lookup-cardtext";
+    txt.textContent=p.dungeonPreviewText||"";
+    dungeonPreview.appendChild(txt);
+
+    if(p.dungeonPreviewImg){
+      const imgWrap=document.createElement("div");
+      imgWrap.className="lookup-cardimg";
+      const im=document.createElement("img");
+      im.src=p.dungeonPreviewImg;
+      im.alt="dungeon";
+      imgWrap.appendChild(im);
+      dungeonPreview.appendChild(imgWrap);
+    }
+  }
+
+  dungeonBlock.appendChild(dungeonLabel);
+  dungeonBlock.appendChild(dungeonArea);
+  dungeonBlock.appendChild(dungeonLookupRow);
+  dungeonBlock.appendChild(dungeonPreview);
+
+  // Emblems / Globals + Emblem Lookup
+  const emblemBlock=document.createElement("div");
+  emblemBlock.style.display="flex";
+  emblemBlock.style.flexDirection="column";
+  emblemBlock.style.gap=".5rem";
+
+  const emblemLabel=document.createElement("div");
+  emblemLabel.className="subsection-label";
+  emblemLabel.textContent="Emblems / Globals";
+
+  const emblemArea=document.createElement("textarea");
+  emblemArea.className="area-input";
+  emblemArea.placeholder="Emblems, static buffs, city-wide effects..."
+  emblemArea.value=p.emblemsText;
+  emblemArea.addEventListener("input",e=>{
+    p.emblemsText=e.target.value;
+  });
+
+  const emblemLookupRow=document.createElement("div");
+  emblemLookupRow.className="lookup-row";
+
+  const emblemCol=document.createElement("div");
+  emblemCol.className="lookup-col";
+
+  const emblemInput=document.createElement("input");
+  emblemInput.className="lookup-input";
+  emblemInput.placeholder="Lookup Emblem / Walker Ult..."
+  emblemInput.value=p.emblemLookupName;
+  emblemInput.addEventListener("input",e=>{
+    p.emblemLookupName=e.target.value;
+  });
+
+  const emblemBtn=document.createElement("button");
+  emblemBtn.className="lookup-btn";
+  emblemBtn.textContent="Lookup Emblem";
+  emblemBtn.addEventListener("click",()=>{
+    lookupEmblemForPlayer(turnIndex);
+  });
+
+  emblemCol.appendChild(emblemInput);
+  emblemCol.appendChild(emblemBtn);
+  emblemLookupRow.appendChild(emblemCol);
+
+  const emblemPreview=document.createElement("div");
+  emblemPreview.className="lookup-preview-block";
+
+  if(p.emblemPreviewText || p.emblemPreviewImg){
+    const txt=document.createElement("div");
+    txt.className="lookup-cardtext";
+    txt.textContent=p.emblemPreviewText||"";
+    emblemPreview.appendChild(txt);
+
+    if(p.emblemPreviewImg){
+      const imgWrap=document.createElement("div");
+      imgWrap.className="lookup-cardimg";
+      const im=document.createElement("img");
+      im.src=p.emblemPreviewImg;
+      im.alt="emblem";
+      imgWrap.appendChild(im);
+      emblemPreview.appendChild(imgWrap);
+    }
+  }
+
+  // TABLE-WIDE EFFECTS (Plane / Scheme)
+  const tableWideBlock=document.createElement("div");
+  tableWideBlock.style.display="flex";
+  tableWideBlock.style.flexDirection="column";
+  tableWideBlock.style.gap=".75rem";
+
+  const tableWideLabel=document.createElement("div");
+  tableWideLabel.className="subsection-label";
+  tableWideLabel.textContent="Table-Wide Effects (Planechase / Archenemy)";
+
+  // Plane row
+  const planeWrap=document.createElement("div");
+  planeWrap.style.display="flex";
+  planeWrap.style.flexDirection="column";
+  planeWrap.style.gap=".5rem";
+
+  const planeInnerRow=document.createElement("div");
+  planeInnerRow.className="lookup-row";
+
+  const planeCol=document.createElement("div");
+  planeCol.className="lookup-col";
+
+  const planeInput=document.createElement("input");
+  planeInput.className="lookup-input";
+  planeInput.placeholder="Current Plane..."
+  planeInput.value=currentPlaneName;
+  planeInput.addEventListener("input",e=>{
+    currentPlaneName=e.target.value;
+  });
+
+  const planeBtn=document.createElement("button");
+  planeBtn.className="lookup-btn";
+  planeBtn.textContent="Lookup Plane";
+  planeBtn.addEventListener("click",()=>{
+    lookupPlaneGlobal();
+  });
+
+  planeCol.appendChild(planeInput);
+  planeCol.appendChild(planeBtn);
+  planeInnerRow.appendChild(planeCol);
+
+  const planePreview=document.createElement("div");
+  planePreview.className="lookup-preview-block";
+
+  if(currentPlaneText || currentPlaneImg){
+    const t=document.createElement("div");
+    t.className="lookup-cardtext";
+    t.textContent=currentPlaneText||"";
+    planePreview.appendChild(t);
+
+    if(currentPlaneImg){
+      const imWrap=document.createElement("div");
+      imWrap.className="lookup-cardimg";
+      const im=document.createElement("img");
+      im.src=currentPlaneImg;
+      im.alt="plane";
+      imWrap.appendChild(im);
+      planePreview.appendChild(imWrap);
+    }
+  }
+
+  planeWrap.appendChild(planeInnerRow);
+  planeWrap.appendChild(planePreview);
+
+  // Scheme row
+  const schemeWrap=document.createElement("div");
+  schemeWrap.style.display="flex";
+  schemeWrap.style.flexDirection="column";
+  schemeWrap.style.gap=".5rem";
+
+  const schemeInnerRow=document.createElement("div");
+  schemeInnerRow.className="lookup-row";
+
+  const schemeCol=document.createElement("div");
+  schemeCol.className="lookup-col";
+
+  const schemeInput=document.createElement("input");
+  schemeInput.className="lookup-input";
+  schemeInput.placeholder="Current Scheme..."
+  schemeInput.value=currentSchemeName;
+  schemeInput.addEventListener("input",e=>{
+    currentSchemeName=e.target.value;
+  });
+
+  const schemeBtn=document.createElement("button");
+  schemeBtn.className="lookup-btn";
+  schemeBtn.textContent="Lookup Scheme";
+  schemeBtn.addEventListener("click",()=>{
+    lookupSchemeGlobal();
+  });
+
+  schemeCol.appendChild(schemeInput);
+  schemeCol.appendChild(schemeBtn);
+  schemeInnerRow.appendChild(schemeCol);
+
+  const schemePreview=document.createElement("div");
+  schemePreview.className="lookup-preview-block";
+
+  if(currentSchemeText || currentSchemeImg){
+    const t=document.createElement("div");
+    t.className="lookup-cardtext";
+    t.textContent=currentSchemeText||"";
+    schemePreview.appendChild(t);
+
+    if(currentSchemeImg){
+      const imWrap=document.createElement("div");
+      imWrap.className="lookup-cardimg";
+      const im=document.createElement("img");
+      im.src=currentSchemeImg;
+      im.alt="scheme";
+      imWrap.appendChild(im);
+      schemePreview.appendChild(imWrap);
+    }
+  }
+
+  schemeWrap.appendChild(schemeInnerRow);
+  schemeWrap.appendChild(schemePreview);
+
+  tableWideBlock.appendChild(tableWideLabel);
+  tableWideBlock.appendChild(planeWrap);
+  tableWideBlock.appendChild(schemeWrap);
+
+  // Assemble body
+  body.appendChild(toggleSection);
+  body.appendChild(dungeonBlock);
+  body.appendChild(emblemBlock);
+  body.appendChild(tableWideBlock);
+
+  // open/closed
+  if(accordionsOpen.statusEffects){
+    body.style.display="flex";
     chevron.textContent="▲";
   }else{
     body.style.display="none";
@@ -2736,14 +2965,73 @@ function makeAccordion(key,title,hint,fillBodyFn){
   }
 
   head.addEventListener("click",()=>{
-    accordionsOpen[key]=!accordionsOpen[key];
-    if(accordionsOpen[key]){
-      body.style.display="block";
-      chevron.textContent="▲";
-    }else{
-      body.style.display="none";
-      chevron.textContent="▼";
-    }
+    accordionsOpen.statusEffects=!accordionsOpen.statusEffects;
+    renderAccordions();
+  });
+
+  wrap.appendChild(head);
+  wrap.appendChild(body);
+  return wrap;
+}
+
+function renderNotesAccordion(){
+  const p=players[turnIndex];
+  if(!p) return null;
+
+  const wrap=document.createElement("div");
+  wrap.className="accordion-block";
+
+  const head=document.createElement("div");
+  head.className="accordion-head";
+
+  const leftSpan=document.createElement("div");
+  leftSpan.textContent="Notes / Reminders";
+
+  const rightSpan=document.createElement("div");
+  rightSpan.style.display="flex";
+  rightSpan.style.gap=".5rem";
+  rightSpan.style.alignItems="center";
+
+  const hintEl=document.createElement("div");
+  hintEl.className="hint";
+  hintEl.textContent="Goad, Skip Draw, Bounties, Politics";
+
+  const chevron=document.createElement("div");
+  chevron.style.color="var(--text-dim)";
+  chevron.style.fontSize=".8rem";
+
+  rightSpan.appendChild(hintEl);
+  rightSpan.appendChild(chevron);
+
+  const body=document.createElement("div");
+  body.className="accordion-body";
+
+  const notesLabel=document.createElement("div");
+  notesLabel.className="subsection-label";
+  notesLabel.textContent="Notes";
+
+  const notesArea=document.createElement("textarea");
+  notesArea.className="area-input";
+  notesArea.placeholder="Goaded Krenko, Skip next draw, 'don't attack me or else', etc..."
+  notesArea.value=p.notesText;
+  notesArea.addEventListener("input",e=>{
+    p.notesText=e.target.value;
+  });
+
+  body.appendChild(notesLabel);
+  body.appendChild(notesArea);
+
+  if(accordionsOpen.notes){
+    body.style.display="flex";
+    chevron.textContent="▲";
+  }else{
+    body.style.display="none";
+    chevron.textContent="▼";
+  }
+
+  head.addEventListener("click",()=>{
+    accordionsOpen.notes=!accordionsOpen.notes;
+    renderAccordions();
   });
 
   wrap.appendChild(head);
@@ -2752,15 +3040,11 @@ function makeAccordion(key,title,hint,fillBodyFn){
 }
 
 /* =========================
-   LETHAL CHECKS
+   LETHAL CHECK
 ========================= */
-
 function lethalCheck(i,source){
   const p=players[i];
   if(!p) return;
-
-  // If commander damage killed them already, they're eliminated (handled elsewhere)
-  // Otherwise:
   if(source==="life" && p.life<=0){
     knockOutToCooldown(i);
     return;
@@ -2769,22 +3053,16 @@ function lethalCheck(i,source){
     knockOutToCooldown(i);
     return;
   }
-  // "you lose the game" style effects aren't auto in UI, but could be future button.
-  // We'll include a helper call if we add that.
 }
 
 /* =========================
    ADMIN STATUS CYCLE
-   (for corrections only)
 ========================= */
-
 function cycleStatusAdmin(i){
   const p=players[i];
-  // basic correction path, not normal gameplay
   if(gameMode==="rumble"){
     // active -> cooldown -> eliminated -> active
     if(p.status==="active"){
-      // send to cooldown w/ standard calc
       knockOutToCooldown(i);
     }else if(p.status==="cooldown"){
       permanentlyEliminate(i);
@@ -2793,7 +3071,6 @@ function cycleStatusAdmin(i){
         "Manual correction."
       );
     }else{
-      // revive as active (house fix)
       p.status="active";
       p.cooldownRemaining=0;
       p.pendingEOTDraw=false;
@@ -2816,9 +3093,8 @@ function cycleStatusAdmin(i){
 }
 
 /* =========================
-   SETUP / NEW GAME / MODE SWITCH
+   SETUP / MODE / NEW GAME
 ========================= */
-
 function resetGameStateKeepMode(){
   players=[];
   turnIndex=0;
@@ -2831,10 +3107,20 @@ function resetGameStateKeepMode(){
   winnerActiveMs=0;
   otherOpen={};
 
+  currentPlaneName   ="";
+  currentPlaneText   ="";
+  currentPlaneImg    ="";
+  currentSchemeName  ="";
+  currentSchemeText  ="";
+  currentSchemeImg   ="";
+
   if(renderIntervalId){
     clearInterval(renderIntervalId);
     renderIntervalId=null;
   }
+
+  accordionsOpen.statusEffects=false;
+  accordionsOpen.notes=true;
 
   setupStepMode.style.display="none";
   setupStepPlayers.style.display="flex";
@@ -2849,10 +3135,20 @@ function showModeStep(){
   reigningCandidateTurnStamp=null;
   otherOpen={};
 
+  currentPlaneName   ="";
+  currentPlaneText   ="";
+  currentPlaneImg    ="";
+  currentSchemeName  ="";
+  currentSchemeText  ="";
+  currentSchemeImg   ="";
+
   if(renderIntervalId){
     clearInterval(renderIntervalId);
     renderIntervalId=null;
   }
+
+  accordionsOpen.statusEffects=false;
+  accordionsOpen.notes=true;
 
   setupStepMode.style.display="flex";
   setupStepPlayers.style.display="none";
@@ -2867,10 +3163,20 @@ function showPlayerCountStep(){
   reigningCandidateTurnStamp=null;
   otherOpen={};
 
+  currentPlaneName   ="";
+  currentPlaneText   ="";
+  currentPlaneImg    ="";
+  currentSchemeName  ="";
+  currentSchemeText  ="";
+  currentSchemeImg   ="";
+
   if(renderIntervalId){
     clearInterval(renderIntervalId);
     renderIntervalId=null;
   }
+
+  accordionsOpen.statusEffects=false;
+  accordionsOpen.notes=true;
 
   setupStepMode.style.display="none";
   setupStepPlayers.style.display="flex";
@@ -2914,16 +3220,24 @@ function startGameWith(nPlayers){
   winnerActiveMs=0;
   otherOpen={};
 
+  currentPlaneName   ="";
+  currentPlaneText   ="";
+  currentPlaneImg    ="";
+  currentSchemeName  ="";
+  currentSchemeText  ="";
+  currentSchemeImg   ="";
+
+  accordionsOpen.statusEffects=false;
+  accordionsOpen.notes=true;
+
   gameStartTime=Date.now();
 
   syncCommanderDamageArrays();
-  // start timing first player
   if(players[0] && players[0].status==="active"){
     startTimingPlayer(0);
   }
 
   setupOverlay.style.display="none";
-
   renderAll();
 
   if(renderIntervalId){
@@ -2937,9 +3251,8 @@ function startGameWith(nPlayers){
 }
 
 /* =========================
-   EVENT LISTENERS
+   EVENTS
 ========================= */
-
 endTurnBtn.addEventListener("click",()=>{
   passTurn();
 });
