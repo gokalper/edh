@@ -1,0 +1,37 @@
+name: Sync Gist to Repo
+
+on:
+  schedule:
+    # Run every 5 minutes to check for updates
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allow manual trigger
+  push:
+    branches:
+      - main # Trigger on push to test the workflow
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push commits
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Sync Gist to Repo
+        uses: gokalper/gist-to-repo@v1
+        with:
+          gist_token: ${{ secrets.GITHUB_TOKEN }} # Public gists only need read access
+          gist_id: 'a06b80161aee5dde67a957465516f8d5'
+          mapping_strategy: 'explicit'
+          file_mappings: |
+            {
+              "EdhRumbleTracker.html": "index.html"
+            }
+          merge_strategy: 'overwrite'
+          commit_message: 'chore: sync EdhRumbleTracker from Gist [skip ci]'
+          git_user_name: 'github-actions[bot]'
+          git_user_email: 'github-actions[bot]@users.noreply.github.com'
