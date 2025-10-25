@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER v15.1</title>
+<title>EDH RUMBLE TRACKER v15.2</title>
 <style>
   :root {
     /* DARK THEME DEFAULT */
@@ -281,7 +281,7 @@
     display:flex;
     flex-direction:column;
     overflow-y:auto;
-    padding:6.5rem .75rem 7.5rem; /* header+footer space */
+    padding:6.5rem .75rem 7.5rem;
   }
 
   /* ====== ACTIVE HUD CARD ====== */
@@ -408,7 +408,6 @@
     font-weight:600;
   }
 
-  /* Commander Tax row */
   .tax-row {
     display:flex;
     flex-wrap:wrap;
@@ -451,7 +450,6 @@
     color:var(--text-primary);
   }
 
-  /* life / counters column */
   .life-row {
     display:flex;
     align-items:center;
@@ -537,7 +535,6 @@
     color:var(--text-primary);
   }
 
-  /* END TURN BTN */
   .end-turn-btn {
     background:var(--gold);
     border:none;
@@ -553,7 +550,6 @@
     margin-bottom:.75rem;
   }
 
-  /* ====== OTHERS SECTION ====== */
   .others-card {
     background:var(--bg-panel);
     border:1px solid var(--border-soft);
@@ -640,23 +636,10 @@
     color:var(--text-primary);
   }
 
-  .cdmg-row {
+  .cdmg-section-wrap {
     display:flex;
-    flex-wrap:wrap;
-    gap:.5rem .75rem;
-    font-size:.7rem;
-    align-items:flex-end;
-  }
-  .cdmg-row input {
-    width:3rem;
-    text-align:center;
-    background:var(--bg-panel);
-    border:1px solid var(--border-soft);
-    border-radius:.4rem;
-    padding:.4rem .5rem;
-    color:var(--text-primary);
-    font-size:.8rem;
-    font-weight:600;
+    flex-direction:column;
+    gap:.5rem;
   }
   .cdmg-label {
     font-size:.6rem;
@@ -664,6 +647,43 @@
     text-transform:uppercase;
     letter-spacing:.05em;
     line-height:1.2;
+  }
+  .cdmg-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));
+    gap:.5rem .75rem;
+  }
+  .cdmg-cell {
+    background:var(--bg-panel);
+    border:1px solid var(--border-soft);
+    border-radius:.5rem;
+    padding:.5rem;
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+    font-size:.7rem;
+    min-width:0;
+  }
+  .cdmg-cell-label {
+    font-size:.65rem;
+    color:var(--text-dim);
+    line-height:1.2;
+  }
+  .cdmg-input-row {
+    display:flex;
+    gap:.5rem;
+    align-items:flex-end;
+  }
+  .cdmg-input-row input {
+    width:3rem;
+    text-align:center;
+    background:var(--bg-accent);
+    border:1px solid var(--border-soft);
+    border-radius:.4rem;
+    padding:.4rem .5rem;
+    color:var(--text-primary);
+    font-size:.8rem;
+    font-weight:600;
   }
 
   .mini-note-box {
@@ -691,7 +711,6 @@
     color:var(--text-primary);
   }
 
-  /* cooldown / status controls in Other Player */
   .status-line-other {
     font-size:.7rem;
     font-weight:600;
@@ -729,7 +748,6 @@
     line-height:1.2;
   }
 
-  /* ====== ACCORDIONS ====== */
   .accordion-block {
     background:var(--bg-panel);
     border:1px solid var(--border-soft);
@@ -852,7 +870,6 @@
     display:block;
   }
 
-  /* ====== TOOLS FOOTER (COLLAPSIBLE) ====== */
   .tools-footer-wrap {
     position:fixed;
     left:0;
@@ -1103,11 +1120,10 @@ let winnerLocked = false;
 let winnerName = "";
 let winnerTimeMs = 0;
 
-let pendingRespawnIndex = null;        // index for "Reigning Rumbler?" respawn/elim overlay
-let pendingCooldownFinishIndex = null; // index for normal cooldown-finished overlay (3-way choice)
-let pendingCooldownMode = null;        // "normalFinish" indicates this is not the Rumbler emergency
+let pendingRespawnIndex = null;
+let pendingCooldownFinishIndex = null;
+let pendingCooldownMode = null;
 
-// accordion state persistence
 let accordionsOpen = {
   statusEffects:false,
   notes:false,
@@ -1125,13 +1141,13 @@ const winnerTimeLine    = document.getElementById("winnerTimeLine");
 const winnerCloseBtn    = document.getElementById("winnerCloseBtn");
 const winnerMiniBanner  = document.getElementById("winnerMiniBanner");
 
-const respawnOverlay    = document.getElementById("respawnOverlay"); // Rumbler emergency
+const respawnOverlay    = document.getElementById("respawnOverlay");
 const respawnQuestion   = document.getElementById("respawnQuestion");
 const respawnHint       = document.getElementById("respawnHint");
 const respawnYesBtn     = document.getElementById("respawnYesBtn");
 const respawnNoBtn      = document.getElementById("respawnNoBtn");
 
-const cooldownFinishOverlay = document.getElementById("cooldownFinishOverlay"); // normal cooldown end
+const cooldownFinishOverlay = document.getElementById("cooldownFinishOverlay");
 const cooldownFinishQuestion= document.getElementById("cooldownFinishQuestion");
 const cooldownFinishHint    = document.getElementById("cooldownFinishHint");
 const cooldownRespawnBtn    = document.getElementById("cooldownRespawnBtn");
@@ -1160,7 +1176,7 @@ const rngOutput         = document.getElementById("rngOutput");
 function makePlayer(defaultName){
   return {
     name: defaultName,
-    status:"active",            // "active","cooldown","eliminated"
+    status:"active",
     cooldownRemaining:0,
 
     life:40,
@@ -1178,9 +1194,9 @@ function makePlayer(defaultName){
     emblemsText:"",
     notesText:"",
 
-    commanderTaxSteps:0,        // number of +2 bumps on commander recast
+    commanderTaxSteps:0,
 
-    commanderDamage:[],         // per attacker index
+    commanderDamage:[],
 
     lookupNameInput:"",
     lastLookupName:"",
@@ -1200,7 +1216,7 @@ function syncCommanderDamageArrays(){
   });
 }
 
-// avg life rounded DOWN (normal respawn after serving cooldown)
+// avg life rounded DOWN
 function computeRespawnLifeDown(idx){
   const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
   if(pool.length===0) return 0;
@@ -1208,8 +1224,7 @@ function computeRespawnLifeDown(idx){
   pool.forEach(pl=>{ sum+=pl.life; });
   return Math.floor(sum / pool.length);
 }
-
-// avg life rounded UP (emergency respawn to stop instant win)
+// avg life rounded UP
 function computeRespawnLifeUp(idx){
   const pool = players.filter((pl,j)=> j!==idx && pl.status!=="eliminated");
   if(pool.length===0) return 0;
@@ -1225,23 +1240,16 @@ function formatDuration(ms){
   return mins+"m "+secs+"s";
 }
 
-// fully respawn player with chosen mode (down or up)
-function fullyRespawnPlayer(i, mode /* "down" | "up" */){
+function fullyRespawnPlayer(i, mode){
   const p = players[i];
-  let newLife = 0;
-  if(mode==="up"){
-    newLife = computeRespawnLifeUp(i);
-  }else{
-    newLife = computeRespawnLifeDown(i);
-  }
+  let newLife = (mode==="up") ? computeRespawnLifeUp(i) : computeRespawnLifeDown(i);
   p.status="active";
   p.cooldownRemaining=0;
   p.poison=0;
   p.life=newLife;
-  p.commanderTaxSteps=0; // commander tax resets on respawn
+  p.commanderTaxSteps=0;
 }
 
-// permanent elimination
 function permanentlyEliminate(i){
   const p = players[i];
   p.status="eliminated";
@@ -1252,7 +1260,6 @@ function permanentlyEliminate(i){
   }
 }
 
-// lethal commander damage check
 function checkCommanderDamageElim(victimIdx){
   const p = players[victimIdx];
   for(let src=0; src<p.commanderDamage.length; src++){
@@ -1263,7 +1270,6 @@ function checkCommanderDamageElim(victimIdx){
   }
 }
 
-// list active players
 function getActivePlayers(){
   let arr=[];
   players.forEach((pl,i)=>{
@@ -1274,7 +1280,6 @@ function getActivePlayers(){
   return arr;
 }
 
-// update Reigning Candidate tracking
 function updateReigningCandidate(){
   const actives = getActivePlayers();
   if(actives.length===1){
@@ -1292,7 +1297,6 @@ function updateReigningCandidate(){
   }
 }
 
-// send player to cooldown
 function sendToCooldown(i){
   const p = players[i];
   if(p.status==="eliminated") return;
@@ -1311,7 +1315,6 @@ function sendToCooldown(i){
   }
 }
 
-// called to tick someone's cooldown when their slot "passes"
 function handleCooldownTick(i){
   const p=players[i];
   if(p.status!=="cooldown") return false;
@@ -1321,7 +1324,6 @@ function handleCooldownTick(i){
   }
 
   if(p.cooldownRemaining<=0){
-    // cooldown just ended for this player
     pendingCooldownFinishIndex = i;
     pendingCooldownMode = "normalFinish";
     showCooldownFinishOverlay(i);
@@ -1331,21 +1333,18 @@ function handleCooldownTick(i){
 }
 
 /* =========================
-   COOLDOWN FINISH PROMPT (normal)
+   COOLDOWN FINISH PROMPT
 ========================= */
 function showCooldownFinishOverlay(idx){
   const pl = players[idx];
   const nm = pl.name || ("Player "+(idx+1));
   cooldownFinishQuestion.textContent = nm+"'s cooldown finished. What happens?";
-
   cooldownFinishOverlay.style.display="flex";
 }
 
-// button: Respawn (normal DOWN life)
 cooldownRespawnBtn.addEventListener("click",()=>{
   if(pendingCooldownFinishIndex!==null){
-    fullyRespawnPlayer(pendingCooldownFinishIndex,"down"); // normal re-entry
-    // they are active again, so throne might be contested
+    fullyRespawnPlayer(pendingCooldownFinishIndex,"down");
     reigningCandidateIndex=null;
     reigningCandidateTurnStamp=null;
   }
@@ -1354,8 +1353,6 @@ cooldownRespawnBtn.addEventListener("click",()=>{
   cooldownFinishOverlay.style.display="none";
   renderAll();
 });
-
-// button: Keep Cooling (stay out, CD -> 1)
 cooldownKeepBtn.addEventListener("click",()=>{
   if(pendingCooldownFinishIndex!==null){
     const p = players[pendingCooldownFinishIndex];
@@ -1367,8 +1364,6 @@ cooldownKeepBtn.addEventListener("click",()=>{
   cooldownFinishOverlay.style.display="none";
   renderAll();
 });
-
-// button: Eliminate forever
 cooldownElimBtn.addEventListener("click",()=>{
   if(pendingCooldownFinishIndex!==null){
     permanentlyEliminate(pendingCooldownFinishIndex);
@@ -1380,12 +1375,11 @@ cooldownElimBtn.addEventListener("click",()=>{
 });
 
 /* =========================
-   REIGNING RUMBLER RESPAWN PROMPT (emergency before win)
+   REIGNING RUMBLER PROMPT
 ========================= */
 function maybeOfferRespawnBeforeWin(){
   if(winnerLocked) return false;
 
-  // find cooldown players still out
   const cooling = players
     .map((pl,i)=>({pl,i}))
     .filter(obj=>obj.pl.status==="cooldown");
@@ -1394,7 +1388,6 @@ function maybeOfferRespawnBeforeWin(){
     return false;
   }
 
-  // Offer first one at a time
   pendingRespawnIndex = cooling[0].i;
   showRespawnOverlay(pendingRespawnIndex);
   return true;
@@ -1408,11 +1401,9 @@ function showRespawnOverlay(idx){
   respawnOverlay.style.display="flex";
 }
 
-// YES emergency respawn (rounded UP life)
 respawnYesBtn.addEventListener("click",()=>{
   if(pendingRespawnIndex!==null){
-    fullyRespawnPlayer(pendingRespawnIndex,"up"); // emergency heroic return
-    // Now there's >1 active, so no instant win
+    fullyRespawnPlayer(pendingRespawnIndex,"up");
     reigningCandidateIndex=null;
     reigningCandidateTurnStamp=null;
   }
@@ -1420,8 +1411,6 @@ respawnYesBtn.addEventListener("click",()=>{
   respawnOverlay.style.display="none";
   renderAll();
 });
-
-// NO eliminate them forever
 respawnNoBtn.addEventListener("click",()=>{
   if(pendingRespawnIndex!==null){
     permanentlyEliminate(pendingRespawnIndex);
@@ -1450,13 +1439,11 @@ function checkForWinBeforeAdvance(){
     return false;
   }
 
-  // Before win, we allow cooldown players to emergency-respawn
   const offered = maybeOfferRespawnBeforeWin();
   if(offered){
     return false;
   }
 
-  // nobody to save the game -> crown winner
   winnerLocked = true;
   winnerName = players[onlyIdx].name || ("Player "+(onlyIdx+1));
   winnerTimeMs = Date.now() - gameStartTime;
@@ -1476,40 +1463,33 @@ winnerCloseBtn.addEventListener("click",()=>{
   winnerOverlay.style.display="none";
 });
 
-/* turn passing */
 function passTurn(){
   if(winnerLocked){
     renderAll();
     return;
   }
 
-  // check if current board state gives a winner (will show Rumbler prompt if needed)
   const didWin = checkForWinBeforeAdvance();
   if(didWin){
     renderAll();
     return;
   }
 
-  // rotate turn index
   let safety=0;
   do{
     turnIndex = (turnIndex+1)%players.length;
     const pl = players[turnIndex];
 
     if(pl.status==="eliminated"){
-      // skip eliminated
+      // skip
     } else if(pl.status==="cooldown"){
-      // tick their cooldown and possibly ask "Cooldown Finished?"
-      const triggeredPrompt = handleCooldownTick(turnIndex);
-      if(triggeredPrompt){
-        // we surfaced cooldownFinishOverlay.
-        // break here to decide their fate.
+      const triggered = handleCooldownTick(turnIndex);
+      if(triggered){
         break;
       } else {
-        // still cooling, keep skipping
+        // still cooling, skip
       }
     } else {
-      // active, we actually land here
       break;
     }
 
@@ -1665,7 +1645,6 @@ async function doLookup(idx){
       }
     }
 
-    // keep accordionsOpen.lookup as-is so it stays open
     renderAll();
   }catch(e){
     p.lastLookupName   = rawName.trim();
@@ -1695,13 +1674,11 @@ function renderAll(){
   }
 }
 
-// Glow color per seat
 function getSeatColor(i){
   const cols=["var(--gold)","var(--cyan)","var(--magenta)","var(--lime)"];
   return cols[i % cols.length];
 }
 
-/* ----- HUD RENDER ----- */
 function renderHUD(){
   hudArea.innerHTML="";
   const p = players[turnIndex];
@@ -1715,7 +1692,6 @@ function renderHUD(){
   const topRow = document.createElement("div");
   topRow.className="hud-top-row";
 
-  // LEFT COL
   const leftCol = document.createElement("div");
   leftCol.className="hud-col";
 
@@ -1729,7 +1705,6 @@ function renderHUD(){
   const nmInput = document.createElement("input");
   nmInput.className="text-input";
   nmInput.value=p.name;
-  // new behavior: update live but don't re-render until blur / enter
   nmInput.addEventListener("input",e=>{
     p.name=e.target.value;
   });
@@ -1739,14 +1714,13 @@ function renderHUD(){
   nmInput.addEventListener("keydown",ev=>{
     if(ev.key==="Enter"){
       ev.preventDefault();
-      nmInput.blur(); // triggers renderAll after final name chosen
+      nmInput.blur();
     }
   });
 
   const statRow = document.createElement("div");
   statRow.className="tiny-row";
 
-  // status chip
   const statusPill = document.createElement("div");
   statusPill.className="status-chip "+(
     p.status==="active"    ? "status-active" :
@@ -1763,7 +1737,6 @@ function renderHUD(){
   });
   statRow.appendChild(statusPill);
 
-  // If cooling, show cooldownRemaining edit
   if(p.status==="cooldown"){
     const cdWrap = document.createElement("div");
     cdWrap.className="cooldown-box-inline";
@@ -1772,7 +1745,6 @@ function renderHUD(){
     cdLab.className="cd-label";
     cdLab.textContent="CD:";
 
-    // stepper for cooldownRemaining
     const cdStepper = document.createElement("div");
     cdStepper.className="mini-step-row";
 
@@ -1803,7 +1775,6 @@ function renderHUD(){
     statRow.appendChild(cdWrap);
   }
 
-  // Commander Tax row
   const taxRow = document.createElement("div");
   taxRow.className="tax-row";
 
@@ -1848,7 +1819,6 @@ function renderHUD(){
 
   leftCol.appendChild(nameBlock);
 
-  // RIGHT COL
   const rightCol = document.createElement("div");
   rightCol.className="hud-col";
 
@@ -1868,7 +1838,6 @@ function renderHUD(){
   minusBtn.addEventListener("click",()=>{
     p.life = p.life-1;
     if(p.life<=0){
-      // Knockout if they hit 0 or below
       sendToCooldown(turnIndex);
     }
     renderAll();
@@ -1973,7 +1942,6 @@ function makeMiniStepperBox(labelText,val,onSet){
   return wrap;
 }
 
-/* ----- OTHERS RENDER ----- */
 function renderOthers(){
   othersArea.innerHTML="";
   const wrap = document.createElement("div");
@@ -2003,7 +1971,6 @@ function renderOthers(){
     const body = document.createElement("div");
     body.className="other-player-body";
 
-    // status / cooldown controls
     const statusLine=document.createElement("div");
     statusLine.className="status-line-other";
 
@@ -2011,7 +1978,6 @@ function renderOthers(){
     statusText.textContent="Status: "+pl.status.toUpperCase();
     statusLine.appendChild(statusText);
 
-    // if ACTIVE, allow Knock Out → Cooldown
     if(pl.status==="active"){
       const koBtn=document.createElement("div");
       koBtn.className="cool-btn-inline";
@@ -2023,7 +1989,6 @@ function renderOthers(){
       statusLine.appendChild(koBtn);
     }
 
-    // if COOLDOWN, show cooldownRemaining stepper & also allow force eliminate or quick respawn-down
     if(pl.status==="cooldown"){
       const cdWrap = document.createElement("div");
       cdWrap.className="cool-row-inline";
@@ -2065,7 +2030,6 @@ function renderOthers(){
       statusLine.appendChild(cdWrap);
     }
 
-    // build life editor for them
     const lifeCol = document.createElement("div");
     lifeCol.className="mini-col";
 
@@ -2104,7 +2068,6 @@ function renderOthers(){
     lifeCol.appendChild(lifeLab);
     lifeCol.appendChild(lifeRow);
 
-    // poison / rad / exp / storm steppers for them
     const debuffRow = document.createElement("div");
     debuffRow.className="mini-row";
 
@@ -2128,33 +2091,51 @@ function renderOthers(){
       renderAll();
     }));
 
-    // commander damage (current player → them)
+    // Commander damage grid (ALL sources)
     const cdmgWrap = document.createElement("div");
-    cdmgWrap.className="mini-col";
+    cdmgWrap.className="cdmg-section-wrap";
+
     const cdmgLab = document.createElement("div");
     cdmgLab.className="cdmg-label";
-    cdmgLab.textContent="Cmdr Dmg FROM "+(players[turnIndex].name||("P"+(turnIndex+1)))+" → "+nm+" (21 = elim)";
+    cdmgLab.textContent="Commander Damage Taken by "+nm+" (21 from any 1 source = elim)";
+    cdmgWrap.appendChild(cdmgLab);
 
-    const cdmgRow = document.createElement("div");
-    cdmgRow.className="cdmg-row";
+    const cdmgGrid = document.createElement("div");
+    cdmgGrid.className="cdmg-grid";
 
-    const dmgIn = document.createElement("input");
-    dmgIn.type="number";
-    dmgIn.min="0";
-    dmgIn.value=pl.commanderDamage[turnIndex] || 0;
-    dmgIn.addEventListener("input",e=>{
-      let v=parseInt(e.target.value,10);
-      if(isNaN(v)||v<0)v=0;
-      pl.commanderDamage[turnIndex]=v;
-      checkCommanderDamageElim(i);
-      renderAll();
+    players.forEach((srcPlayer,srcIdx)=>{
+      const srcName = srcPlayer.name || ("P"+(srcIdx+1));
+      const cell = document.createElement("div");
+      cell.className="cdmg-cell";
+
+      const cellLabel = document.createElement("div");
+      cellLabel.className="cdmg-cell-label";
+      cellLabel.textContent="from "+srcName;
+
+      const inputRow = document.createElement("div");
+      inputRow.className="cdmg-input-row";
+
+      const dmgIn = document.createElement("input");
+      dmgIn.type="number";
+      dmgIn.min="0";
+      dmgIn.value = pl.commanderDamage[srcIdx] || 0;
+
+      dmgIn.addEventListener("input",e=>{
+        let v=parseInt(e.target.value,10);
+        if(isNaN(v)||v<0)v=0;
+        pl.commanderDamage[srcIdx]=v;
+        checkCommanderDamageElim(i);
+        renderAll();
+      });
+
+      inputRow.appendChild(dmgIn);
+      cell.appendChild(cellLabel);
+      cell.appendChild(inputRow);
+      cdmgGrid.appendChild(cell);
     });
 
-    cdmgRow.appendChild(dmgIn);
-    cdmgWrap.appendChild(cdmgLab);
-    cdmgWrap.appendChild(cdmgRow);
+    cdmgWrap.appendChild(cdmgGrid);
 
-    // notes for that player
     const miniNote = document.createElement("div");
     miniNote.className="mini-note-box";
     const mnLab = document.createElement("div");
@@ -2236,12 +2217,10 @@ function smallStepperBox(labelText,val,onSet){
   return box;
 }
 
-/* ----- ACCORDIONS RENDER ----- */
 function renderAccordions(){
   accordionsArea.innerHTML="";
   const p = players[turnIndex];
 
-  // 1. Status Effects / Titles
   const acc1 = makeAccordion(
     "statusEffects",
     "Status Effects / Titles",
@@ -2293,7 +2272,6 @@ function renderAccordions(){
     }
   );
 
-  // 2. Notes / Reminders
   const acc2 = makeAccordion(
     "notes",
     "Notes / Reminders",
@@ -2315,7 +2293,6 @@ function renderAccordions(){
     }
   );
 
-  // 3. Card Lookup (Scryfall)
   const acc3 = makeAccordion(
     "lookup",
     "Card Lookup (Scryfall)",
@@ -2388,7 +2365,6 @@ function makeToggleChip(label,active,onToggle){
   return chip;
 }
 
-// Make accordion w/ persistent open state
 function makeAccordion(key,title,hint,fillBodyFn){
   const wrap=document.createElement("div");
   wrap.className="accordion-block";
@@ -2423,7 +2399,6 @@ function makeAccordion(key,title,hint,fillBodyFn){
 
   fillBodyFn(body);
 
-  // initial open/close from accordionsOpen
   if(accordionsOpen[key]){
     body.style.display="block";
     chevron.textContent="▲";
@@ -2450,12 +2425,11 @@ function makeAccordion(key,title,hint,fillBodyFn){
 }
 
 /* =========================
-   STATUS CYCLER / CD ADJUST
+   STATUS / COOLDOWN ADJUST
 ========================= */
 function cycleStatus(i){
   const p=players[i];
   if(p.status==="active"){
-    // go to cooldown
     let othersCooling=0;
     players.forEach((q,qi)=>{
       if(qi!==i && q.status==="cooldown") othersCooling++;
@@ -2463,10 +2437,8 @@ function cycleStatus(i){
     p.status="cooldown";
     p.cooldownRemaining=1+othersCooling;
   } else if(p.status==="cooldown"){
-    // go eliminated
     permanentlyEliminate(i);
   } else {
-    // eliminated -> back active (table correction)
     p.status="active";
     p.cooldownRemaining=0;
     if(p.life<1){ p.life=1; }
@@ -2475,9 +2447,6 @@ function cycleStatus(i){
   renderAll();
 }
 
-// adjust cooldownRemaining from HUD or Others panel
-// if "fromSelfHUD" is true, we are editing the currently active player's HUD
-// this path shouldn't instantly prompt cooldown-finish unless CD hits 0.
 function adjustCooldownRemaining(i,delta,fromSelfHUD){
   const p=players[i];
   if(p.status!=="cooldown") return;
@@ -2486,7 +2455,6 @@ function adjustCooldownRemaining(i,delta,fromSelfHUD){
   if(p.cooldownRemaining<0) p.cooldownRemaining=0;
 
   if(p.cooldownRemaining===0){
-    // cooldown done right now → show normal cooldown finish prompt.
     pendingCooldownFinishIndex = i;
     pendingCooldownMode = "normalFinish";
     showCooldownFinishOverlay(i);
