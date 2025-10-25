@@ -3,35 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER</title>
+<title>EDH RUMBLE TRACKER v0.9.6</title>
 <style>
-/* THEME VARS */
+/* =========================================================
+   THEME VARIABLES
+   ========================================================= */
 :root {
-  --bg-main:#0f0f12;
-  --bg-panel:#1a1a22;
-  --bg-accent:#2a2a36;
-  --border-soft:#3a3a4f;
-
-  --text-primary:#f5f5fa;
-  --text-dim:#8a8aa5;
-
-  --gold:#d4a94f;
-  --cyan:#5fd8d8;
-  --magenta:#ff4acb;
-  --lime:#5fd85f;
-  --red:#d85f5f;
-  --off:#55556e;
-
-  --button-bg:#2a2a36;
-  --button-border:#3a3a4f;
-
-  --overlay-bg:rgba(0,0,0,0.8);
-
-  --tool-bg:#1a1a22;
-  --tool-border:#3a3a4f;
-}
-
-.theme-light {
   --bg-main:#ffffff;
   --bg-panel:#ffffff;
   --bg-accent:#f4f4fa;
@@ -54,6 +31,31 @@
 
   --tool-bg:#ffffff;
   --tool-border:#bfbfd4;
+}
+
+.theme-dark {
+  --bg-main:#0f0f12;
+  --bg-panel:#1a1a22;
+  --bg-accent:#2a2a36;
+  --border-soft:#3a3a4f;
+
+  --text-primary:#f5f5fa;
+  --text-dim:#8a8aa5;
+
+  --gold:#d4a94f;
+  --cyan:#5fd8d8;
+  --magenta:#ff4acb;
+  --lime:#5fd85f;
+  --red:#d85f5f;
+  --off:#55556e;
+
+  --button-bg:#2a2a36;
+  --button-border:#3a3a4f;
+
+  --overlay-bg:rgba(0,0,0,0.8);
+
+  --tool-bg:#1a1a22;
+  --tool-border:#3a3a4f;
 }
 
 .theme-neon {
@@ -81,7 +83,9 @@
   --tool-border:#4a4aff;
 }
 
-/* BASE */
+/* =========================================================
+   BASE GLOBAL
+   ========================================================= */
 *{
   box-sizing:border-box;
   font-family:system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -99,9 +103,12 @@ button{
 }
 input, textarea, select, button {
   font-family:inherit;
+  color:var(--text-primary);
 }
 
-/* APP SHELL */
+/* =========================================================
+   APP SHELL / LAYOUT
+   ========================================================= */
 .app-shell{
   width:100%;
   max-width:480px;
@@ -112,7 +119,7 @@ input, textarea, select, button {
   position:relative;
 }
 
-/* STICKY HEADER */
+/* Sticky header */
 .top-header{
   position:sticky;
   top:0;
@@ -153,7 +160,7 @@ input, textarea, select, button {
   letter-spacing:.05em;
 }
 
-/* CONTENT */
+/* Scrollable main content */
 .content-area{
   flex:1;
   overflow-y:auto;
@@ -163,16 +170,22 @@ input, textarea, select, button {
   gap:.75rem;
 }
 
-/* HUD CARD */
+/* =========================================================
+   HUD CARD (ACTIVE PLAYER PANEL)
+   ========================================================= */
 .hud-card{
   background:var(--bg-panel);
-  border:1px solid var(--border-soft);
+  border:2px solid var(--border-soft);
   border-radius:.75rem;
-  box-shadow:0 20px 40px rgba(0,0,0,.7);
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
   padding:.75rem;
   display:flex;
   flex-direction:column;
-  gap:.5rem;
+  gap:.75rem;
+}
+.hud-card.glow-border{
+  /* border color is set inline via JS based on seat */
+  box-shadow:0 0 20px rgba(0,0,0,.15),0 30px 60px rgba(0,0,0,.2);
 }
 .hud-top-row{
   display:flex;
@@ -185,30 +198,24 @@ input, textarea, select, button {
   min-width:0;
   display:flex;
   flex-direction:column;
-  gap:.5rem;
+  gap:.75rem;
 }
+
+/* Section blocks */
 .section-block-inline{
   background:var(--bg-accent);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.6rem;
+  padding:.6rem .6rem .6rem;
   display:flex;
   flex-direction:column;
-  gap:.5rem;
+  gap:.6rem;
 }
-.respawn-draw-banner{
-  background:rgba(212,169,79,.07);
-  border:1px solid var(--gold);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
-  font-size:.7rem;
-  font-weight:600;
-  line-height:1.3;
-  color:var(--gold);
-}
+
+/* Labels, Inputs */
 .label-sm{
   font-size:.6rem;
-  font-weight:500;
+  font-weight:600;
   color:var(--text-dim);
   text-transform:uppercase;
   letter-spacing:.05em;
@@ -221,13 +228,16 @@ input, textarea, select, button {
   color:var(--text-primary);
   font-size:.8rem;
   line-height:1.3;
-  padding:.45rem .5rem;
+  padding:.5rem .6rem;
   min-width:5rem;
   font-weight:600;
   width:100%;
 }
+.text-input:focus{
+  outline:2px solid var(--border-soft);
+}
 
-/* STATUS/TIMERS */
+/* STATUS / COOLDOWN / TIMERS */
 .tiny-col-stack{
   display:flex;
   flex-direction:column;
@@ -236,17 +246,19 @@ input, textarea, select, button {
 .tiny-row{
   display:flex;
   flex-wrap:wrap;
-  align-items:center;
-  gap:.5rem .75rem;
+  align-items:flex-start;
+  gap:.6rem .75rem;
   font-size:.7rem;
 }
+
+/* status chip */
 .status-chip{
   border-radius:.5rem;
-  padding:.5rem;
+  padding:.5rem .6rem;
   text-align:center;
   font-size:.7rem;
-  font-weight:600;
-  line-height:1.3;
+  font-weight:700;
+  line-height:1.2;
   border:1px solid;
   cursor:pointer;
   min-width:5.5rem;
@@ -254,18 +266,20 @@ input, textarea, select, button {
 .status-active{
   color:var(--lime);
   border-color:var(--lime);
-  background:rgba(95,216,95,.07);
+  background:rgba(44,255,44,.08);
 }
 .status-cooldown{
   color:var(--red);
   border-color:var(--red);
-  background:rgba(216,95,95,.08);
+  background:rgba(255,44,44,.08);
 }
 .status-elim{
   color:var(--off);
   border-color:var(--off);
-  background:rgba(85,85,110,.15);
+  background:rgba(85,85,110,.12);
 }
+
+/* cooldown inline */
 .cd-info-inline{
   display:flex;
   flex-wrap:wrap;
@@ -277,6 +291,7 @@ input, textarea, select, button {
   color:var(--text-dim);
   text-transform:uppercase;
   letter-spacing:.05em;
+  line-height:1.2;
 }
 .cd-val-box{
   min-width:2rem;
@@ -291,7 +306,7 @@ input, textarea, select, button {
   color:var(--text-primary);
 }
 
-/* TIMERS */
+/* timers row */
 .timer-row{
   display:flex;
   flex-wrap:wrap;
@@ -318,11 +333,68 @@ input, textarea, select, button {
   min-width:3.5rem;
 }
 
-/* VITALS */
+/* commander tax */
+.tax-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  gap:.5rem .75rem;
+  font-size:.7rem;
+}
+.tax-label{
+  font-size:.6rem;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  line-height:1.2;
+}
+.tax-ctrl{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+.tax-btn{
+  background:var(--button-bg);
+  border:1px solid var(--button-border);
+  border-radius:.5rem;
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1;
+  padding:.45rem .65rem;
+  min-width:2rem;
+  text-align:center;
+  color:var(--text-primary);
+}
+.tax-val{
+  min-width:2.5rem;
+  text-align:center;
+  font-size:.9rem;
+  font-weight:700;
+  border:1px solid var(--border-soft);
+  background:var(--bg-panel);
+  border-radius:.5rem;
+  padding:.4rem .6rem;
+  color:var(--text-primary);
+}
+
+/* respawn reminder */
+.respawn-draw-banner{
+  background:rgba(212,169,79,.07);
+  border:1px solid var(--gold);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
+  font-size:.7rem;
+  font-weight:600;
+  line-height:1.3;
+  color:var(--gold);
+}
+
+/* LIFE + COUNTERS */
 .vitalsBlock .life-row{
   display:flex;
   align-items:center;
   gap:.5rem;
+  flex-wrap:wrap;
 }
 .life-btn{
   background:var(--button-bg);
@@ -331,7 +403,7 @@ input, textarea, select, button {
   font-size:1rem;
   font-weight:700;
   line-height:1;
-  padding:.4rem .6rem;
+  padding:.5rem .7rem;
   min-width:2.2rem;
   text-align:center;
   color:var(--text-primary);
@@ -345,59 +417,60 @@ input, textarea, select, button {
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.4rem .6rem;
+  padding:.5rem .7rem;
   line-height:1.2;
 }
+
+/* mini counters grid */
 .mini-counters-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(min(100px,100%),1fr));
-  gap:.5rem;
+  grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));
+  gap:.75rem;
 }
-.mini-counter-box{
-  background:var(--bg-accent);
+.sub-box{
+  background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.5rem;
+  padding:.6rem;
   display:flex;
   flex-direction:column;
-  align-items:center;
-  gap:.4rem;
-  font-size:.7rem;
-  text-align:center;
+  gap:.5rem;
 }
-.mini-counter-label{
-  font-size:.65rem;
-  line-height:1.2;
-  color:var(--text-dim);
-}
-.mini-step-row{
+.sub-box-label{
+  font-size:.75rem;
+  font-weight:600;
+  color:var(--text-primary);
   display:flex;
   align-items:center;
   gap:.4rem;
-  font-size:.8rem;
-  font-weight:600;
+}
+.sub-box-step-row{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex-wrap:wrap;
 }
 .step-btn{
   background:var(--button-bg);
   border:1px solid var(--button-border);
   border-radius:.5rem;
-  font-size:.8rem;
+  font-size:.9rem;
   font-weight:700;
   line-height:1;
-  padding:.4rem .6rem;
-  min-width:2rem;
+  padding:.45rem .65rem;
+  min-width:2.1rem;
   text-align:center;
   color:var(--text-primary);
 }
 .step-val{
   min-width:2.5rem;
   text-align:center;
-  font-size:.9rem;
+  font-size:1rem;
   font-weight:700;
   border:1px solid var(--border-soft);
   background:var(--bg-panel);
   border-radius:.5rem;
-  padding:.4rem .5rem;
+  padding:.45rem .6rem;
   line-height:1.2;
   color:var(--text-primary);
 }
@@ -407,117 +480,143 @@ input, textarea, select, button {
   background:var(--gold);
   border:none;
   border-radius:.5rem;
-  padding:.8rem .9rem;
-  font-size:clamp(.8rem,.5rem + .5vw,.9rem);
+  padding:.9rem .9rem;
+  font-size:clamp(.8rem,.5rem + .5vw,.95rem);
   font-weight:700;
   color:#000;
   text-align:center;
-  box-shadow:0 10px 20px rgba(0,0,0,.6);
+  box-shadow:0 10px 20px rgba(0,0,0,.2);
   width:100%;
 }
 
-/* OTHERS */
-.others-card{
+/* =========================================================
+   OTHER PLAYERS / ACCORDIONS
+   ========================================================= */
+.section-frame{
   background:var(--bg-panel);
-  border:1px solid var(--border-soft);
+  border:2px solid var(--border-soft);
   border-radius:.75rem;
   padding:.75rem;
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
   display:flex;
   flex-direction:column;
+  gap:.75rem;
+}
+.section-header-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
   gap:.5rem;
 }
-.other-header{
-  font-size:.75rem;
-  font-weight:600;
+.section-header-title{
+  font-size:.8rem;
+  font-weight:700;
   color:var(--text-primary);
   text-transform:uppercase;
   letter-spacing:.05em;
 }
+
 .other-player-block{
   background:var(--bg-accent);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
   overflow:hidden;
 }
-.other-player-top{
+.other-top-row{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:.6rem .75rem;
+  cursor:pointer;
+  padding:.75rem .75rem;
+  color:var(--text-primary);
+  font-size:.8rem;
+  font-weight:600;
+}
+.other-top-left{
+  display:flex;
+  flex-direction:column;
+  line-height:1.3;
+}
+.other-top-name{
   font-size:.8rem;
   font-weight:600;
   color:var(--text-primary);
-  cursor:pointer;
 }
-.other-expand-indicator{
+.other-top-subline{
+  font-size:.7rem;
+  color:var(--text-dim);
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem .75rem;
+  align-items:center;
+}
+.other-chevron{
   font-size:.8rem;
   color:var(--text-dim);
   font-weight:400;
 }
-.other-player-body{
-  border-top:1px solid var(--border-soft);
-  padding:.75rem;
+
+.other-body{
   display:none;
+  padding:.75rem;
+  border-top:1px solid var(--border-soft);
+  font-size:.75rem;
+  color:var(--text-primary);
+  line-height:1.4;
+  display:flex;
   flex-direction:column;
   gap:.75rem;
-  font-size:.75rem;
 }
-.status-line-other{
-  font-size:.7rem;
-  font-weight:600;
+
+.inline-row-wrap{
   display:flex;
   flex-wrap:wrap;
-  gap:.5rem .75rem;
-  align-items:center;
+  align-items:flex-start;
+  gap:.75rem;
+  font-size:.7rem;
 }
-.life-edit-inline{
+
+.inline-col{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  min-width:min(160px,100%);
+  flex:1 1 160px;
+}
+.inline-col-label{
+  font-size:.6rem;
+  font-weight:600;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.inline-life-row{
   display:flex;
   align-items:center;
   gap:.5rem;
+  flex-wrap:wrap;
 }
-.life-inline-btn{
-  background:var(--button-bg);
-  border:1px solid var(--button-border);
-  border-radius:.5rem;
-  font-size:.8rem;
-  font-weight:600;
-  line-height:1;
-  padding:.4rem .6rem;
-  min-width:2rem;
-  text-align:center;
-  color:var(--text-primary);
-}
-.life-inline-val{
+.inline-life-val{
   min-width:2.5rem;
   text-align:center;
   font-size:.9rem;
   font-weight:700;
-  border:1px solid var(--border-soft);
   background:var(--bg-panel);
+  border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.4rem .5rem;
-  color:var(--text-primary);
-}
-.mini-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem .75rem;
-  align-items:flex-start;
-}
-.mini-col{
-  display:flex;
-  flex-direction:column;
-  gap:.4rem;
+  padding:.4rem .6rem;
 }
 
-/* COMMANDER DAMAGE GRID */
-.cdmg-section-wrap{
+/* commander dmg grid */
+.cdmg-wrap{
   display:flex;
   flex-direction:column;
   gap:.5rem;
 }
-.cdmg-label{
+.cdmg-head{
   font-size:.6rem;
+  font-weight:600;
   color:var(--text-dim);
   text-transform:uppercase;
   letter-spacing:.05em;
@@ -543,11 +642,6 @@ input, textarea, select, button {
   color:var(--text-dim);
   line-height:1.2;
 }
-.cdmg-input-row{
-  display:flex;
-  gap:.5rem;
-  align-items:flex-end;
-}
 .cdmg-input-row input{
   width:3rem;
   text-align:center;
@@ -560,177 +654,24 @@ input, textarea, select, button {
   font-weight:600;
 }
 
-/* PLAYER NOTE IN OTHERS */
-.mini-note-box{
-  display:flex;
-  flex-direction:column;
-  gap:.4rem;
-  width:100%;
-}
-.mini-note-label{
-  font-size:.6rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:.05em;
-}
-.mini-area-input{
-  width:100%;
-  min-height:2rem;
-  resize:vertical;
-  font-size:.7rem;
-  padding:.5rem .6rem;
-  line-height:1.3;
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  color:var(--text-primary);
-}
-
-/* ACCORDIONS (Status Effects / Notes) */
-.accordion-block{
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.75rem;
-  overflow:hidden;
-}
-.accordion-head{
-  background:var(--bg-accent);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:.6rem .75rem;
-  cursor:pointer;
-  font-size:.75rem;
-  font-weight:600;
-  color:var(--text-primary);
-  letter-spacing:.05em;
-}
-.accordion-head .hint{
-  color:var(--text-dim);
-  font-size:.6rem;
-  font-weight:400;
-  margin-left:.5rem;
-}
-.accordion-body{
-  border-top:1px solid var(--border-soft);
-  padding:.75rem;
-  display:none;
-  font-size:.75rem;
-  color:var(--text-primary);
-  line-height:1.4;
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-}
-.row-flex{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem .5rem;
-}
-.toggle-chip{
+/* notes accordion */
+.notes-area{
   background:var(--bg-accent);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.4rem .5rem;
-  font-size:.7rem;
-  color:var(--text-primary);
-  text-align:center;
-  cursor:pointer;
-}
-.toggle-chip.active{
-  box-shadow:0 0 10px var(--magenta);
-  border-color:var(--text-dim);
-  font-weight:600;
-}
-.subsection-label{
-  font-size:.6rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  line-height:1.2;
-}
-.area-input{
-  background:var(--bg-accent);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
+  padding:.6rem .6rem;
   width:100%;
   min-height:3rem;
   resize:vertical;
-  font-size:.7rem;
+  font-size:.75rem;
+  line-height:1.3;
+  color:var(--text-primary);
   font-weight:400;
-  color:var(--text-primary);
-  line-height:1.3;
-}
-.lookup-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
-  align-items:flex-end;
-}
-.lookup-col{
-  flex:1;
-  min-width:8rem;
-  display:flex;
-  flex-direction:column;
-  gap:.4rem;
-}
-.lookup-input{
-  width:100%;
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  color:var(--text-primary);
-  font-size:.8rem;
-  line-height:1.3;
-  padding:.45rem .5rem;
-  font-weight:600;
-}
-.lookup-btn{
-  background:var(--button-bg);
-  border:1px solid var(--button-border);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
-  font-size:.7rem;
-  font-weight:600;
-  color:var(--text-primary);
-  text-align:center;
-  min-width:5rem;
-}
-.lookup-preview-block{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.75rem;
-  font-size:.7rem;
-  line-height:1.3;
-  color:var(--text-primary);
-}
-.lookup-cardtext{
-  flex:2;
-  min-width:10rem;
-  white-space:pre-line;
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
-}
-.lookup-cardimg{
-  flex:1;
-  min-width:6rem;
-  max-width:140px;
-  border-radius:.5rem;
-  border:1px solid var(--border-soft);
-  background:var(--bg-panel);
-  overflow:hidden;
-  align-self:flex-start;
-}
-.lookup-cardimg img{
-  width:100%;
-  height:auto;
-  display:block;
 }
 
-/* FOOTER / TOOLS DOCK */
+/* =========================================================
+   TOOLS DOCK
+   ========================================================= */
 .tools-footer-wrap{
   position:sticky;
   bottom:0;
@@ -744,10 +685,10 @@ input, textarea, select, button {
   border:none;
   text-align:center;
   color:var(--text-primary);
-  font-size:.75rem;
+  font-size:.8rem;
   font-weight:600;
   letter-spacing:.05em;
-  padding:.6rem .75rem;
+  padding:.7rem .75rem;
 }
 .tools-panel{
   border-top:1px solid var(--tool-border);
@@ -756,7 +697,7 @@ input, textarea, select, button {
   font-size:.75rem;
   color:var(--text-primary);
   background:var(--tool-bg);
-  max-height:50vh;
+  max-height:60vh;
   overflow-y:auto;
 }
 .tools-grid{
@@ -771,14 +712,23 @@ input, textarea, select, button {
   padding:.6rem;
   display:flex;
   flex-direction:column;
-  gap:.5rem;
+  gap:.6rem;
 }
 .tool-title{
   font-size:.65rem;
-  font-weight:500;
+  font-weight:600;
   color:var(--text-dim);
   text-transform:uppercase;
   letter-spacing:.05em;
+}
+.theme-select{
+  background:var(--bg-panel);
+  border:1px solid var(--border-soft);
+  border-radius:.5rem;
+  padding:.5rem .6rem;
+  font-size:.8rem;
+  color:var(--text-primary);
+  width:100%;
 }
 .rng-row{
   display:flex;
@@ -805,36 +755,66 @@ input, textarea, select, button {
   color:var(--gold);
   word-break:break-word;
 }
-.theme-select{
-  background:var(--bg-panel);
-  border:1px solid var(--border-soft);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
-  font-size:.8rem;
-  color:var(--text-primary);
-  width:100%;
+.lookup-col{
+  flex:1;
+  min-width:8rem;
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
 }
-.global-cardtext{
+.lookup-input{
+  width:100%;
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
+  color:var(--text-primary);
+  font-size:.8rem;
+  line-height:1.3;
   padding:.5rem .6rem;
-  white-space:pre-line;
+  font-weight:600;
+}
+.lookup-btn{
+  background:var(--button-bg);
+  border:1px solid var(--button-border);
+  border-radius:.5rem;
+  padding:.6rem .6rem;
+  font-size:.7rem;
+  font-weight:600;
+  color:var(--text-primary);
+  text-align:center;
+  min-width:5rem;
+}
+.lookup-preview-block{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem;
   font-size:.7rem;
   line-height:1.3;
   color:var(--text-primary);
 }
-.global-cardimg{
+.lookup-cardtext{
+  flex:2;
+  min-width:10rem;
+  white-space:pre-line;
+  background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
+  padding:.6rem .6rem;
+}
+.lookup-cardimg{
+  flex:1;
+  min-width:6rem;
+  max-width:140px;
+  border-radius:.5rem;
+  border:1px solid var(--border-soft);
   background:var(--bg-panel);
   overflow:hidden;
-  max-width:140px;
+  align-self:flex-start;
 }
-.global-cardimg img{
-  display:block;
+.lookup-cardimg img{
   width:100%;
   height:auto;
+  display:block;
 }
 .winner-mini-banner{
   border:1px solid var(--gold);
@@ -853,7 +833,7 @@ input, textarea, select, button {
   line-height:1.3;
   display:flex;
   flex-direction:column;
-  gap:.25rem;
+  gap:.5rem;
 }
 .mode-btn-row{
   display:flex;
@@ -873,7 +853,7 @@ input, textarea, select, button {
   text-align:center;
 }
 .rules-scroll-block{
-  max-height:200px;
+  max-height:220px;
   overflow-y:auto;
   font-size:.7rem;
   line-height:1.4;
@@ -881,11 +861,13 @@ input, textarea, select, button {
   background:var(--bg-panel);
   border:1px solid var(--border-soft);
   border-radius:.5rem;
-  padding:.5rem .6rem;
+  padding:.6rem .6rem;
   color:var(--text-primary);
 }
 
-/* OVERLAYS */
+/* =========================================================
+   OVERLAYS
+   ========================================================= */
 .overlay-fullscreen{
   position:fixed;
   inset:0;
@@ -898,7 +880,7 @@ input, textarea, select, button {
 }
 .setup-card{
   background:var(--bg-panel);
-  border:1px solid var(--border-soft);
+  border:2px solid var(--border-soft);
   border-radius:.75rem;
   padding:1rem;
   max-width:320px;
@@ -907,6 +889,7 @@ input, textarea, select, button {
   flex-direction:column;
   gap:1rem;
   text-align:center;
+  box-shadow:0 30px 60px rgba(0,0,0,.4);
 }
 .setup-title{
   font-size:.9rem;
@@ -942,6 +925,16 @@ input, textarea, select, button {
   flex-direction:column;
   gap:.5rem;
   align-items:center;
+  width:100%;
+}
+.label-block{
+  font-size:.6rem;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  line-height:1.2;
+  text-align:center;
+  font-weight:600;
 }
 .setup-number-input{
   background:var(--bg-accent);
@@ -957,7 +950,7 @@ input, textarea, select, button {
   background:var(--button-bg);
   border:1px solid var(--button-border);
   border-radius:.5rem;
-  padding:.5rem .75rem;
+  padding:.6rem .75rem;
   font-size:.8rem;
   font-weight:600;
   color:var(--text-primary);
@@ -969,7 +962,7 @@ input, textarea, select, button {
   text-align:center;
 }
 
-/* Winner overlay */
+/* Winner overlay card */
 .winner-card{
   background:var(--bg-panel);
   border:2px solid var(--gold);
@@ -981,7 +974,7 @@ input, textarea, select, button {
   display:flex;
   flex-direction:column;
   gap:1rem;
-  box-shadow:0 0 30px rgba(212,169,79,.6),0 40px 80px rgba(0,0,0,.9);
+  box-shadow:0 0 30px rgba(212,169,79,.4),0 40px 80px rgba(0,0,0,.8);
 }
 .winner-title{
   font-size:.9rem;
@@ -1007,7 +1000,7 @@ input, textarea, select, button {
   text-align:center;
 }
 
-/* Announce / Cooldown popup */
+/* Announce/cooldown modal */
 .announce-card{
   background:var(--bg-panel);
   border:2px solid var(--gold);
@@ -1019,7 +1012,7 @@ input, textarea, select, button {
   display:flex;
   flex-direction:column;
   gap:1rem;
-  box-shadow:0 0 30px rgba(212,169,79,.6),0 40px 80px rgba(0,0,0,.9);
+  box-shadow:0 0 30px rgba(212,169,79,.4),0 40px 80px rgba(0,0,0,.8);
   font-size:.8rem;
   line-height:1.4;
   color:var(--text-primary);
@@ -1030,13 +1023,27 @@ input, textarea, select, button {
   font-size:.9rem;
   line-height:1.3;
 }
+
+/* cooldown acknowledge button in announce modal */
+.cooldown-ack-btn{
+  background:var(--button-bg);
+  border:1px solid var(--button-border);
+  border-radius:.5rem;
+  padding:.6rem .75rem;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--text-primary);
+  text-align:center;
+  width:100%;
+}
 </style>
 </head>
-<body class="theme-neon">
+<body class="">
 <div class="app-shell">
 
   <!-- SETUP OVERLAY -->
   <div id="setupOverlay" class="overlay-fullscreen">
+    <!-- Step 1: mode pick -->
     <div class="setup-card" id="setupStepMode">
       <div class="setup-title">Select Mode</div>
       <div class="setup-row">
@@ -1052,6 +1059,7 @@ input, textarea, select, button {
       <div class="helper-row">You’ll pick player count next.</div>
     </div>
 
+    <!-- Step 2: player count -->
     <div class="setup-card" id="setupStepPlayers" style="display:none;">
       <div class="setup-title">How many players?</div>
       <div class="setup-row">
@@ -1060,11 +1068,11 @@ input, textarea, select, button {
         <button class="setup-btn" data-fixedplayers="4">4</button>
       </div>
       <div class="setup-small">
-        <div class="label-sm" style="text-align:center;">Manual Entry (2–8)</div>
-        <input id="manualPlayerCount" class="setup-number-input" type="number" min="2" max="8" value="5" />
+        <div class="label-block">Manual Entry (2–8)</div>
+        <input id="manualPlayerCount" class="setup-number-input" type="number" min="2" max="8" value="4" />
         <button id="manualStartBtn" class="setup-go">Start Game</button>
       </div>
-      <div class="helper-row">Rename yourself on your turn.</div>
+      <div class="helper-row">You can rename yourself on your turn.</div>
     </div>
   </div>
 
@@ -1078,12 +1086,12 @@ input, textarea, select, button {
     </div>
   </div>
 
-  <!-- ANNOUNCE OVERLAY (used for cooldown acknowledge + respawn + reminders) -->
+  <!-- ANNOUNCE / COOLDOWN / RESPAWN OVERLAY -->
   <div id="announceOverlay" class="overlay-fullscreen" style="display:none;">
     <div class="announce-card">
       <div class="announce-strong" id="announceMain">Announcement</div>
       <div id="announceBody">Body text.</div>
-      <button class="overlay-btn" id="announceOkBtn">OK</button>
+      <button class="cooldown-ack-btn" id="announceOkBtn">OK</button>
     </div>
   </div>
 
@@ -1102,26 +1110,40 @@ input, textarea, select, button {
 
     <button class="end-turn-btn" id="endTurnBtn">End Turn →</button>
 
-    <div id="othersArea"></div>
+    <div id="othersAccordion" class="section-frame">
+      <div class="section-header-line accordion-head-static" data-accordion="others">
+        <div class="section-header-title">OTHER PLAYERS</div>
+        <div class="other-chevron" id="othersChevron">▼</div>
+      </div>
+      <div id="othersBody" class="accordion-body-static" style="display:block;"></div>
+    </div>
 
-    <div id="accordionsArea"></div>
+    <div id="notesAccordion" class="section-frame">
+      <div class="section-header-line accordion-head-static" data-accordion="notes">
+        <div class="section-header-title">NOTES / REMINDERS</div>
+        <div class="other-chevron" id="notesChevron">▼</div>
+      </div>
+      <div id="notesBody" class="accordion-body-static" style="display:block;"></div>
+    </div>
   </div>
 
-  <!-- TOOLS / FOOTER -->
+  <!-- TOOLS DOCK -->
   <div class="tools-footer-wrap">
     <button class="tools-header-btn" id="toggleToolsBtn">Tools ▼</button>
     <div class="tools-panel" id="toolsPanel">
       <div class="tools-grid">
 
+        <!-- THEME -->
         <div class="tool-block">
           <div class="tool-title">Theme</div>
           <select id="themeSelect" class="theme-select">
+            <option value="" selected>Light</option>
             <option value="theme-dark">Dark</option>
-            <option value="theme-light">Light</option>
-            <option value="theme-neon" selected>Neon</option>
+            <option value="theme-neon">Neon</option>
           </select>
         </div>
 
+        <!-- RANDOMIZERS -->
         <div class="tool-block">
           <div class="tool-title">Randomizers</div>
           <div class="rng-row">
@@ -1132,14 +1154,14 @@ input, textarea, select, button {
           <div class="rng-output" id="rngOutput"></div>
         </div>
 
+        <!-- CARD LOOKUP -->
         <div class="tool-block">
           <div class="tool-title">Card Lookup (Scryfall)</div>
-          <div class="lookup-row">
-            <div class="lookup-col">
-              <input id="globalLookupInput" class="lookup-input" placeholder="Any card..." />
-              <button id="globalLookupBtn" class="lookup-btn">Lookup</button>
-            </div>
+          <div class="lookup-col">
+            <input id="globalLookupInput" class="lookup-input" placeholder="Any card..." />
+            <button id="globalLookupBtn" class="lookup-btn">Lookup</button>
           </div>
+
           <div class="lookup-preview-block" id="globalLookupPreview">
             <div class="lookup-cardtext" id="globalLookupText"></div>
             <div class="lookup-cardimg" id="globalLookupImg" style="display:none;">
@@ -1148,6 +1170,7 @@ input, textarea, select, button {
           </div>
         </div>
 
+        <!-- GAME CONTROL -->
         <div class="tool-block">
           <div class="tool-title">Game Control</div>
           <div class="mode-line">
@@ -1160,64 +1183,60 @@ input, textarea, select, button {
           </div>
         </div>
 
+        <!-- RULES -->
         <div class="tool-block">
           <div class="tool-title">Rumble Rules</div>
           <div class="rules-scroll-block" id="rulesBlock">
 Rumble Rules
 
-Setup
-- Normal Commander decks (100-card singleton, color identity).
-- Start 40 life, 0 poison.
-- Commander damage (21 from one commander) and decking out still permanently eliminate you.
+Setup:
+• Commander decks: 100-card singleton, color identity applies.
+• Everyone starts at 40 life, 0 poison.
+• You can still lose forever if:
+  – You take 21+ combat damage from one commander.
+  – You try to draw and cannot (decked out).
 
-Temporary Knockout (Cooldown)
+Temporary Death (Cooldown):
 You go on cooldown instead of leaving the game if:
-- Your life is 0 or less,
-- You have 10 or more poison counters, or
-- An effect says “you lose the game.”
-“Win the game” effects do nothing in Rumble.
-Your cooldown is 1 + the number of players already on cooldown when you go out.
+  – Your life is 0 or less.
+  – You have 10 or more poison counters.
+  – An effect says "you lose the game."
+"Win the game" effects do nothing in this format.
+When you’re knocked out, you get a cooldown timer in turns.
 
-Permanent Elimination
-You are out of the game (no cooldown) if:
-- You’ve taken 21+ combat damage from a single commander this game, or
-- You would draw a card and can’t (decked out).
+Cooldown State:
+While you're on cooldown:
+  – You are not in the turn order as an active player.
+  – You cannot cast spells, attack, block, activate abilities, or respond.
+  – You can't be targeted as a player.
+  – Your battlefield stays. Your stuff can still be attacked, removed, etc. You just can't defend it.
+  – Your commander, hand, graveyard, etc. stay.
+  – Triggers that need your choices are ignored. Triggers that don't need choices still work.
 
-Cooldown
-While on cooldown:
-- You are not active.
-- You take no game actions.
-- You can’t block, cast, respond, or be targeted as a player.
-- Your battlefield remains in play, and opponents can interact with it freely.
-- Your hand / graveyard / command zone stay.
-- Triggers that need your choices are ignored; passive effects still work.
+Cooldown Progress:
+On each of your future turns (when play would rotate to you):
+  1. If cooldown > 0, you're shown "You're cooling down." You acknowledge it. Then cooldown is reduced by 1, and play immediately passes on.
+  2. If cooldown hits 0 after that tick, you immediately respawn and take a real turn.
 
-Cooldown Turns
-Turn order still moves seat by seat.
-When it reaches a cooldown player, that player doesn’t get a normal turn. Instead, they acknowledge their cooldown:
-- Their cooldown counter goes down by 1.
-- If it’s still above 0, they remain out.
-- If it hits 0, they immediately respawn.
-
-Respawn
+Respawn:
 When you respawn:
-- You become active again.
-- Your life becomes the average life total of all active players, rounded up.
-- You lose all poison counters.
-- Your commander tax resets.
-- You regain control of whatever permanents of yours are still on the battlefield.
-First Turn Back:
-- On the first real turn you actually take after respawning,
-  you skip your normal draw step, then draw 1 at the end of that turn instead.
+  – You become active again.
+  – Your life total becomes the ceiling of the average life total of all active players (not counting you).
+  – You remove all poison counters.
+  – Your commander tax resets.
+  – You keep anything you still own on the battlefield.
+  – You rejoin normal turn order.
+Your first real turn back:
+  – Skip your normal draw step.
+  – Instead, draw 1 at END of that turn.
 
-Reigning Rumbler
-If exactly one player is active and everyone else is either eliminated or on cooldown, that player becomes the Reigning Rumbler.
-After that player finishes their next full active turn, if they are still the only active player, they win the game.
+Reigning Rumbler:
+If exactly one player is active and everyone else is cooling down or eliminated, that player becomes the Reigning Rumbler.
+After that player finishes their NEXT full turn, if they are still the only active player, they win.
 
-Regular Mode
-- No cooldown or respawn.
-- 0 life / 10 poison / “lose the game” knocks you out permanently.
-- Last surviving player wins immediately.
+Regular Mode:
+No cooldown or respawn. 0 life / 10 poison / "you lose the game" just eliminates you.
+Last player standing wins.
           </div>
         </div>
 
@@ -1228,16 +1247,17 @@ Regular Mode
 </div> <!-- /app-shell -->
 
 <script>
-/* =========================
+/* =========================================================
    GLOBAL STATE
-========================= */
+   ========================================================= */
 
 let gameMode = null; // "regular" | "rumble"
 let players = [];
-let turnIndex = 0;
-let turnCounter = 0;
-let gameStartTime = null;
+let turnIndex = 0;          // whose turn index we're "resolving"
+let turnCounter = 0;        // overall turn count tick
+let gameStartTime = null;   // ms timestamp
 
+// Reigning Rumbler tracking
 let reigningCandidateIndex = null;
 let reigningCandidateTurnStamp = null;
 
@@ -1246,32 +1266,22 @@ let winnerName = "";
 let winnerTimeMs = 0;
 let winnerActiveMs = 0;
 
-// accordion open states
-let accordionsOpen = {
-  statusEffects:false,
-  notes:true
-};
+// UI state for collapsibles
+let otherExpanded = true;
+let notesExpanded = true;
+let otherOpen = {}; // per-player toggles in "Other Players"
 
-// dropdown persistence for "other players"
-let otherOpen = {};
-
+// timers
 let renderIntervalId = null;
 
-// announce overlay usage flags
+// cooldown acknowledge flow
 let showingAnnounce = false;
-
-// after showing "draw at end of turn" reminder
 let pendingClearAfterAnnounce = null;
 
-// cooldown handoff state
-let cooldownAcknowledgeIndex = null;
-let pendingTurnAdvance = false;
-
-/* GLOBAL PLANE / SCHEME STATE (shared table effects) */
+// Scryfall lookup shared state
 let currentPlaneName   = "";
 let currentPlaneText   = "";
 let currentPlaneImg    = "";
-
 let currentSchemeName  = "";
 let currentSchemeText  = "";
 let currentSchemeImg   = "";
@@ -1299,9 +1309,16 @@ const turnBanner             = document.getElementById("turnBanner");
 const globalTimerBanner      = document.getElementById("globalTimerBanner");
 
 const hudArea                = document.getElementById("hudArea");
+
 const endTurnBtn             = document.getElementById("endTurnBtn");
-const othersArea             = document.getElementById("othersArea");
-const accordionsArea         = document.getElementById("accordionsArea");
+
+const othersAccordion        = document.getElementById("othersAccordion");
+const othersChevron          = document.getElementById("othersChevron");
+const othersBody             = document.getElementById("othersBody");
+
+const notesAccordion         = document.getElementById("notesAccordion");
+const notesChevron           = document.getElementById("notesChevron");
+const notesBody              = document.getElementById("notesBody");
 
 const toggleToolsBtn         = document.getElementById("toggleToolsBtn");
 const toolsPanel             = document.getElementById("toolsPanel");
@@ -1319,14 +1336,12 @@ const changeModeBtn          = document.getElementById("changeModeBtn");
 const globalLookupInput      = document.getElementById("globalLookupInput");
 const globalLookupBtn        = document.getElementById("globalLookupBtn");
 const globalLookupText       = document.getElementById("globalLookupText");
-const globalLookupPreview    = document.getElementById("globalLookupPreview");
 const globalLookupImg        = document.getElementById("globalLookupImg");
 const globalLookupImgTag     = document.getElementById("globalLookupImgTag");
 
-/* =========================
-   UTILITIES
-========================= */
-
+/* =========================================================
+   UTILS
+   ========================================================= */
 function msToClock(ms){
   const totalSec = Math.floor(ms/1000);
   const mins = Math.floor(totalSec/60);
@@ -1343,7 +1358,6 @@ function getGameElapsedMs(){
   if(!gameStartTime) return 0;
   return Date.now()-gameStartTime;
 }
-
 function getAvgActiveLifeCeil(excludeIndex){
   let sum=0;
   let ct=0;
@@ -1354,17 +1368,20 @@ function getAvgActiveLifeCeil(excludeIndex){
       ct++;
     }
   });
-  if(ct===0){
-    return 1;
-  }
+  if(ct===0){ return 1; }
   return Math.ceil(sum/ct);
 }
+function getSeatColor(i){
+  const cols=["var(--gold)","var(--cyan)","var(--magenta)","var(--lime)"];
+  return cols[i % cols.length];
+}
 
+/* Player template */
 function makePlayer(defaultName){
   return {
     name: defaultName,
 
-    status:"active",          // "active","cooldown","eliminated"
+    status:"active",          // "active"|"cooldown"|"eliminated"
     cooldownRemaining:0,
 
     life:40,
@@ -1374,21 +1391,7 @@ function makePlayer(defaultName){
     experience:0,
     storm:0,
 
-    hasMonarch:false,
-    hasInitiative:false,
-    hasCitysBlessing:false,
-
-    dungeonProgress:"",
-    emblemsText:"",
     notesText:"",
-
-    dungeonLookupName:"",
-    dungeonPreviewText:"",
-    dungeonPreviewImg:"",
-
-    emblemLookupName:"",
-    emblemPreviewText:"",
-    emblemPreviewImg:"",
 
     commanderTaxSteps:0,
 
@@ -1398,10 +1401,9 @@ function makePlayer(defaultName){
     turnStartMs:null,
     isTiming:false,
 
-    pendingEOTDraw:false // skip first-draw, draw at EOT
+    pendingEOTDraw:false // respawn draw timing
   };
 }
-
 function syncCommanderDamageArrays(){
   players.forEach(p=>{
     while(p.commanderDamage.length < players.length){
@@ -1413,31 +1415,21 @@ function syncCommanderDamageArrays(){
   });
 }
 
-function getActivePlayers(){
-  const arr=[];
-  players.forEach((pl,i)=>{
-    if(pl.status==="active"){
-      arr.push(i);
-    }
-  });
-  return arr;
-}
-
-/* timing */
+/* time tracking */
 function startTimingPlayer(i){
   const p=players[i];
-  if(p.status!=="active") return;
+  if(!p || p.status!=="active") return;
   p.isTiming=true;
   p.turnStartMs=Date.now();
 }
 function stopTimingPlayer(i){
   const p=players[i];
-  if(!p.isTiming) return;
+  if(!p || !p.isTiming) return;
   const now=Date.now();
   const diff = now-(p.turnStartMs||now);
   p.totalActiveMs += diff;
-  p.isTiming=false;
   p.turnStartMs=null;
+  p.isTiming=false;
 }
 function getPlayerTurnMs(p){
   if(p.isTiming && p.turnStartMs!=null){
@@ -1448,27 +1440,45 @@ function getPlayerTurnMs(p){
 function getPlayerTotalMs(p){
   return p.totalActiveMs+getPlayerTurnMs(p);
 }
+function getActivePlayers(){
+  const arr=[];
+  players.forEach((pl,i)=>{
+    if(pl.status==="active"){
+      arr.push(i);
+    }
+  });
+  return arr;
+}
 
-/* =========================
+/* =========================================================
    OVERLAY HELPERS
-========================= */
-
-function showAnnounce(mainTxt, bodyTxt, okLabel="OK"){
+   ========================================================= */
+function showAnnounce(mainTxt, bodyTxt, acknowledgeCallback){
   showingAnnounce=true;
   announceMain.textContent = mainTxt;
   announceBody.textContent = bodyTxt;
-  announceOkBtn.textContent = okLabel;
   announceOverlay.style.display="flex";
+
+  // store callback on button
+  announceOkBtn.onclick = ()=>{
+    announceOverlay.style.display="none";
+    showingAnnounce=false;
+    if(pendingClearAfterAnnounce!==null){
+      const pp=players[pendingClearAfterAnnounce];
+      if(pp){
+        pp.pendingEOTDraw=false;
+      }
+      pendingClearAfterAnnounce=null;
+    }
+    if(typeof acknowledgeCallback==="function"){
+      acknowledgeCallback();
+    }
+  };
 }
 
-function hideAnnounce(){
-  showingAnnounce=false;
-  announceOverlay.style.display="none";
-}
-
-/* =========================
-   KNOCKOUT / ELIMINATION
-========================= */
+/* =========================================================
+   ELIM / COOLDOWN / RESPAWN LOGIC
+   ========================================================= */
 function permanentlyEliminate(i){
   const p=players[i];
   stopTimingPlayer(i);
@@ -1481,6 +1491,7 @@ function permanentlyEliminate(i){
   }
 }
 
+/* commander damage kill check */
 function checkCommanderDamageElim(victimIdx){
   const p = players[victimIdx];
   for(let src=0; src<p.commanderDamage.length; src++){
@@ -1491,32 +1502,32 @@ function checkCommanderDamageElim(victimIdx){
   }
 }
 
+/* Knockout into cooldown (Rumble) or elim (Regular) */
 function knockOutToCooldown(i){
   const p=players[i];
 
   if(gameMode==="regular"){
-    // regular = perm out
     permanentlyEliminate(i);
     showAnnounce(
       (p.name||("Player "+(i+1)))+" eliminated",
-      "Regular mode: 0 life / 10 poison / lose-the-game is final.",
-      "OK"
+      "Regular Mode: 0 life / 10 poison / lose-the-game is permanent.",
+      null
     );
     return;
   }
 
-  if(p.status==="eliminated" || p.status==="cooldown") return;
+  if(p.status==="eliminated") return;
+  if(p.status==="cooldown") return;
 
   stopTimingPlayer(i);
 
-  // cooldown = 1 + other cooldown players
-  let alreadyCooling=0;
+  // cooldown start = 1 + how many others are already cooling
+  let othersCooling=0;
   players.forEach((q,qi)=>{
-    if(qi!==i && q.status==="cooldown") alreadyCooling++;
+    if(qi!==i && q.status==="cooldown") othersCooling++;
   });
-
   p.status="cooldown";
-  p.cooldownRemaining=1+alreadyCooling;
+  p.cooldownRemaining=1+othersCooling;
   p.pendingEOTDraw=false;
 
   if(reigningCandidateIndex===i){
@@ -1526,50 +1537,97 @@ function knockOutToCooldown(i){
 
   showAnnounce(
     (p.name||("Player "+(i+1)))+" knocked out",
-    "Entered cooldown for "+p.cooldownRemaining+" turn(s). You’ll acknowledge each cooldown turn instead of taking a normal turn.",
-    "OK"
+    "Entered cooldown for "+p.cooldownRemaining+" turn(s). On each of their turns, they acknowledge cooldown instead of playing.",
+    null
   );
 }
 
-/* =========================
-   RESPAWN
-========================= */
+/* actually respawn a player (happens at start of their real return turn) */
 function respawnPlayer(i){
   const p=players[i];
   if(p.status!=="cooldown") return;
 
+  // calc life right now, based on active players excluding this player
   const newLife=getAvgActiveLifeCeil(i);
-
   p.status="active";
   p.cooldownRemaining=0;
   p.poison=0;
   p.life=newLife;
   p.commanderTaxSteps=0;
-  p.pendingEOTDraw=true;
-
+  p.pendingEOTDraw=true; // draw at end of first real turn
   showAnnounce(
     (p.name||("Player "+(i+1)))+" respawned",
-    "Life "+newLife+" (avg rounded up), poison = 0, commander tax reset.\nIMPORTANT: On your first real turn back you skip your normal draw step and instead draw 1 at END of that turn.",
-    "OK"
+    "Life "+newLife+" (avg rounded up), poison = 0, commander tax reset.\nOn this first real turn back: skip normal draw step; instead draw 1 at END of turn.",
+    null
   );
 }
 
-/* =========================
-   REIGNING RUMBLER
-========================= */
-function updateReigningCandidateAfterTurnEnd(){
-  if(gameMode!=="rumble" || winnerLocked) return;
+/* Lethal checks that trigger cooldown or elim */
+function lethalCheck(i,source){
+  const p=players[i];
+  if(!p) return;
+  if(source==="life" && p.life<=0){
+    knockOutToCooldown(i);
+    return;
+  }
+  if(source==="poison" && p.poison>=10){
+    knockOutToCooldown(i);
+    return;
+  }
+}
 
+/* Admin cycle tap on status chip */
+function cycleStatusAdmin(i){
+  const p=players[i];
+  if(gameMode==="rumble"){
+    // active -> cooldown -> eliminated -> active
+    if(p.status==="active"){
+      knockOutToCooldown(i);
+    }else if(p.status==="cooldown"){
+      permanentlyEliminate(i);
+      showAnnounce(
+        (p.name||("Player "+(i+1)))+" eliminated",
+        "Manual correction.",
+        null
+      );
+    }else{
+      p.status="active";
+      p.cooldownRemaining=0;
+      p.pendingEOTDraw=false;
+    }
+  }else{
+    // regular: active <-> eliminated
+    if(p.status==="active"){
+      permanentlyEliminate(i);
+      showAnnounce(
+        (p.name||("Player "+(i+1)))+" eliminated",
+        "Manual correction.",
+        null
+      );
+    }else{
+      p.status="active";
+      p.cooldownRemaining=0;
+      p.pendingEOTDraw=false;
+    }
+  }
+  renderAll();
+}
+
+/* =========================================================
+   REIGNING RUMBLER / WIN LOGIC
+   ========================================================= */
+function updateReigningCandidateOnTurnEnd(){
+  if(gameMode!=="rumble" || winnerLocked) return;
   const actives=getActivePlayers();
   if(actives.length===1){
     const onlyIdx=actives[0];
-    if(reigningCandidateIndex===null || reigningCandidateIndex!==onlyIdx){
+    if(reigningCandidateIndex!==onlyIdx){
       reigningCandidateIndex=onlyIdx;
       reigningCandidateTurnStamp=turnCounter;
       showAnnounce(
         (players[onlyIdx].name||("Player "+(onlyIdx+1)))+" is now REIGNING RUMBLER",
-        "If no one else becomes active before they finish their next full turn, they win.",
-        "OK"
+        "If they remain the only active player through their next full turn, they win.",
+        null
       );
     }
   }else{
@@ -1581,13 +1639,13 @@ function updateReigningCandidateAfterTurnEnd(){
 function checkReigningWin(){
   if(gameMode!=="rumble" || winnerLocked) return false;
   if(reigningCandidateIndex===null) return false;
-
   const actives=getActivePlayers();
   if(actives.length!==1) return false;
   const onlyIdx=actives[0];
   if(onlyIdx!==reigningCandidateIndex) return false;
 
-  // must survive as sole active through their next full turn
+  // they become reigning at reigningCandidateTurnStamp
+  // they must survive as only active through their NEXT full turn
   if(turnCounter>(reigningCandidateTurnStamp+1)){
     lockWinner(onlyIdx,true);
     return true;
@@ -1595,14 +1653,11 @@ function checkReigningWin(){
   return false;
 }
 
-/* =========================
-   WIN CHECKS
-========================= */
 function checkForWinRegular(){
   if(gameMode!=="regular" || winnerLocked) return false;
-  const stillIn = players.filter(p=>p.status!=="eliminated");
-  if(stillIn.length===1){
-    const idx = players.indexOf(stillIn[0]);
+  const alive = players.filter(p=>p.status!=="eliminated");
+  if(alive.length===1){
+    const idx = players.indexOf(alive[0]);
     lockWinner(idx,false);
     return true;
   }
@@ -1633,15 +1688,43 @@ function lockWinner(idx,isRumble){
 
   winnerOverlay.style.display="flex";
 }
-winnerCloseBtn.addEventListener("click",()=>{
-  winnerOverlay.style.display="none";
-});
 
-/* =========================
-   TURN / COOLDOWN FLOW
-========================= */
+/* =========================================================
+   TURN FLOW
+   ========================================================= */
 
-// Reminder popup at end of a respawned player's first real turn
+/*
+Turn passing logic (big one):
+
+1. We finish the CURRENT player's turn:
+   - stop their timer
+   - if they had pendingEOTDraw, remind them now
+
+2. turnCounter++ (finished a turn cycle)
+
+3. Check for win conditions (regular or reigning) AFTER handling respawns etc.
+
+4. Advance turnIndex to the NEXT seat index (clockwise, even if eliminated/cooldown)
+   - When we land on a seat:
+      a) If that seat is ELIMINATED -> immediately skip to next.
+      b) If that seat is COOLDOWN:
+            - if cooldownRemaining > 0:
+                show "X is cooling down" popup. After Acknowledge:
+                  cooldownRemaining -= 1
+                  if cooldownRemaining > 0:
+                      passTurn() again (no timer for them)
+                  else cooldownRemaining == 0:
+                      respawnPlayer()
+                      startTimingPlayer() for them
+                      renderAll()
+            (Important: we DO NOT increment turnCounter again when we auto-skip
+             cooldown seats in a chain. Only increment turnCounter on real turns.)
+      c) If that seat is ACTIVE:
+            start their timer,
+            renderAll(),
+            break.
+*/
+
 function runEndOfTurnDrawIfNeeded(idx){
   const p=players[idx];
   if(!p) return;
@@ -1649,235 +1732,149 @@ function runEndOfTurnDrawIfNeeded(idx){
     pendingClearAfterAnnounce = idx;
     showAnnounce(
       (p.name||("Player "+(idx+1)))+" draw reminder",
-      "Draw 1 card now. (You skipped your normal draw step this turn.)",
-      "OK"
+      "Draw 1 card now (respawn recovery). You skipped the normal draw step this turn.",
+      function(){
+        // after OK we clear in announceOkBtn logic
+      }
     );
   }
 }
 
-// Called when active player taps End Turn
+function rotateClockwiseIndex(i){
+  if(players.length===0) return i;
+  return (i+1)%players.length;
+}
+
+/* advanceTurnCore is the engine to move to a seat that will ACTUALLY take a turn */
+function advanceTurnCore(){
+  // safety valve to prevent infinite loop
+  let safety=0;
+  while(safety<50){
+    safety++;
+
+    const p=players[turnIndex];
+    if(!p){
+      turnIndex=rotateClockwiseIndex(turnIndex);
+      continue;
+    }
+
+    // eliminated: skip
+    if(p.status==="eliminated"){
+      turnIndex=rotateClockwiseIndex(turnIndex);
+      continue;
+    }
+
+    // cooldown seat
+    if(p.status==="cooldown"){
+      return handleCooldownSeat(turnIndex);
+    }
+
+    // active seat: start timing them if not winnerLocked
+    if(!winnerLocked){
+      startTimingPlayer(turnIndex);
+    }
+    renderAll();
+    return;
+  }
+  console.warn("advanceTurnCore safety stop");
+  renderAll();
+}
+
+/* handleCooldownSeat:
+   - if cooldownRemaining>0 => show "cooling down" popup.
+      After acknowledge:
+         cooldownRemaining -=1
+         If still >0:
+            move clockwise (turnIndex=next) (NO turnCounter++)
+            handleCooldownSeat/advance again.
+         If now ==0:
+            respawnPlayer()
+            // they immediately become active and it's now their real turn.
+            startTimingPlayer()
+            renderAll()
+   - if cooldownRemaining==0 already (shouldn't happen if state is correct),
+     just respawn them.
+*/
+function handleCooldownSeat(i){
+  const p = players[i];
+  if(!p) { turnIndex=rotateClockwiseIndex(i); return advanceTurnCore(); }
+
+  if(p.cooldownRemaining>0){
+    // show popup that they "do nothing"
+    showAnnounce(
+      (p.name||("Player "+(i+1)))+" is cooling down",
+      "Cooldown remaining: "+p.cooldownRemaining+" turn(s). You do nothing this turn. Tap Acknowledge to continue.",
+      function afterAck(){
+        // after they acknowledge, tick cooldown
+        p.cooldownRemaining -=1;
+        if(p.cooldownRemaining>0){
+          // still cooling, skip to next seat
+          turnIndex=rotateClockwiseIndex(i);
+          return advanceTurnCore();
+        }else{
+          // they are done cooling, respawn now & take this turn
+          respawnPlayer(i);
+          // start timing them
+          if(!winnerLocked){
+            startTimingPlayer(i);
+          }
+          renderAll();
+        }
+      }
+    );
+    return;
+  } else {
+    // leftover edge-case: cooldownRemaining==0 but still flagged cooldown -> respawn now
+    respawnPlayer(i);
+    if(!winnerLocked){
+      startTimingPlayer(i);
+    }
+    renderAll();
+  }
+}
+
+/* passTurn is called when the current active player taps End Turn */
 function passTurn(){
   if(winnerLocked){
     renderAll();
     return;
   }
 
-  // wrap up the current active player's real turn
+  // 1. stop timing current
   stopTimingPlayer(turnIndex);
 
+  // 2. check EOT draw for respawn-turn players
   runEndOfTurnDrawIfNeeded(turnIndex);
 
-  // we just finished a real, actual turn
+  // 3. we just ended a real turn -> turnCounter++
   turnCounter += 1;
 
-  // check/crown reigning candidate after finishing this turn
-  updateReigningCandidateAfterTurnEnd();
-
-  // prepare to walk seats until we land on next active or resolve cooldown acknowledgements
-  pendingTurnAdvance = true;
-  cooldownAcknowledgeIndex = null;
-
-  advanceTurn();
-}
-
-// step through seats clockwise until:
-// - we hit eliminated -> skip
-// - we hit cooldown -> pause with cooldown popup
-// - we hit active   -> that becomes next real turn
-function advanceTurn(){
-  // if winner already locked, just render
-  if(winnerLocked){
-    renderAll();
-    return;
+  // 4. check Reigning Rumbler progress from *just-finished* turn:
+  if(gameMode==="rumble"){
+    updateReigningCandidateOnTurnEnd();
   }
 
-  let safety=0;
-  while(safety<100){
-    // next seat
-    turnIndex = (turnIndex+1)%players.length;
-    const pl = players[turnIndex];
-
-    // eliminated? skip
-    if(pl.status==="eliminated"){
-      safety++;
-      continue;
-    }
-
-    // cooldown seat? pause here and force acknowledge
-    if(pl.status==="cooldown"){
-      cooldownAcknowledgeIndex = turnIndex;
-      showCooldownPopup(turnIndex);
-      return; // wait for acknowledge
-    }
-
-    // found an active player, they get the next real turn
-    if(pl.status==="active"){
-      startTimingPlayer(turnIndex);
-
-      // regular immediate win check
-      if(gameMode==="regular"){
-        if(checkForWinRegular()){
-          renderAll();
-          return;
-        }
-      }
-
-      // reigning rumbler win check
-      if(checkReigningWin()){
-        renderAll();
-        return;
-      }
-
-      // done advancing
-      pendingTurnAdvance=false;
-      cooldownAcknowledgeIndex=null;
+  // 5. Win checks
+  if(gameMode==="regular"){
+    if(checkForWinRegular()){
       renderAll();
       return;
     }
-
-    safety++;
   }
-
-  // fallback
-  pendingTurnAdvance=false;
-  cooldownAcknowledgeIndex=null;
-  renderAll();
-}
-
-// show the cooldown acknowledge popup for a cooldown seat
-function showCooldownPopup(i){
-  const p=players[i];
-  const nm = p.name||("Player "+(i+1));
-
-  // "You are cooling down. Remaining N turn(s)."
-  const bodyTxt =
-    "Cooldown remaining: "+p.cooldownRemaining+" turn(s).\n" +
-    "You do nothing this turn.\n" +
-    "Tap Acknowledge to continue.";
-
-  showAnnounce(
-    nm+" is cooling down",
-    bodyTxt,
-    "Acknowledge →"
-  );
-}
-
-// handle clicking "OK"/"Acknowledge →" on announce overlay
-announceOkBtn.addEventListener("click",()=>{
-  hideAnnounce();
-
-  // CASE 1: we were showing an end-of-turn draw reminder
-  if(pendingClearAfterAnnounce !== null){
-    const p = players[pendingClearAfterAnnounce];
-    if(p){
-      p.pendingEOTDraw=false;
-    }
-    pendingClearAfterAnnounce=null;
-    // after draw reminder, we just return to board
+  if(checkReigningWin()){
     renderAll();
     return;
   }
 
-  // CASE 2: we're in a cooldown acknowledgment step
-  if(cooldownAcknowledgeIndex !== null){
-    const idx = cooldownAcknowledgeIndex;
-    const pl = players[idx];
+  // 6. advance clockwise, maybe through multiple cooldown/eliminated seats
+  turnIndex = rotateClockwiseIndex(turnIndex);
+  advanceTurnCore();
+}
 
-    if(pl && pl.status==="cooldown"){
-      // spend 1 cooldown "turn"
-      if(pl.cooldownRemaining>0){
-        pl.cooldownRemaining -= 1;
-        if(pl.cooldownRemaining<0) pl.cooldownRemaining=0;
-      }
-
-      // if done cooling, respawn now
-      if(pl.cooldownRemaining===0){
-        respawnPlayer(idx);
-        // after respawnPlayer() we just showed a respawn popup via showAnnounce().
-        // when that popup ends (user hits OK again), we should continue advancing.
-        // So we hook that logic up by stashing who we just respawned.
-        // Easiest: remember who just respawned in cooldownAcknowledgeIndex
-        // and wait for the next click.
-        // BUT respawnPlayer() already triggered showAnnounce(...) which re-opened
-        // the announceOverlay and reset cooldownAcknowledgeIndex? No, we didn't reset it there.
-        // We'll handle that below: we don't advanceTurn() immediately here if we just respawned,
-        // because there's now an active respawn popup open.
-        //
-        // So we mark a flag so the NEXT click continues.
-        // We'll do that by storing a special value:
-        pl._justRespawned = true;
-        return; // wait for the respawn popup "OK"
-      }
-    }
-
-    // if still cooling OR eliminated somehow, continue walking
-    cooldownAcknowledgeIndex=null;
-    advanceTurn();
-    return;
-  }
-
-  // CASE 3: if we just ended a respawn popup
-  // check if anyone has _justRespawned
-  let foundRespawnIdx=-1;
-  players.forEach((p,i)=>{
-    if(p._justRespawned){
-      foundRespawnIdx=i;
-    }
-  });
-  if(foundRespawnIdx>=0){
-    // clear flag
-    players[foundRespawnIdx]._justRespawned=false;
-    // that player is now active, but they do NOT immediately get full turn here.
-    // We still need to continue advancing seats until we land on the next real ACTIVE turn holder.
-    cooldownAcknowledgeIndex=null;
-    advanceTurn();
-    return;
-  }
-
-  // default close behavior (generic announce not tied to cooldown or EOT draw)
-  renderAll();
-});
-
-/* =========================
-   THEME / TOOLS
-========================= */
-toggleToolsBtn.addEventListener("click",()=>{
-  if(toolsPanel.style.display==="block"){
-    toolsPanel.style.display="none";
-    toggleToolsBtn.textContent="Tools ▼";
-  } else {
-    toolsPanel.style.display="block";
-    toggleToolsBtn.textContent="Tools ▲";
-  }
-});
-
-themeSelect.addEventListener("change",()=>{
-  document.body.classList.remove("theme-dark","theme-light","theme-neon");
-  document.body.classList.add(themeSelect.value);
-});
-
-flipCoinBtn.addEventListener("click",()=>{
-  rngOutput.textContent="Coin: "+(Math.random()<0.5?"Heads":"Tails");
-});
-rollD6Btn.addEventListener("click",()=>{
-  rngOutput.textContent="d6: "+(Math.floor(Math.random()*6)+1);
-});
-rollD20Btn.addEventListener("click",()=>{
-  rngOutput.textContent="d20: "+(Math.floor(Math.random()*20)+1);
-});
-
-newGameBtn.addEventListener("click",()=>{
-  if(!confirm("Start a new game in the same mode? This clears all data.")) return;
-  showPlayerCountStep();
-});
-changeModeBtn.addEventListener("click",()=>{
-  if(!confirm("Change mode? This restarts the game.")) return;
-  showModeStep();
-});
-
-/* =========================
-   SCRYFALL HELPERS
-========================= */
+/* =========================================================
+   SCRYFALL LOOKUP
+   (Global card search)
+   ========================================================= */
 async function scryfallFuzzy(name){
   if(!name.trim()) return null;
   const url="https://api.scryfall.com/cards/named?fuzzy="+encodeURIComponent(name.trim());
@@ -1901,8 +1898,6 @@ function extractCardImage(data){
   }
   return "";
 }
-
-/* Global lookup (Tools panel) */
 async function lookupAnyCardGlobal(){
   const rawName = globalLookupInput.value||"";
   const data = await scryfallFuzzy(rawName);
@@ -1926,134 +1921,10 @@ async function lookupAnyCardGlobal(){
     globalLookupImgTag.removeAttribute("src");
   }
 }
-globalLookupBtn.addEventListener("click",()=>{
-  lookupAnyCardGlobal();
-});
 
-/* Dungeon lookup (per-player) */
-async function lookupDungeonForPlayer(i){
-  const p=players[i];
-  const rawName=p.dungeonLookupName||"";
-  const data=await scryfallFuzzy(rawName);
-  if(!data){
-    p.dungeonPreviewText="Not found / offline.";
-    p.dungeonPreviewImg="";
-    renderAll();
-    return;
-  }
-  const typeLine=data.type_line||"";
-  const layout=(data.layout||"").toLowerCase();
-  const oracle=data.oracle_text||"";
-  const cardName=data.name||rawName.trim();
-
-  if(typeLine.toLowerCase().includes("dungeon") || layout==="dungeon"){
-    const imgUrl=extractCardImage(data);
-    p.dungeonPreviewText = cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
-    p.dungeonPreviewImg  = imgUrl||"";
-
-    if(!p.dungeonProgress.toLowerCase().includes(cardName.toLowerCase())){
-      p.dungeonProgress += (p.dungeonProgress? "\n":"")+"Dungeon: "+cardName;
-    }
-  } else {
-    p.dungeonPreviewText = "Not a Dungeon card.";
-    p.dungeonPreviewImg  = "";
-  }
-  renderAll();
-}
-
-/* Emblem lookup (per-player) */
-async function lookupEmblemForPlayer(i){
-  const p=players[i];
-  const rawName=p.emblemLookupName||"";
-  let data=await scryfallFuzzy(rawName);
-
-  function isEmblemCard(d){
-    if(!d) return false;
-    const layout=(d.layout||"").toLowerCase();
-    return layout==="emblem";
-  }
-
-  if(!isEmblemCard(data)){
-    if(rawName.trim()){
-      data=await scryfallFuzzy(rawName+" emblem");
-    }
-  }
-
-  if(!data){
-    p.emblemPreviewText="Not found / offline.";
-    p.emblemPreviewImg="";
-    renderAll();
-    return;
-  }
-
-  if(!isEmblemCard(data)){
-    p.emblemPreviewText="No emblem form found. Try planeswalker name + 'emblem'.";
-    p.emblemPreviewImg="";
-    renderAll();
-    return;
-  }
-
-  const typeLine=data.type_line||"";
-  const oracle=data.oracle_text||"";
-  const cardName=data.name||rawName.trim();
-  const imgUrl=extractCardImage(data);
-
-  p.emblemPreviewText =
-    cardName+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
-  p.emblemPreviewImg  = imgUrl||"";
-
-  if(!p.emblemsText.toLowerCase().includes(cardName.toLowerCase())){
-    p.emblemsText += (p.emblemsText? "\n":"")+"Emblem: "+cardName+" — "+oracle;
-  }
-
-  renderAll();
-}
-
-/* Plane lookup (global) */
-async function lookupPlaneGlobal(){
-  const name=(currentPlaneName||"");
-  const data=await scryfallFuzzy(name);
-  if(!data){
-    currentPlaneText="Not found / offline.";
-    currentPlaneImg="";
-    renderAll();
-    return;
-  }
-  const typeLine=data.type_line||"";
-  const oracle=data.oracle_text||"";
-  const nm=data.name||name.trim();
-
-  currentPlaneText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
-
-  const imgUrl=extractCardImage(data);
-  currentPlaneImg=imgUrl||"";
-  renderAll();
-}
-
-/* Scheme lookup (global) */
-async function lookupSchemeGlobal(){
-  const name=(currentSchemeName||"");
-  const data=await scryfallFuzzy(name);
-  if(!data){
-    currentSchemeText="Not found / offline.";
-    currentSchemeImg="";
-    renderAll();
-    return;
-  }
-  const typeLine=data.type_line||"";
-  const oracle=data.oracle_text||"";
-  const nm=data.name||name.trim();
-
-  currentSchemeText = nm+(typeLine?("\n"+typeLine):"")+(oracle?("\n"+oracle):"");
-
-  const imgUrl=extractCardImage(data);
-  currentSchemeImg=imgUrl||"";
-  renderAll();
-}
-
-/* =========================
-   RENDER HELPERS
-========================= */
+/* =========================================================
+   RENDERING
+   ========================================================= */
 function renderGlobalTimerBanner(){
   globalTimerBanner.textContent = "Global: "+msToClock(getGameElapsedMs());
 }
@@ -2061,54 +1932,23 @@ function renderTimersOnly(){
   renderGlobalTimerBanner();
   const p=players[turnIndex];
   if(p){
-    const hudTimerBlocks = document.querySelectorAll("#hudArea .timer-block");
-    if(hudTimerBlocks.length>=2){
-      const turnVal=hudTimerBlocks[0].querySelector(".timer-val");
-      if(turnVal){ turnVal.textContent=msToClock(getPlayerTurnMs(p)); }
-      const playerVal=hudTimerBlocks[1].querySelector(".timer-val");
-      if(playerVal){ playerVal.textContent=msToClock(getPlayerTotalMs(p)); }
-    }
+    // update the HUD times
+    const turnVal = document.querySelector(".timer-turn-val");
+    const plVal   = document.querySelector(".timer-player-val");
+    if(turnVal) turnVal.textContent = msToClock(getPlayerTurnMs(p));
+    if(plVal)   plVal.textContent   = msToClock(getPlayerTotalMs(p));
   }
-  // also update player time in "Other Players" cards
+  // update each OTHER PLAYER's player time
   players.forEach((pl,i)=>{
     if(i===turnIndex) return;
-    const node=document.querySelector(
-      `.other-player-block[data-idx="${i}"] .player-time-val`
-    );
+    const node=document.querySelector(`.player-time-val[data-idx="${i}"]`);
     if(node){
-      node.textContent=msToClock(getPlayerTotalMs(pl));
+      node.textContent = msToClock(getPlayerTotalMs(pl));
     }
   });
 }
 
-function getSeatColor(i){
-  const cols=["var(--gold)","var(--cyan)","var(--magenta)","var(--lime)"];
-  return cols[i % cols.length];
-}
-
-function renderAll(){
-  syncCommanderDamageArrays();
-
-  const cur = players[turnIndex]||{};
-  const nm  = cur.name||("Player "+(turnIndex+1));
-  turnBanner.textContent = "▶ "+nm.toUpperCase()+"'S TURN ◀";
-
-  modeStatusText.textContent =
-    (gameMode==="regular"?"Mode 1 — Regular":"Mode 2 — Rumble");
-
-  renderHUD();
-  renderOthers();
-  renderAccordions();
-  renderGlobalTimerBanner();
-
-  if(winnerLocked){
-    winnerMiniBanner.style.display="block";
-  }else if(!winnerTimeMs){
-    winnerMiniBanner.style.display="none";
-  }
-}
-
-/* HUD (active player's panel) */
+/* HUD panel for active player */
 function renderHUD(){
   hudArea.innerHTML="";
   const p=players[turnIndex];
@@ -2117,20 +1957,22 @@ function renderHUD(){
   const seatColor=getSeatColor(turnIndex);
 
   const card=document.createElement("div");
-  card.className="hud-card";
-  card.style.border="1px solid "+seatColor;
-  card.style.boxShadow="0 0 20px "+seatColor+"80, 0 30px 60px rgba(0,0,0,.9)";
+  card.className="hud-card glow-border";
+  card.style.borderColor=seatColor;
+  card.style.boxShadow=
+    `0 0 20px ${seatColor}66,0 30px 60px rgba(0,0,0,.35)`;
 
   const topRow=document.createElement("div");
   topRow.className="hud-top-row";
 
-  // LEFT COL
+  /* LEFT COLUMN: name / status / timers / tax / respawn reminder */
   const leftCol=document.createElement("div");
   leftCol.className="hud-col";
 
   const nameBlock=document.createElement("div");
   nameBlock.className="section-block-inline";
 
+  // name label + input
   const nmLabel=document.createElement("div");
   nmLabel.className="label-sm";
   nmLabel.textContent="Your Name";
@@ -2149,17 +1991,15 @@ function renderHUD(){
     }
   });
 
-  const tinyStack=document.createElement("div");
-  tinyStack.className="tiny-col-stack";
-
-  // status chip + cooldown info
-  const statusRow=document.createElement("div");
-  statusRow.className="tiny-row";
+  // status row (Active / Cooldown / Eliminated) + cooldown info
+  const statusWrap=document.createElement("div");
+  statusWrap.className="tiny-row";
 
   const stChip=document.createElement("div");
   stChip.className="status-chip "+
     (p.status==="active"?"status-active":
-     p.status==="cooldown"?"status-cooldown":"status-elim");
+     p.status==="cooldown"?"status-cooldown":
+     "status-elim");
   stChip.textContent=
     p.status==="active"?"ACTIVE":
     p.status==="cooldown"?"COOLDOWN":
@@ -2172,11 +2012,11 @@ function renderHUD(){
     cycleStatusAdmin(turnIndex);
   });
 
-  statusRow.appendChild(stChip);
+  statusWrap.appendChild(stChip);
 
   if(p.status==="cooldown" && gameMode==="rumble"){
-    const cdWrap=document.createElement("div");
-    cdWrap.className="cd-info-inline";
+    const cdDiv=document.createElement("div");
+    cdDiv.className="cd-info-inline";
 
     const cdLab=document.createElement("div");
     cdLab.className="cd-label";
@@ -2186,57 +2026,93 @@ function renderHUD(){
     cdVal.className="cd-val-box";
     cdVal.textContent=p.cooldownRemaining;
 
-    cdWrap.appendChild(cdLab);
-    cdWrap.appendChild(cdVal);
-    statusRow.appendChild(cdWrap);
+    cdDiv.appendChild(cdLab);
+    cdDiv.appendChild(cdVal);
+    statusWrap.appendChild(cdDiv);
   }
 
-  // Timers
+  // timers row
   const timeRow=document.createElement("div");
   timeRow.className="timer-row";
 
-  const tBlock1=document.createElement("div");
-  tBlock1.className="timer-block";
-  const tb1L=document.createElement("div");
-  tb1L.className="timer-label";
-  tb1L.textContent="Turn Time";
-  const tb1V=document.createElement("div");
-  tb1V.className="timer-val";
-  tb1V.textContent=msToClock(getPlayerTurnMs(p));
-  tBlock1.appendChild(tb1L);
-  tBlock1.appendChild(tb1V);
+  const blockTurn=document.createElement("div");
+  blockTurn.className="timer-block";
+  const labTurn=document.createElement("div");
+  labTurn.className="timer-label";
+  labTurn.textContent="Turn Time";
+  const valTurn=document.createElement("div");
+  valTurn.className="timer-val timer-turn-val";
+  valTurn.textContent=msToClock(getPlayerTurnMs(p));
+  blockTurn.appendChild(labTurn);
+  blockTurn.appendChild(valTurn);
 
-  const tBlock2=document.createElement("div");
-  tBlock2.className="timer-block";
-  const tb2L=document.createElement("div");
-  tb2L.className="timer-label";
-  tb2L.textContent="Player Time";
-  const tb2V=document.createElement("div");
-  tb2V.className="timer-val";
-  tb2V.textContent=msToClock(getPlayerTotalMs(p));
-  tBlock2.appendChild(tb2L);
-  tBlock2.appendChild(tb2V);
+  const blockPlayer=document.createElement("div");
+  blockPlayer.className="timer-block";
+  const labPlayer=document.createElement("div");
+  labPlayer.className="timer-label";
+  labPlayer.textContent="Player Time";
+  const valPlayer=document.createElement("div");
+  valPlayer.className="timer-val timer-player-val";
+  valPlayer.textContent=msToClock(getPlayerTotalMs(p));
+  blockPlayer.appendChild(labPlayer);
+  blockPlayer.appendChild(valPlayer);
 
-  timeRow.appendChild(tBlock1);
-  timeRow.appendChild(tBlock2);
+  timeRow.appendChild(blockTurn);
+  timeRow.appendChild(blockPlayer);
 
-  const tinyStackTop=document.createElement("div");
-  tinyStackTop.appendChild(statusRow);
-  tinyStackTop.appendChild(timeRow);
+  // Commander Tax
+  const taxRow=document.createElement("div");
+  taxRow.className="tax-row";
+
+  const taxLabel=document.createElement("div");
+  taxLabel.className="tax-label";
+  taxLabel.textContent="Commander Tax: +2 ×";
+
+  const taxCtrl=document.createElement("div");
+  taxCtrl.className="tax-ctrl";
+
+  const taxMinus=document.createElement("div");
+  taxMinus.className="tax-btn";
+  taxMinus.textContent="-";
+  taxMinus.addEventListener("click",()=>{
+    if(p.commanderTaxSteps>0)p.commanderTaxSteps--;
+    renderAll();
+  });
+  const taxVal=document.createElement("div");
+  taxVal.className="tax-val";
+  taxVal.textContent=p.commanderTaxSteps;
+  const taxPlus=document.createElement("div");
+  taxPlus.className="tax-btn";
+  taxPlus.textContent="+";
+  taxPlus.addEventListener("click",()=>{
+    p.commanderTaxSteps++;
+    renderAll();
+  });
+
+  taxCtrl.appendChild(taxMinus);
+  taxCtrl.appendChild(taxVal);
+  taxCtrl.appendChild(taxPlus);
+
+  taxRow.appendChild(taxLabel);
+  taxRow.appendChild(taxCtrl);
+
+  // assemble left block
+  nameBlock.appendChild(nmLabel);
+  nameBlock.appendChild(nmInput);
+  nameBlock.appendChild(statusWrap);
+  nameBlock.appendChild(timeRow);
+  nameBlock.appendChild(taxRow);
 
   if(p.pendingEOTDraw){
     const reminder=document.createElement("div");
     reminder.className="respawn-draw-banner";
-    reminder.textContent="RESPAWN TURN: Skip normal draw. Draw 1 at END of this turn.";
-    tinyStackTop.appendChild(reminder);
+    reminder.textContent="Respawn Turn: Skip your draw step. Draw 1 at END of this turn.";
+    nameBlock.appendChild(reminder);
   }
 
-  nameBlock.appendChild(nmLabel);
-  nameBlock.appendChild(nmInput);
-  nameBlock.appendChild(tinyStackTop);
   leftCol.appendChild(nameBlock);
 
-  // RIGHT COL
+  /* RIGHT COLUMN: Life + poison/rad/etc */
   const rightCol=document.createElement("div");
   rightCol.className="hud-col";
 
@@ -2278,25 +2154,25 @@ function renderHUD(){
   const grid=document.createElement("div");
   grid.className="mini-counters-grid";
 
-  grid.appendChild(makeMiniStepperBox("☠ Poison",p.poison,(newVal)=>{
-    p.poison=newVal;
+  grid.appendChild(makeSubStepper("☠ Poison",p.poison,val=>{
+    p.poison=val;
     lethalCheck(turnIndex,"poison");
     renderAll();
   }));
-  grid.appendChild(makeMiniStepperBox("☢ Rad",p.radiation,(newVal)=>{
-    p.radiation=newVal;
+  grid.appendChild(makeSubStepper("☢ Rad",p.radiation,val=>{
+    p.radiation=val;
     renderAll();
   }));
-  grid.appendChild(makeMiniStepperBox("⚡ Energy",p.energy,(newVal)=>{
-    p.energy=newVal;
+  grid.appendChild(makeSubStepper("⚡ Energy",p.energy,val=>{
+    p.energy=val;
     renderAll();
   }));
-  grid.appendChild(makeMiniStepperBox("★ Exp",p.experience,(newVal)=>{
-    p.experience=newVal;
+  grid.appendChild(makeSubStepper("★ Exp",p.experience,val=>{
+    p.experience=val;
     renderAll();
   }));
-  grid.appendChild(makeMiniStepperBox("☁ Storm",p.storm,(newVal)=>{
-    p.storm=newVal;
+  grid.appendChild(makeSubStepper("☁ Storm",p.storm,val=>{
+    p.storm=val;
     renderAll();
   }));
 
@@ -2313,16 +2189,16 @@ function renderHUD(){
   hudArea.appendChild(card);
 }
 
-function makeMiniStepperBox(labelText,val,onSet){
-  const wrap=document.createElement("div");
-  wrap.className="mini-counter-box";
+function makeSubStepper(label,val,onSet){
+  const box=document.createElement("div");
+  box.className="sub-box";
 
-  const lab=document.createElement("div");
-  lab.className="mini-counter-label";
-  lab.textContent=labelText;
+  const l=document.createElement("div");
+  l.className="sub-box-label";
+  l.textContent=label;
 
   const row=document.createElement("div");
-  row.className="mini-step-row";
+  row.className="sub-box-step-row";
 
   const minus=document.createElement("div");
   minus.className="step-btn";
@@ -2348,107 +2224,84 @@ function makeMiniStepperBox(labelText,val,onSet){
   row.appendChild(mid);
   row.appendChild(plus);
 
-  wrap.appendChild(lab);
-  wrap.appendChild(row);
-  return wrap;
+  box.appendChild(l);
+  box.appendChild(row);
+  return box;
 }
 
-/* OTHERS */
+/* OTHER PLAYERS SECTION */
 function renderOthers(){
-  othersArea.innerHTML="";
-  const wrap=document.createElement("div");
-  wrap.className="others-card";
+  othersBody.innerHTML="";
 
-  const hdr=document.createElement("div");
-  hdr.className="other-header";
-  hdr.textContent="Other Players";
-  wrap.appendChild(hdr);
+  const bodyVisible = otherExpanded;
+  othersChevron.textContent = bodyVisible?"▼":"▲";
+  othersBody.style.display = bodyVisible?"block":"none";
 
   players.forEach((pl,i)=>{
-    if(i===turnIndex) return;
+    if(i===turnIndex) return; // don't list current player as "Other" to themselves
+
     const block=document.createElement("div");
     block.className="other-player-block";
     block.setAttribute("data-idx",i);
 
     const top=document.createElement("div");
-    top.className="other-player-top";
+    top.className="other-top-row";
+
+    const leftWrap=document.createElement("div");
+    leftWrap.className="other-top-left";
 
     const nm=pl.name||("Player "+(i+1));
-    const titleSpan=document.createElement("span");
-    titleSpan.textContent=nm;
+    const topName=document.createElement("div");
+    topName.className="other-top-name";
+    topName.textContent=nm;
 
-    const chev=document.createElement("span");
-    chev.className="other-expand-indicator";
+    const subline=document.createElement("div");
+    subline.className="other-top-subline";
 
-    const body=document.createElement("div");
-    body.className="other-player-body";
+    // status chunk
+    let stChunk="Status: "+pl.status.toUpperCase();
+    if(pl.status==="cooldown" && gameMode==="rumble"){
+      stChunk+=" ("+pl.cooldownRemaining+")";
+    }
+    subline.appendChild(makeSubChunk(stChunk));
 
+    // player time chunk
+    const tChunk="Time "+msToClock(getPlayerTotalMs(pl));
+    subline.appendChild(makeSubChunk(tChunk));
+
+    leftWrap.appendChild(topName);
+    leftWrap.appendChild(subline);
+
+    const chev=document.createElement("div");
+    chev.className="other-chevron";
     const isOpen=!!otherOpen[i];
+    chev.textContent=isOpen?"▲":"▼";
+
+    // body
+    const body=document.createElement("div");
+    body.className="other-body";
     if(isOpen){
       body.style.display="flex";
-      chev.textContent="▲";
     }else{
       body.style.display="none";
-      chev.textContent="▼";
     }
 
-    // Status line
-    const statusLine=document.createElement("div");
-    statusLine.className="status-line-other";
+    // Life / +/- etc
+    const inlineVitals=document.createElement("div");
+    inlineVitals.className="inline-row-wrap";
 
-    const statusText=document.createElement("div");
-    statusText.textContent="Status: "+pl.status.toUpperCase();
-    statusLine.appendChild(statusText);
-
-    if(pl.status==="cooldown" && gameMode==="rumble"){
-      const cdLab=document.createElement("div");
-      cdLab.className="cd-label";
-      cdLab.style.fontSize=".6rem";
-      cdLab.style.color="var(--text-dim)";
-      cdLab.style.textTransform="uppercase";
-      cdLab.style.letterSpacing=".05em";
-      cdLab.textContent="Cooldown:";
-
-      const cdNum=document.createElement("div");
-      cdNum.className="cd-val-box";
-      cdNum.textContent=pl.cooldownRemaining;
-
-      statusLine.appendChild(cdLab);
-      statusLine.appendChild(cdNum);
-    }
-
-    const timeBox=document.createElement("div");
-    timeBox.style.display="flex";
-    timeBox.style.flexWrap="wrap";
-    timeBox.style.alignItems="center";
-    timeBox.style.gap=".5rem .75rem";
-
-    const tLab=document.createElement("div");
-    tLab.className="cd-label";
-    tLab.textContent="Player Time:";
-
-    const tVal=document.createElement("div");
-    tVal.className="cd-val-box player-time-val";
-    tVal.textContent=msToClock(getPlayerTotalMs(pl));
-    timeBox.appendChild(tLab);
-    timeBox.appendChild(tVal);
-
-    statusLine.appendChild(timeBox);
-    body.appendChild(statusLine);
-
-    // Life / +/- controls
+    // Life edit col
     const lifeCol=document.createElement("div");
-    lifeCol.className="mini-col";
-
+    lifeCol.className="inline-col";
     const lifeLab=document.createElement("div");
-    lifeLab.className="label-sm";
+    lifeLab.className="inline-col-label";
     lifeLab.textContent="Life Total ("+nm+")";
 
     const lifeRow=document.createElement("div");
-    lifeRow.className="life-edit-inline";
+    lifeRow.className="inline-life-row";
 
     const minusBtn=document.createElement("div");
-    minusBtn.className="life-inline-btn";
+    minusBtn.className="step-btn";
     minusBtn.textContent="-";
     minusBtn.addEventListener("click",()=>{
       pl.life=pl.life-1;
@@ -2457,11 +2310,11 @@ function renderOthers(){
     });
 
     const lifeVal=document.createElement("div");
-    lifeVal.className="life-inline-val";
+    lifeVal.className="inline-life-val";
     lifeVal.textContent=pl.life;
 
     const plusBtn=document.createElement("div");
-    plusBtn.className="life-inline-btn";
+    plusBtn.className="step-btn";
     plusBtn.textContent="+";
     plusBtn.addEventListener("click",()=>{
       pl.life=pl.life+1;
@@ -2473,39 +2326,49 @@ function renderOthers(){
     lifeRow.appendChild(plusBtn);
     lifeCol.appendChild(lifeLab);
     lifeCol.appendChild(lifeRow);
-    body.appendChild(lifeCol);
 
-    // poison/rad/exp/storm
-    const debuffRow=document.createElement("div");
-    debuffRow.className="mini-row";
+    // poison / rad / exp / storm (quick edit)
+    const countersCol=document.createElement("div");
+    countersCol.className="inline-col";
+    const countersLab=document.createElement("div");
+    countersLab.className="inline-col-label";
+    countersLab.textContent="Counters ("+nm+")";
+    const ctrRow=document.createElement("div");
+    ctrRow.className="inline-row-wrap";
 
-    debuffRow.appendChild(smallStepperBox("☠ Poison",pl.poison,(v)=>{
+    ctrRow.appendChild(smallStepper("☠ Poison",pl.poison,(v)=>{
       pl.poison=v;
       lethalCheck(i,"poison");
       renderAll();
     }));
-    debuffRow.appendChild(smallStepperBox("☢ Rad",pl.radiation,(v)=>{
+    ctrRow.appendChild(smallStepper("☢ Rad",pl.radiation,(v)=>{
       pl.radiation=v;
       renderAll();
     }));
-    debuffRow.appendChild(smallStepperBox("★ Exp",pl.experience,(v)=>{
+    ctrRow.appendChild(smallStepper("★ Exp",pl.experience,(v)=>{
       pl.experience=v;
       renderAll();
     }));
-    debuffRow.appendChild(smallStepperBox("☁ Storm",pl.storm,(v)=>{
+    ctrRow.appendChild(smallStepper("☁ Storm",pl.storm,(v)=>{
       pl.storm=v;
       renderAll();
     }));
-    body.appendChild(debuffRow);
 
-    // Commander damage grid
-    const cdmgWrap=document.createElement("div");
-    cdmgWrap.className="cdmg-section-wrap";
+    countersCol.appendChild(countersLab);
+    countersCol.appendChild(ctrRow);
 
-    const cdmgLab=document.createElement("div");
-    cdmgLab.className="cdmg-label";
-    cdmgLab.textContent="Commander Damage Taken by "+nm+" (21 from any 1 source = elim)";
-    cdmgWrap.appendChild(cdmgLab);
+    inlineVitals.appendChild(lifeCol);
+    inlineVitals.appendChild(countersCol);
+    body.appendChild(inlineVitals);
+
+    // Commander damage edit grid
+    const cdmg=document.createElement("div");
+    cdmg.className="cdmg-wrap";
+
+    const cdmgHead=document.createElement("div");
+    cdmgHead.className="cdmg-head";
+    cdmgHead.textContent="Commander Damage Taken by "+nm+" (21 from one source = elim)";
+    cdmg.appendChild(cdmgHead);
 
     const cdmgGrid=document.createElement("div");
     cdmgGrid.className="cdmg-grid";
@@ -2515,12 +2378,11 @@ function renderOthers(){
       const cell=document.createElement("div");
       cell.className="cdmg-cell";
 
-      const cellLabel=document.createElement("div");
-      cellLabel.className="cdmg-cell-label";
-      cellLabel.textContent="from "+srcName;
-
-      const inputRow=document.createElement("div");
-      inputRow.className="cdmg-input-row";
+      const label=document.createElement("div");
+      label.className="cdmg-cell-label";
+      label.textContent="from "+srcName;
+      const row=document.createElement("div");
+      row.className="cdmg-input-row";
 
       const dmgIn=document.createElement("input");
       dmgIn.type="number";
@@ -2534,61 +2396,76 @@ function renderOthers(){
         renderAll();
       });
 
-      inputRow.appendChild(dmgIn);
-      cell.appendChild(cellLabel);
-      cell.appendChild(inputRow);
+      row.appendChild(dmgIn);
+      cell.appendChild(label);
+      cell.appendChild(row);
       cdmgGrid.appendChild(cell);
     });
 
-    cdmgWrap.appendChild(cdmgGrid);
-    body.appendChild(cdmgWrap);
+    cdmg.appendChild(cdmgGrid);
+    body.appendChild(cdmg);
 
-    // Player notes in Others
-    const miniNote=document.createElement("div");
-    miniNote.className="mini-note-box";
-    const mnLab=document.createElement("div");
-    mnLab.className="mini-note-label";
-    mnLab.textContent="Note on "+nm+" (Monarch, Initiative, Goaded, etc.)";
-    const mnArea=document.createElement("textarea");
-    mnArea.className="mini-area-input";
-    mnArea.value=pl.notesText;
-    mnArea.addEventListener("input",e=>{
+    // personal note for that player
+    const noteWrap=document.createElement("div");
+    noteWrap.className="inline-col";
+    const noteLab=document.createElement("div");
+    noteLab.className="inline-col-label";
+    noteLab.textContent="Note on "+nm+" (Monarch, Goaded, etc.)";
+
+    const noteTa=document.createElement("textarea");
+    noteTa.className="notes-area";
+    noteTa.value=pl.notesText;
+    noteTa.addEventListener("input",e=>{
       pl.notesText=e.target.value;
     });
-    miniNote.appendChild(mnLab);
-    miniNote.appendChild(mnArea);
-    body.appendChild(miniNote);
 
+    noteWrap.appendChild(noteLab);
+    noteWrap.appendChild(noteTa);
+    body.appendChild(noteWrap);
+
+    // click to toggle open
     top.addEventListener("click",()=>{
       otherOpen[i]=!otherOpen[i];
       renderOthers();
     });
 
-    const chevWrap=document.createElement("span");
-    chevWrap.appendChild(chev);
+    top.appendChild(leftWrap);
 
-    top.appendChild(titleSpan);
-    top.appendChild(chevWrap);
+    const rightSide=document.createElement("div");
+    rightSide.className="other-chevron";
+    rightSide.textContent=isOpen?"▲":"▼";
+    top.appendChild(rightSide);
 
     block.appendChild(top);
     block.appendChild(body);
-
-    wrap.appendChild(block);
+    othersBody.appendChild(block);
   });
-
-  othersArea.appendChild(wrap);
 }
 
-function smallStepperBox(labelText,val,onSet){
-  const box=document.createElement("div");
-  box.className="mini-col";
+function makeSubChunk(text){
+  const span=document.createElement("span");
+  span.textContent=text;
+  return span;
+}
 
-  const l=document.createElement("div");
-  l.className="label-sm";
-  l.textContent=labelText;
+function smallStepper(labelText,val,onSet){
+  const container=document.createElement("div");
+  container.style.display="flex";
+  container.style.flexDirection="column";
+  container.style.gap=".4rem";
+  container.style.minWidth="6rem";
+
+  const lab=document.createElement("div");
+  lab.style.fontSize=".7rem";
+  lab.style.fontWeight="600";
+  lab.style.color="var(--text-primary)";
+  lab.textContent=labelText;
 
   const row=document.createElement("div");
-  row.className="mini-step-row";
+  row.style.display="flex";
+  row.style.flexWrap="wrap";
+  row.style.gap=".4rem";
+  row.style.alignItems="center";
 
   const minus=document.createElement("div");
   minus.className="step-btn";
@@ -2613,569 +2490,98 @@ function smallStepperBox(labelText,val,onSet){
   row.appendChild(minus);
   row.appendChild(mid);
   row.appendChild(plus);
-  box.appendChild(l);
-  box.appendChild(row);
 
-  return box;
+  container.appendChild(lab);
+  container.appendChild(row);
+  return container;
 }
 
-/* =========================
-   ACCORDIONS
-========================= */
-function makeToggleChip(label,active,onToggle){
-  const chip=document.createElement("div");
-  chip.className="toggle-chip"+(active?" active":"");
-  chip.textContent=active?(label+" ✓"):label;
-  chip.addEventListener("click",()=>{ onToggle(!active); });
-  return chip;
-}
-
-function renderAccordions(){
-  accordionsArea.innerHTML="";
-
-  const statusAcc = renderStatusAccordion();
-  if(statusAcc) accordionsArea.appendChild(statusAcc);
-
-  const notesAcc = renderNotesAccordion();
-  if(notesAcc) accordionsArea.appendChild(notesAcc);
-}
-
-function renderStatusAccordion(){
+/* NOTES SECTION */
+function renderNotesSection(){
   const p=players[turnIndex];
-  if(!p) return null;
+  if(!p) return;
 
-  const wrap=document.createElement("div");
-  wrap.className="accordion-block";
+  const bodyVisible = notesExpanded;
+  notesChevron.textContent = bodyVisible?"▼":"▲";
+  notesBody.style.display = bodyVisible?"block":"none";
 
-  const head=document.createElement("div");
-  head.className="accordion-head";
-
-  const leftSpan=document.createElement("div");
-  leftSpan.textContent="Status Effects / Titles";
-
-  const rightSpan=document.createElement("div");
-  rightSpan.style.display="flex";
-  rightSpan.style.gap=".5rem";
-  rightSpan.style.alignItems="center";
-
-  const hintEl=document.createElement("div");
-  hintEl.className="hint";
-  hintEl.textContent="Monarch, Initiative, Dungeons, Emblems, Plane, Scheme";
-
-  const chevron=document.createElement("div");
-  chevron.style.color="var(--text-dim)";
-  chevron.style.fontSize=".8rem";
-
-  rightSpan.appendChild(hintEl);
-  rightSpan.appendChild(chevron);
-
-  const body=document.createElement("div");
-  body.className="accordion-body";
-
-  // Toggled titles
-  const toggleSection=document.createElement("div");
-  toggleSection.style.display="flex";
-  toggleSection.style.flexWrap="wrap";
-  toggleSection.style.gap=".5rem .5rem";
-
-  toggleSection.appendChild(
-    makeToggleChip("Monarch",p.hasMonarch,(val)=>{
-      p.hasMonarch=val; renderAll();
-    })
-  );
-  toggleSection.appendChild(
-    makeToggleChip("Initiative",p.hasInitiative,(val)=>{
-      p.hasInitiative=val; renderAll();
-    })
-  );
-  toggleSection.appendChild(
-    makeToggleChip("Blessing",p.hasCitysBlessing,(val)=>{
-      p.hasCitysBlessing=val; renderAll();
-    })
-  );
-
-  // Dungeon / Undercity / Progress + lookup
-  const dungeonBlock=document.createElement("div");
-  dungeonBlock.style.display="flex";
-  dungeonBlock.style.flexDirection="column";
-  dungeonBlock.style.gap=".5rem";
-
-  const dungeonLabel=document.createElement("div");
-  dungeonLabel.className="subsection-label";
-  dungeonLabel.textContent="Dungeon / Undercity / Progress";
-
-  const dungeonArea=document.createElement("textarea");
-  dungeonArea.className="area-input";
-  dungeonArea.placeholder="Initiative rooms, dungeon rooms, steps..."
-  dungeonArea.value=p.dungeonProgress;
-  dungeonArea.addEventListener("input",e=>{
-    p.dungeonProgress=e.target.value;
-  });
-
-  const dungeonLookupRow=document.createElement("div");
-  dungeonLookupRow.className="lookup-row";
-
-  const dungeonCol=document.createElement("div");
-  dungeonCol.className="lookup-col";
-
-  const dungeonInput=document.createElement("input");
-  dungeonInput.className="lookup-input";
-  dungeonInput.placeholder="Lookup Dungeon..."
-  dungeonInput.value=p.dungeonLookupName;
-  dungeonInput.addEventListener("input",e=>{
-    p.dungeonLookupName=e.target.value;
-  });
-
-  const dungeonBtn=document.createElement("button");
-  dungeonBtn.className="lookup-btn";
-  dungeonBtn.textContent="Lookup Dungeon";
-  dungeonBtn.addEventListener("click",()=>{
-    lookupDungeonForPlayer(turnIndex);
-  });
-
-  dungeonCol.appendChild(dungeonInput);
-  dungeonCol.appendChild(dungeonBtn);
-  dungeonLookupRow.appendChild(dungeonCol);
-
-  const dungeonPreview=document.createElement("div");
-  dungeonPreview.className="lookup-preview-block";
-
-  if(p.dungeonPreviewText || p.dungeonPreviewImg){
-    const txt=document.createElement("div");
-    txt.className="lookup-cardtext";
-    txt.textContent=p.dungeonPreviewText||"";
-    dungeonPreview.appendChild(txt);
-
-    if(p.dungeonPreviewImg){
-      const imgWrap=document.createElement("div");
-      imgWrap.className="lookup-cardimg";
-      const im=document.createElement("img");
-      im.src=p.dungeonPreviewImg;
-      im.alt="dungeon";
-      imgWrap.appendChild(im);
-      dungeonPreview.appendChild(imgWrap);
-    }
-  }
-
-  dungeonBlock.appendChild(dungeonLabel);
-  dungeonBlock.appendChild(dungeonArea);
-  dungeonBlock.appendChild(dungeonLookupRow);
-  dungeonBlock.appendChild(dungeonPreview);
-
-  // Emblems / Globals + emblem lookup
-  const emblemBlock=document.createElement("div");
-  emblemBlock.style.display="flex";
-  emblemBlock.style.flexDirection="column";
-  emblemBlock.style.gap=".5rem";
-
-  const emblemLabel=document.createElement("div");
-  emblemLabel.className="subsection-label";
-  emblemLabel.textContent="Emblems / Globals";
-
-  const emblemArea=document.createElement("textarea");
-  emblemArea.className="area-input";
-  emblemArea.placeholder="Emblems, static buffs, city-wide effects..."
-  emblemArea.value=p.emblemsText;
-  emblemArea.addEventListener("input",e=>{
-    p.emblemsText=e.target.value;
-  });
-
-  const emblemLookupRow=document.createElement("div");
-  emblemLookupRow.className="lookup-row";
-
-  const emblemCol=document.createElement("div");
-  emblemCol.className="lookup-col";
-
-  const emblemInput=document.createElement("input");
-  emblemInput.className="lookup-input";
-  emblemInput.placeholder="Lookup Emblem / Walker Ult..."
-  emblemInput.value=p.emblemLookupName;
-  emblemInput.addEventListener("input",e=>{
-    p.emblemLookupName=e.target.value;
-  });
-
-  const emblemBtn=document.createElement("button");
-  emblemBtn.className="lookup-btn";
-  emblemBtn.textContent="Lookup Emblem";
-  emblemBtn.addEventListener("click",()=>{
-    lookupEmblemForPlayer(turnIndex);
-  });
-
-  emblemCol.appendChild(emblemInput);
-  emblemCol.appendChild(emblemBtn);
-  emblemLookupRow.appendChild(emblemCol);
-
-  const emblemPreview=document.createElement("div");
-  emblemPreview.className="lookup-preview-block";
-
-  if(p.emblemPreviewText || p.emblemPreviewImg){
-    const txt=document.createElement("div");
-    txt.className="lookup-cardtext";
-    txt.textContent=p.emblemPreviewText||"";
-    emblemPreview.appendChild(txt);
-
-    if(p.emblemPreviewImg){
-      const imgWrap=document.createElement("div");
-      imgWrap.className="lookup-cardimg";
-      const im=document.createElement("img");
-      im.src=p.emblemPreviewImg;
-      im.alt="emblem";
-      imgWrap.appendChild(im);
-      emblemPreview.appendChild(imgWrap);
-    }
-  }
-
-  // Table-wide effects (Plane / Scheme)
-  const tableWideBlock=document.createElement("div");
-  tableWideBlock.style.display="flex";
-  tableWideBlock.style.flexDirection="column";
-  tableWideBlock.style.gap=".75rem";
-
-  const tableWideLabel=document.createElement("div");
-  tableWideLabel.className="subsection-label";
-  tableWideLabel.textContent="Table-Wide Effects (Planechase / Archenemy)";
-
-  // plane
-  const planeWrap=document.createElement("div");
-  planeWrap.style.display="flex";
-  planeWrap.style.flexDirection="column";
-  planeWrap.style.gap=".5rem";
-
-  const planeInnerRow=document.createElement("div");
-  planeInnerRow.className="lookup-row";
-
-  const planeCol=document.createElement("div");
-  planeCol.className="lookup-col";
-
-  const planeInput=document.createElement("input");
-  planeInput.className="lookup-input";
-  planeInput.placeholder="Current Plane..."
-  planeInput.value=currentPlaneName;
-  planeInput.addEventListener("input",e=>{
-    currentPlaneName=e.target.value;
-  });
-
-  const planeBtn=document.createElement("button");
-  planeBtn.className="lookup-btn";
-  planeBtn.textContent="Lookup Plane";
-  planeBtn.addEventListener("click",()=>{
-    lookupPlaneGlobal();
-  });
-
-  planeCol.appendChild(planeInput);
-  planeCol.appendChild(planeBtn);
-  planeInnerRow.appendChild(planeCol);
-
-  const planePreview=document.createElement("div");
-  planePreview.className="lookup-preview-block";
-
-  if(currentPlaneText || currentPlaneImg){
-    const t=document.createElement("div");
-    t.className="lookup-cardtext";
-    t.textContent=currentPlaneText||"";
-    planePreview.appendChild(t);
-
-    if(currentPlaneImg){
-      const imWrap=document.createElement("div");
-      imWrap.className="lookup-cardimg";
-      const im=document.createElement("img");
-      im.src=currentPlaneImg;
-      im.alt="plane";
-      imWrap.appendChild(im);
-      planePreview.appendChild(imWrap);
-    }
-  }
-
-  planeWrap.appendChild(planeInnerRow);
-  planeWrap.appendChild(planePreview);
-
-  // scheme
-  const schemeWrap=document.createElement("div");
-  schemeWrap.style.display="flex";
-  schemeWrap.style.flexDirection="column";
-  schemeWrap.style.gap=".5rem";
-
-  const schemeInnerRow=document.createElement("div");
-  schemeInnerRow.className="lookup-row";
-
-  const schemeCol=document.createElement("div");
-  schemeCol.className="lookup-col";
-
-  const schemeInput=document.createElement("input");
-  schemeInput.className="lookup-input";
-  schemeInput.placeholder="Current Scheme..."
-  schemeInput.value=currentSchemeName;
-  schemeInput.addEventListener("input",e=>{
-    currentSchemeName=e.target.value;
-  });
-
-  const schemeBtn=document.createElement("button");
-  schemeBtn.className="lookup-btn";
-  schemeBtn.textContent="Lookup Scheme";
-  schemeBtn.addEventListener("click",()=>{
-    lookupSchemeGlobal();
-  });
-
-  schemeCol.appendChild(schemeInput);
-  schemeCol.appendChild(schemeBtn);
-  schemeInnerRow.appendChild(schemeCol);
-
-  const schemePreview=document.createElement("div");
-  schemePreview.className="lookup-preview-block";
-
-  if(currentSchemeText || currentSchemeImg){
-    const t=document.createElement("div");
-    t.className="lookup-cardtext";
-    t.textContent=currentSchemeText||"";
-    schemePreview.appendChild(t);
-
-    if(currentSchemeImg){
-      const imWrap=document.createElement("div");
-      imWrap.className="lookup-cardimg";
-      const im=document.createElement("img");
-      im.src=currentSchemeImg;
-      im.alt="scheme";
-      imWrap.appendChild(im);
-      schemePreview.appendChild(imWrap);
-    }
-  }
-
-  schemeWrap.appendChild(schemeInnerRow);
-  schemeWrap.appendChild(schemePreview);
-
-  tableWideBlock.appendChild(tableWideLabel);
-  tableWideBlock.appendChild(planeWrap);
-  tableWideBlock.appendChild(schemeWrap);
-
-  body.appendChild(toggleSection);
-  body.appendChild(dungeonBlock);
-  body.appendChild(emblemBlock);
-  body.appendChild(tableWideBlock);
-
-  if(accordionsOpen.statusEffects){
-    body.style.display="flex";
-    chevron.textContent="▲";
-  }else{
-    body.style.display="none";
-    chevron.textContent="▼";
-  }
-
-  head.addEventListener("click",()=>{
-    accordionsOpen.statusEffects=!accordionsOpen.statusEffects;
-    renderAccordions();
-  });
-
-  wrap.appendChild(head);
-  wrap.appendChild(body);
-  return wrap;
-}
-
-function renderNotesAccordion(){
-  const p=players[turnIndex];
-  if(!p) return null;
-
-  const wrap=document.createElement("div");
-  wrap.className="accordion-block";
-
-  const head=document.createElement("div");
-  head.className="accordion-head";
-
-  const leftSpan=document.createElement("div");
-  leftSpan.textContent="Notes / Reminders";
-
-  const rightSpan=document.createElement("div");
-  rightSpan.style.display="flex";
-  rightSpan.style.gap=".5rem";
-  rightSpan.style.alignItems="center";
-
-  const hintEl=document.createElement("div");
-  hintEl.className="hint";
-  hintEl.textContent="Goad, skip draw, bounties, politics";
-
-  const chevron=document.createElement("div");
-  chevron.style.color="var(--text-dim)";
-  chevron.style.fontSize=".8rem";
-
-  rightSpan.appendChild(hintEl);
-  rightSpan.appendChild(chevron);
-
-  const body=document.createElement("div");
-  body.className="accordion-body";
+  notesBody.innerHTML="";
 
   const notesLabel=document.createElement("div");
-  notesLabel.className="subsection-label";
-  notesLabel.textContent="Notes";
+  notesLabel.className="inline-col-label";
+  notesLabel.textContent="Notes (Deals, Goad, Skip Draw, Bounty...)";
 
-  const notesArea=document.createElement("textarea");
-  notesArea.className="area-input";
-  notesArea.placeholder="Goaded Krenko, skip next draw, bounty, 'don't attack me' deals..."
-  notesArea.value=p.notesText;
-  notesArea.addEventListener("input",e=>{
+  const notesTa=document.createElement("textarea");
+  notesTa.className="notes-area";
+  notesTa.placeholder="Goaded X, skip next draw, bounty on Y, don't attack me or else..."
+  notesTa.value=p.notesText;
+  notesTa.addEventListener("input",e=>{
     p.notesText=e.target.value;
   });
 
-  body.appendChild(notesLabel);
-  body.appendChild(notesArea);
-
-  if(accordionsOpen.notes){
-    body.style.display="flex";
-    chevron.textContent="▲";
-  }else{
-    body.style.display="none";
-    chevron.textContent="▼";
-  }
-
-  head.addEventListener("click",()=>{
-    accordionsOpen.notes=!accordionsOpen.notes;
-    renderAccordions();
-  });
-
-  wrap.appendChild(head);
-  wrap.appendChild(body);
-  return wrap;
+  notesBody.appendChild(notesLabel);
+  notesBody.appendChild(notesTa);
 }
 
-/* =========================
-   LETHAL CHECK
-========================= */
-function lethalCheck(i,source){
-  const p=players[i];
-  if(!p) return;
-  if(source==="life" && p.life<=0){
-    knockOutToCooldown(i);
-    return;
-  }
-  if(source==="poison" && p.poison>=10){
-    knockOutToCooldown(i);
-    return;
+/* FULL RENDER */
+function renderAll(){
+  syncCommanderDamageArrays();
+
+  const cur = players[turnIndex]||{};
+  const nm  = cur.name||("Player "+(turnIndex+1));
+  turnBanner.textContent = "▶ "+nm.toUpperCase()+"'S TURN ◀";
+
+  modeStatusText.textContent =
+    (gameMode==="regular"?"Mode 1 — Regular":"Mode 2 — Rumble");
+
+  renderHUD();
+  renderOthers();
+  renderNotesSection();
+  renderGlobalTimerBanner();
+
+  if(winnerLocked){
+    winnerMiniBanner.style.display="block";
+  }else if(!winnerTimeMs){
+    winnerMiniBanner.style.display="none";
   }
 }
 
-/* =========================
-   ADMIN STATUS CYCLE
-========================= */
-function cycleStatusAdmin(i){
-  const p=players[i];
-  if(gameMode==="rumble"){
-    // active -> cooldown -> eliminated -> active
-    if(p.status==="active"){
-      knockOutToCooldown(i);
-    }else if(p.status==="cooldown"){
-      permanentlyEliminate(i);
-      showAnnounce(
-        (p.name||("Player "+(i+1)))+" eliminated",
-        "Manual correction.",
-        "OK"
-      );
-    }else{
-      p.status="active";
-      p.cooldownRemaining=0;
-      p.pendingEOTDraw=false;
-    }
-  }else{
-    // regular: active -> eliminated -> active
-    if(p.status==="active"){
-      permanentlyEliminate(i);
-      showAnnounce(
-        (p.name||("Player "+(i+1)))+" eliminated",
-        "Manual correction.",
-        "OK"
-      );
-    }else{
-      p.status="active";
-      p.cooldownRemaining=0;
-      p.pendingEOTDraw=false;
-    }
-  }
-  renderAll();
-}
-
-/* =========================
-   SETUP / MODE / NEW GAME
-========================= */
+/* =========================================================
+   SETUP FLOW
+   ========================================================= */
 function resetGameStateKeepMode(){
   players=[];
   turnIndex=0;
   turnCounter=0;
+
   reigningCandidateIndex=null;
   reigningCandidateTurnStamp=null;
+
   winnerLocked=false;
   winnerName="";
   winnerTimeMs=0;
   winnerActiveMs=0;
-  otherOpen={};
 
-  currentPlaneName   ="";
-  currentPlaneText   ="";
-  currentPlaneImg    ="";
-  currentSchemeName  ="";
-  currentSchemeText  ="";
-  currentSchemeImg   ="";
+  otherOpen={};
 
   if(renderIntervalId){
     clearInterval(renderIntervalId);
     renderIntervalId=null;
   }
-
-  accordionsOpen.statusEffects=false;
-  accordionsOpen.notes=true;
-
-  setupStepMode.style.display="none";
-  setupStepPlayers.style.display="flex";
-  setupOverlay.style.display="flex";
 }
 
 function showModeStep(){
-  players=[];
-  gameStartTime=null;
-  winnerLocked=false;
-  reigningCandidateIndex=null;
-  reigningCandidateTurnStamp=null;
-  otherOpen={};
-
-  currentPlaneName   ="";
-  currentPlaneText   ="";
-  currentPlaneImg    ="";
-  currentSchemeName  ="";
-  currentSchemeText  ="";
-  currentSchemeImg   ="";
-
-  if(renderIntervalId){
-    clearInterval(renderIntervalId);
-    renderIntervalId=null;
-  }
-
-  accordionsOpen.statusEffects=false;
-  accordionsOpen.notes=true;
-
+  resetGameStateKeepMode();
+  gameMode=null;
+  // overlay visible, show mode step
   setupStepMode.style.display="flex";
   setupStepPlayers.style.display="none";
   setupOverlay.style.display="flex";
 }
 
 function showPlayerCountStep(){
-  players=[];
-  gameStartTime=null;
-  winnerLocked=false;
-  reigningCandidateIndex=null;
-  reigningCandidateTurnStamp=null;
-  otherOpen={};
-
-  currentPlaneName   ="";
-  currentPlaneText   ="";
-  currentPlaneImg    ="";
-  currentSchemeName  ="";
-  currentSchemeText  ="";
-  currentSchemeImg   ="";
-
-  if(renderIntervalId){
-    clearInterval(renderIntervalId);
-    renderIntervalId=null;
-  }
-
-  accordionsOpen.statusEffects=false;
-  accordionsOpen.notes=true;
-
+  resetGameStateKeepMode();
+  // overlay visible, show playercount step
   setupStepMode.style.display="none";
   setupStepPlayers.style.display="flex";
   setupOverlay.style.display="flex";
@@ -3184,7 +2590,7 @@ function showPlayerCountStep(){
 setupStepMode.querySelectorAll("[data-mode]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     const m=btn.getAttribute("data-mode");
-    gameMode=m==="regular"?"regular":"rumble";
+    gameMode = (m==="regular")?"regular":"rumble";
     showPlayerCountStep();
   });
 });
@@ -3218,26 +2624,20 @@ function startGameWith(nPlayers){
   winnerActiveMs=0;
   otherOpen={};
 
-  currentPlaneName   ="";
-  currentPlaneText   ="";
-  currentPlaneImg    ="";
-  currentSchemeName  ="";
-  currentSchemeText  ="";
-  currentSchemeImg   ="";
-
-  accordionsOpen.statusEffects=false;
-  accordionsOpen.notes=true;
-
   gameStartTime=Date.now();
 
   syncCommanderDamageArrays();
+
+  setupOverlay.style.display="none";
+
+  // start the first player's timer if they're active
   if(players[0] && players[0].status==="active"){
     startTimingPlayer(0);
   }
 
-  setupOverlay.style.display="none";
   renderAll();
 
+  // timer updater
   if(renderIntervalId){
     clearInterval(renderIntervalId);
   }
@@ -3248,9 +2648,9 @@ function startGameWith(nPlayers){
   },1000);
 }
 
-/* =========================
+/* =========================================================
    EVENTS
-========================= */
+   ========================================================= */
 endTurnBtn.addEventListener("click",()=>{
   passTurn();
 });
@@ -3259,11 +2659,73 @@ winnerCloseBtn.addEventListener("click",()=>{
   winnerOverlay.style.display="none";
 });
 
-themeSelect.addEventListener("change",()=>{
-  document.body.classList.remove("theme-dark","theme-light","theme-neon");
-  document.body.classList.add(themeSelect.value);
+/* accordions for Other Players and Notes */
+othersAccordion.querySelector(".accordion-head-static").addEventListener("click",()=>{
+  otherExpanded=!otherExpanded;
+  renderOthers();
+});
+notesAccordion.querySelector(".accordion-head-static").addEventListener("click",()=>{
+  notesExpanded=!notesExpanded;
+  renderNotesSection();
 });
 
+/* tools drawer */
+toggleToolsBtn.addEventListener("click",()=>{
+  if(toolsPanel.style.display==="block"){
+    toolsPanel.style.display="none";
+    toggleToolsBtn.textContent="Tools ▼";
+  } else {
+    toolsPanel.style.display="block";
+    toggleToolsBtn.textContent="Tools ▲";
+  }
+});
+
+/* theme select */
+themeSelect.addEventListener("change",()=>{
+  document.body.classList.remove("theme-dark","theme-neon");
+  const val=themeSelect.value;
+  if(val==="theme-dark"){
+    document.body.classList.add("theme-dark");
+  }else if(val==="theme-neon"){
+    document.body.classList.add("theme-neon");
+  }else{
+    // light/default
+    // remove all
+  }
+});
+
+/* RNG buttons */
+flipCoinBtn.addEventListener("click",()=>{
+  rngOutput.textContent="Coin: "+(Math.random()<0.5?"Heads":"Tails");
+});
+rollD6Btn.addEventListener("click",()=>{
+  rngOutput.textContent="d6: "+(Math.floor(Math.random()*6)+1);
+});
+rollD20Btn.addEventListener("click",()=>{
+  rngOutput.textContent="d20: "+(Math.floor(Math.random()*20)+1);
+});
+
+/* global card lookup */
+globalLookupBtn.addEventListener("click",()=>{
+  lookupAnyCardGlobal();
+});
+
+/* new / change mode */
+newGameBtn.addEventListener("click",()=>{
+  if(!confirm("Start a new game in the same mode? This clears all data.")) return;
+  showPlayerCountStep();
+});
+changeModeBtn.addEventListener("click",()=>{
+  if(!confirm("Change mode? This restarts the game.")) return;
+  showModeStep();
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+showModeStep();
+renderAll();
 </script>
 </body>
 </html>
+```0
