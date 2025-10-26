@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>EDH RUMBLE TRACKER v16</title>
+<title>EDH RUMBLE TRACKER v17</title>
 <style>
 /* =========================================================
    THEME VARIABLES
@@ -145,7 +145,6 @@ div.step-btn:active,
 div.life-btn:active,
 div.tax-btn:active,
 .end-turn-btn:active,
-.cooldown-ack-btn:active,
 .overlay-btn:active,
 .setup-btn:active,
 .setup-go:active,
@@ -290,9 +289,6 @@ div.tax-btn:active,
   position:relative;
   transition:border-color .25s, box-shadow .25s, background .25s;
   animation:fadeInUp .25s ease both;
-}
-.hud-card.glow-border{
-  box-shadow:0 0 18px var(--glow-current),0 30px 60px rgba(0,0,0,.5);
 }
 @keyframes fadeInUp{
   0%{opacity:0;transform:translateY(8px) scale(.98);}
@@ -496,20 +492,6 @@ div.tax-btn:active,
   padding:.4rem .6rem;
   color:var(--text-primary);
   transition:background .3s,border-color .3s,color .3s;
-}
-
-/* respawn reminder */
-.respawn-draw-banner{
-  background:var(--accent-warn-bg);
-  border:1px solid var(--accent-warn-border);
-  border-radius:.5rem;
-  padding:.5rem .6rem;
-  font-size:.7rem;
-  font-weight:600;
-  line-height:1.3;
-  color:var(--gold);
-  text-shadow:0 0 8px var(--glow-current);
-  animation:pulseWarn 1.5s infinite;
 }
 
 /* vitalsBlock */
@@ -1241,7 +1223,6 @@ div.tax-btn:active,
 
 /* -------------------------------------------------
    OVERLAYS (Setup, Announce, Winner)
-   fancy pulse glow + gentle pop
 ------------------------------------------------- */
 .overlay-fullscreen{
   position:fixed;
@@ -1420,7 +1401,7 @@ div.tax-btn:active,
   transition:background .3s,border-color .3s,color .3s,box-shadow .3s;
 }
 
-/* we keep this hidden element for later if needed */
+/* hidden mini banner for later if needed */
 .winner-mini-banner{
   display:none;
   border:1px solid var(--gold);
@@ -1547,46 +1528,39 @@ Setup:
   – You try to draw and cannot (decked out).
 
 Temporary Death (Cooldown):
-• If your life hits 0 or less, or you get 10+ poison, or an effect says “you lose the game,”
-  you go on cooldown instead of leaving.
+• If your life hits 0 or less, or you get 10+ poison, or an effect says “you lose the game,” you go on cooldown instead of leaving (Rumble mode).
 • “Win the game” effects do nothing in this mode.
-• You get a cooldown length in turns.
-  – Your cooldown length = 1 + number of *other* players already cooling right now.
-  – snapshot when you enter.
+• You get a cooldown length in turns:
+  – Your cooldown length = 1 + number of *other* players already cooling right now (snapshot at death).
 
-Cooldown Turns:
-• On each of your future turns:
-  1. You get a popup saying you're still cooling down.
-  2. You acknowledge. You are skipped this turn.
-  3. If that was your FIRST skipped turn after you entered, your "armed" flag is now TRUE. Cooldown number stays the same.
-  4. Otherwise:
-     - If cooldown > 0, cooldown -= 1.
-     - If cooldown is now 0:
-         You are READY to respawn, but not yet spawned this cycle.
+Cooldown / Turn Skips:
+• Whenever it becomes your turn and you are cooling:
+  – If cooldownRemaining > 0:
+       cooldownRemaining -= 1
+       Your entire turn is skipped.
+  – Else (cooldownRemaining === 0):
+       You immediately respawn and you take this turn as normal.
 
-Respawn Timing:
-• You only actually respawn at the *start* of a future turn of yours
-  in which:
-  – cooldown == 0
-  – and you ALREADY had at least one skip after entering cooldown.
-  In other words, you can't die and instantly pop back up. You must miss at least one full turn cycle.
+• So cooldown only ticks when turn order reaches you.
+• If you died during your own turn, that turn just finishes, then you start missing future turns.
+• If you died during someone else’s turn, the next time it gets to you the same logic applies.
 
-Respawn Effects:
+Respawn:
 • When you respawn:
   – You become active again.
-  – Life = ceiling(average life of all other active players).
+  – Life = ceiling(average life of all OTHER active players).
   – Poison = 0.
   – Commander tax resets.
-  – You keep any permanents you still control on the battlefield.
-  – Your first full turn back: you skip your normal draw step, but at END of that turn you draw 1.
+  – You keep anything you still control on the battlefield.
+  – You act normally starting right now.
 
-While Cooling Down (Not Active):
-• You're not an active player.
+While Cooling Down:
+• You are NOT an active player.
 • You can't cast/attack/block/respond/activate.
 • You can't be targeted as a player.
 • Your board stays in play and can still be attacked/blown up.
-• Your zones (hand, exile, etc.) stay.
-• Triggers that would need your decisions are ignored. Your static effects just sit there.
+• Your zones stay (hand, exile, etc.).
+• Triggers that would need your decisions are ignored.
 
 Reigning Rumbler:
 • If exactly one player is active and everyone else is cooling or eliminated,
@@ -1802,46 +1776,13 @@ let turnIndex = 0;
 let turnCounter = 0;
 let gameStartTime = null;
 
-/*
-Cooldown logic (the refined "armed" model):
-
-When a player is knocked out in Rumble:
-- status="cooldown"
-- armed=false
-- cooldownRemaining = snapshotBase (1 + othersCoolingAtDeath)
-
-On each of THEIR turns while in cooldown:
-1. Popup.
-2. If(!armed):
-     armed=true
-   Else:
-     if(cooldownRemaining>0) cooldownRemaining--
-3. If(after step 2, cooldownRemaining===0 AND armed===true):
-     mark them READY to respawn next time their turn STARTS.
-     We'll represent "readyToRespawn" = true.
-4. That skipped turn still ends immediately (they don't take actions).
-
-After we cycle around and it's their turn AGAIN:
-- If(status==="cooldown" AND readyToRespawn===true):
-     Respawn now (become active, reset poison, etc)
-     Give them this turn as normal active turn
-     pendingEOTDraw=true, skipDrawOnThisTurn=true
-
-So we need fields:
-- armed:boolean
-- readyToRespawn:boolean
-*/
-
 let reigningCandidateIndex = null;
 let reigningCandidateTurnStamp = null;
 
 let winnerLocked = false;
 let renderIntervalId = null;
 
-let showingAnnounce = false;
-let pendingClearAfterAnnounce = null;
-
-/* plane/scheme global shared state */
+/* plane/scheme shared state */
 let currentPlaneName   = "";
 let currentPlaneText   = "";
 let currentPlaneImg    = "";
@@ -1991,9 +1932,7 @@ function makePlayer(defaultName){
     name: defaultName,
 
     status:"active",          // "active"|"cooldown"|"eliminated"
-    cooldownRemaining:0,
-    armed:false,
-    readyToRespawn:false,
+    cooldownRemaining:0,      // integer >=0, only matters if status==="cooldown"
 
     life:40,
     poison:0,
@@ -2010,21 +1949,7 @@ function makePlayer(defaultName){
 
     totalActiveMs:0,
     turnStartMs:null,
-    isTiming:false,
-
-    pendingEOTDraw:false,
-    skipDrawThisTurn:false, // only true on the first respawn turn
-
-    // dungeon / emblem tracking for THIS player
-    dungeonLookupName:"",
-    dungeonPreviewText:"",
-    dungeonPreviewImg:"",
-    dungeonProgress:"",
-
-    emblemLookupName:"",
-    emblemPreviewText:"",
-    emblemPreviewImg:"",
-    emblemsText:""
+    isTiming:false
   };
 }
 function syncCommanderDamageArrays(){
@@ -2079,39 +2004,16 @@ function getActivePlayers(){
    ANNOUNCEMENTS
 ========================================================= */
 function showAnnounce(mainTxt, bodyTxt, cb){
-  showingAnnounce=true;
   announceMain.textContent = mainTxt;
   announceBody.textContent = bodyTxt;
   announceOverlay.style.display="flex";
 
   announceOkBtn.onclick = ()=>{
     announceOverlay.style.display="none";
-    showingAnnounce=false;
-    if(pendingClearAfterAnnounce!==null){
-      const pp=players[pendingClearAfterAnnounce];
-      if(pp){
-        pp.pendingEOTDraw=false;
-      }
-      pendingClearAfterAnnounce=null;
-    }
     if(typeof cb==="function"){
       cb();
     }
   };
-}
-
-/* end-of-turn draw reminder */
-function runEndOfTurnDrawIfNeeded(idx){
-  const p=players[idx];
-  if(!p) return;
-  if(p.pendingEOTDraw){
-    pendingClearAfterAnnounce = idx;
-    showAnnounce(
-      (p.name||("Player "+(idx+1)))+" draw reminder",
-      "Draw 1 card now. This is your respawn recovery draw because you skipped your draw step this turn.",
-      function(){}
-    );
-  }
 }
 
 /* =========================================================
@@ -2122,10 +2024,6 @@ function permanentlyEliminate(i){
   stopTimingPlayer(i);
   p.status="eliminated";
   p.cooldownRemaining=0;
-  p.armed=false;
-  p.readyToRespawn=false;
-  p.pendingEOTDraw=false;
-  p.skipDrawThisTurn=false;
 
   if(reigningCandidateIndex===i){
     reigningCandidateIndex=null;
@@ -2143,7 +2041,7 @@ function checkCommanderDamageElim(victimIdx){
   }
 }
 
-/* lethal events -> goes to cooldown in rumble, or elim in regular */
+/* lethal events -> cooldown in rumble, or elim in regular */
 function knockOutToCooldown(i){
   const p=players[i];
 
@@ -2172,10 +2070,6 @@ function knockOutToCooldown(i){
 
   p.status="cooldown";
   p.cooldownRemaining=1+othersCooling;
-  p.armed=false;
-  p.readyToRespawn=false;
-  p.pendingEOTDraw=false;
-  p.skipDrawThisTurn=false;
 
   if(reigningCandidateIndex===i){
     reigningCandidateIndex=null;
@@ -2184,31 +2078,27 @@ function knockOutToCooldown(i){
 
   showAnnounce(
     (p.name||("Player "+(i+1)))+" knocked out",
-    "Entered cooldown. Will miss a turn, then count down.\nThey'll respawn when cooldown hits 0 on a future turn of theirs.",
+    "Entered cooldown with "+p.cooldownRemaining+" turn(s) to burn.",
     null
   );
 }
 
-/* respawn now on start of turn IF readyToRespawn===true && cooldownRemaining===0 */
+/* respawn now on start of turn IF cooldownRemaining===0 */
 function respawnPlayer(i){
   const p=players[i];
   if(p.status!=="cooldown") return;
-  if(!p.readyToRespawn || p.cooldownRemaining!==0) return;
+  if(p.cooldownRemaining!==0) return;
 
+  // heal on respawn: ceil(avg life of other ACTIVE players), poison reset, tax reset
   const newLife=getAvgActiveLifeCeil(i);
   p.status="active";
-  p.poison=0;
   p.life=newLife;
+  p.poison=0;
   p.commanderTaxSteps=0;
-
-  p.readyToRespawn=false;
-  p.armed=true; // irrelevant but keep consistent
-  p.skipDrawThisTurn=true; // skip normal draw step this turn
-  p.pendingEOTDraw=true;   // then draw 1 at end of turn
 
   showAnnounce(
     (p.name||("Player "+(i+1)))+" respawned",
-    "Life "+newLife+" (avg rounded up), poison=0, commander tax reset.\nThis turn: skip normal draw step; draw 1 at END of turn.",
+    "Back in at "+newLife+" life. Poison reset. Commander tax reset.",
     null
   );
 }
@@ -2243,10 +2133,6 @@ function cycleStatusAdmin(i){
     }else{ // eliminated -> active
       p.status="active";
       p.cooldownRemaining=0;
-      p.armed=true;
-      p.readyToRespawn=false;
-      p.pendingEOTDraw=false;
-      p.skipDrawThisTurn=false;
     }
   }else{
     if(p.status==="active"){
@@ -2259,10 +2145,6 @@ function cycleStatusAdmin(i){
     }else{
       p.status="active";
       p.cooldownRemaining=0;
-      p.armed=true;
-      p.readyToRespawn=false;
-      p.pendingEOTDraw=false;
-      p.skipDrawThisTurn=false;
     }
   }
   renderAll();
@@ -2292,7 +2174,6 @@ function updateReigningCandidateOnTurnEnd(){
 }
 function checkReigningWin(){
   if(gameMode!=="rumble" || winnerLocked) return false;
-  if(reigningCandidateIndex===null) return false;
   const actives=getActivePlayers();
   if(actives.length!==1) return false;
   const onlyIdx=actives[0];
@@ -2338,33 +2219,14 @@ function lockWinner(idx,isRumble){
    TURN FLOW
 ========================================================= */
 /*
-passTurn() is called by the active player.
+passTurn() is called by the *current* player when their turn ends.
 
-Process:
+Steps:
 1. stop timing them
-2. EOT draw reminder if pending
-3. turnCounter++ (a real turn finished)
-4. check/crown Reigning Rumbler, check wins
-5. move to next seat, resolve that seat
-
-resolve next seat:
-- eliminated -> skip forward (no increment)
-- cooldown:
-   a) if p.readyToRespawn && p.cooldownRemaining===0:
-        -> respawnPlayer(i), startTimingPlayer(i) and we STOP
-        (this is an actual turn, NOT skipped)
-   b) else:
-        show popup: "cooling down"
-        if(!p.armed) p.armed=true else if(p.cooldownRemaining>0) p.cooldownRemaining--
-        if(p.cooldownRemaining===0 && p.armed===true) p.readyToRespawn=true
-        skip them -> move on (no turnCounter++)
-- active:
-    startTimingPlayer(i) and STOP
-
-We loop until we land on someone who actually takes a turn (active or newly respawned),
-or we wrap crazy many times.
+2. turnCounter++ (a real turn finished)
+3. update reigning rumbler / check win
+4. advance to the next seat and resolve that seat with advanceTurnCore()
 */
-
 function passTurn(){
   if(winnerLocked){
     renderAll();
@@ -2373,7 +2235,6 @@ function passTurn(){
 
   // current player finishing
   stopTimingPlayer(turnIndex);
-  runEndOfTurnDrawIfNeeded(turnIndex);
 
   // full real turn ended
   turnCounter += 1;
@@ -2398,7 +2259,20 @@ function passTurn(){
   advanceTurnCore();
 }
 
-/* Advance forward until we find who actually acts this turn */
+/*
+advanceTurnCore():
+We keep rotating until we land on someone who actually TAKES a turn.
+
+status === "eliminated" -> skip
+status === "cooldown":
+   if cooldownRemaining > 0:
+        cooldownRemaining--, announce, skip them
+   else cooldownRemaining === 0:
+        respawnPlayer(i), startTimingPlayer(i), stop looping (they take this turn)
+
+status === "active":
+   startTimingPlayer(i), stop looping
+*/
 function advanceTurnCore(){
   let guard=0;
   while(guard<50){
@@ -2416,8 +2290,18 @@ function advanceTurnCore(){
     }
 
     if(p.status==="cooldown"){
-      // check if they're fully ready to respawn NOW
-      if(p.readyToRespawn && p.cooldownRemaining===0){
+      if(p.cooldownRemaining>0){
+        // burn one cooldown step and skip this turn completely
+        p.cooldownRemaining--;
+        showAnnounce(
+          (p.name||("Player "+(turnIndex+1)))+" cooling down",
+          "Cooldown now "+p.cooldownRemaining+". They take no turn.",
+          null
+        );
+        turnIndex=rotateClockwiseIndex(turnIndex);
+        continue;
+      } else {
+        // cooldownRemaining===0 -> immediate respawn and take THIS turn
         respawnPlayer(turnIndex);
         if(!winnerLocked){
           startTimingPlayer(turnIndex);
@@ -2425,52 +2309,18 @@ function advanceTurnCore(){
         renderAll();
         return;
       }
-
-      // else they are cooling this turn (skip turn)
-      handleCooldownTurn(turnIndex);
-      // after handling, move to next seat
-      turnIndex=rotateClockwiseIndex(turnIndex);
-      continue;
     }
 
-    // ACTIVE seat -> this is who takes the turn
+    // ACTIVE player -> they take the turn
     if(!winnerLocked){
       startTimingPlayer(turnIndex);
     }
     renderAll();
     return;
   }
+
   console.warn("advanceTurnCore guard stop");
   renderAll();
-}
-
-/* Player at i gets "you are cooling down, you skip" popup and logic updates */
-function handleCooldownTurn(i){
-  const p=players[i];
-  if(!p || p.status!=="cooldown") return;
-
-  const mainTxt = (p.name||("Player "+(i+1)))+" is cooling down";
-  let bodyTxt = "You are skipped this turn.";
-
-  showAnnounce(mainTxt, bodyTxt, function afterAck(){
-    // after ack:
-    if(!p.armed){
-      // first skip after entering cooldown
-      p.armed=true;
-    }else{
-      // already armed: burn down cooldownRemaining if >0
-      if(p.cooldownRemaining>0){
-        p.cooldownRemaining--;
-      }
-    }
-
-    // If cooldownRemaining is now 0 AND armed true => mark readyToRespawn
-    if(p.cooldownRemaining===0 && p.armed){
-      p.readyToRespawn=true;
-    }
-
-    renderAll();
-  });
 }
 
 /* =========================================================
@@ -2519,7 +2369,6 @@ async function smartContextSearch(query, context){
     primaryURL = base+"/cards/named?fuzzy="+encodeURIComponent(query);
   }
 
-  // first attempt
   let data = await scryfallFetch(primaryURL);
 
   let card = null;
@@ -2555,7 +2404,6 @@ async function smartContextSearch(query, context){
   };
 }
 
-/* each button */
 async function runGlobalLookup(){
   const q=globalLookupInput.value||"";
   const res=await smartContextSearch(q,"global");
@@ -2586,8 +2434,8 @@ async function runDungeonLookup(){
   }else{
     p.dungeonPreviewText = res.name+(res.type?("\n"+res.type):"")+(res.text?("\n"+res.text):"");
     p.dungeonPreviewImg  = res.image||"";
-    if(p.dungeonProgress.toLowerCase().indexOf(res.name.toLowerCase())===-1){
-      p.dungeonProgress += (p.dungeonProgress? "\n":"")+"Dungeon: "+res.name;
+    if(!p.dungeonProgress || p.dungeonProgress.toLowerCase().indexOf(res.name.toLowerCase())===-1){
+      p.dungeonProgress = (p.dungeonProgress? p.dungeonProgress+"\n":"")+"Dungeon: "+res.name;
     }
   }
   renderAll();
@@ -2603,8 +2451,8 @@ async function runEmblemLookup(){
   }else{
     p.emblemPreviewText = res.name+(res.type?("\n"+res.type):"")+(res.text?("\n"+res.text):"");
     p.emblemPreviewImg  = res.image||"";
-    if(p.emblemsText.toLowerCase().indexOf(res.name.toLowerCase())===-1){
-      p.emblemsText += (p.emblemsText? "\n":"")+"Emblem: "+res.name+" — "+res.text;
+    if(!p.emblemsText || p.emblemsText.toLowerCase().indexOf(res.name.toLowerCase())===-1){
+      p.emblemsText = (p.emblemsText? p.emblemsText+"\n":"")+"Emblem: "+res.name+" — "+res.text;
     }
   }
   renderAll();
@@ -2663,7 +2511,7 @@ function renderTimersOnly(){
   });
 }
 
-/* create sub-stepper for active main HUD right-col */
+/* small steppers */
 function makeSubStepper(label,val,onSet){
   const box=document.createElement("div");
   box.className="sub-box";
@@ -2703,8 +2551,6 @@ function makeSubStepper(label,val,onSet){
   box.appendChild(row);
   return box;
 }
-
-/* little stepper used in "other players" lists */
 function smallStepper(labelText,val,onSet){
   const container=document.createElement("div");
   container.style.display="flex";
@@ -2753,23 +2599,32 @@ function renderHUD(){
   const p=players[turnIndex];
   if(!p)return;
 
-  // turn banner side note (skip draw etc)
-  if(p.skipDrawThisTurn){
+  // cooldown banner under turn bar
+  if(p.status === "cooldown"){
     turnReminderExtra.style.display="block";
-    turnReminderExtra.textContent="Skip draw step; draw 1 at END of this turn.";
-  }else{
+    turnReminderExtra.textContent="On cooldown ("+p.cooldownRemaining+" left).";
+  } else {
     turnReminderExtra.style.display="none";
     turnReminderExtra.textContent="";
   }
 
   const card=document.createElement("div");
-  card.className="hud-card glow-border";
+  card.className="hud-card";
 
-  // seat color border glow
-  const seatColor=getSeatColor(turnIndex);
-  card.style.borderColor=seatColor;
-  card.style.boxShadow=
-    `0 0 18px ${seatColor},0 30px 60px rgba(0,0,0,.5)`;
+  // seat color / alert glow
+  if(p.status==="cooldown"){
+    const danger="var(--red)";
+    card.style.borderColor=danger;
+    card.style.boxShadow=`0 0 18px ${danger},0 30px 60px rgba(0,0,0,.5)`;
+  } else if(p.status==="eliminated"){
+    const off="var(--off)";
+    card.style.borderColor=off;
+    card.style.boxShadow=`0 0 18px ${off},0 30px 60px rgba(0,0,0,.5)`;
+  } else {
+    const seatColor=getSeatColor(turnIndex);
+    card.style.borderColor=seatColor;
+    card.style.boxShadow=`0 0 18px ${seatColor},0 30px 60px rgba(0,0,0,.5)`;
+  }
 
   const topRow=document.createElement("div");
   topRow.className="hud-top-row";
@@ -2828,7 +2683,7 @@ function renderHUD(){
 
     const cdVal=document.createElement("div");
     cdVal.className="cd-val-box";
-    cdVal.textContent=p.cooldownRemaining+(p.readyToRespawn?"*":"");
+    cdVal.textContent=p.cooldownRemaining;
     cdDiv.appendChild(cdLab);
     cdDiv.appendChild(cdVal);
     statusWrap.appendChild(cdDiv);
@@ -2904,13 +2759,6 @@ function renderHUD(){
   nameBlock.appendChild(statusWrap);
   nameBlock.appendChild(timeRow);
   nameBlock.appendChild(taxRow);
-
-  if(p.skipDrawThisTurn){
-    const reminder=document.createElement("div");
-    reminder.className="respawn-draw-banner";
-    reminder.textContent="Respawn Turn: Skip draw step. Draw 1 at END of turn.";
-    nameBlock.appendChild(reminder);
-  }
 
   leftCol.appendChild(nameBlock);
 
@@ -2990,28 +2838,37 @@ function renderHUD(){
   hudArea.appendChild(card);
 
   // sync the tools panel with active player's stored tracking + globals
-  dungeonInput.value = p.dungeonLookupName||"";
-  dungeonViewerText.textContent = p.dungeonPreviewText||"";
-  if(p.dungeonPreviewImg){
-    dungeonViewerImg.src=p.dungeonPreviewImg;
+  // Dungeon / Emblem (per active player)
+  if(players[turnIndex].dungeonLookupName!==undefined){
+    dungeonInput.value = players[turnIndex].dungeonLookupName||"";
+  }else{
+    dungeonInput.value="";
+  }
+  dungeonViewerText.textContent = players[turnIndex].dungeonPreviewText||"";
+  if(players[turnIndex].dungeonPreviewImg){
+    dungeonViewerImg.src=players[turnIndex].dungeonPreviewImg;
     dungeonViewerImgBox.style.display="block";
   }else{
     dungeonViewerImgBox.style.display="none";
     dungeonViewerImg.removeAttribute("src");
   }
 
-  emblemInput.value = p.emblemLookupName||"";
-  emblemViewerText.textContent = p.emblemPreviewText||"";
-  if(p.emblemPreviewImg){
-    emblemViewerImg.src=p.emblemPreviewImg;
+  if(players[turnIndex].emblemLookupName!==undefined){
+    emblemInput.value = players[turnIndex].emblemLookupName||"";
+  }else{
+    emblemInput.value="";
+  }
+  emblemViewerText.textContent = players[turnIndex].emblemPreviewText||"";
+  if(players[turnIndex].emblemPreviewImg){
+    emblemViewerImg.src=players[turnIndex].emblemPreviewImg;
     emblemViewerImgBox.style.display="block";
   }else{
     emblemViewerImgBox.style.display="none";
     emblemViewerImg.removeAttribute("src");
   }
 
-  dungeonProgressArea.value = p.dungeonProgress||"";
-  emblemsArea.value         = p.emblemsText||"";
+  dungeonProgressArea.value = players[turnIndex].dungeonProgress||"";
+  emblemsArea.value         = players[turnIndex].emblemsText||"";
 
   planeInput.value = currentPlaneName||"";
   planeViewerText.textContent = currentPlaneText||"";
@@ -3041,7 +2898,6 @@ function renderHUD(){
 
 /* RENDER OTHER PLAYERS */
 function renderPlayers(){
-  // accordion outer
   playersChevron.textContent = playersOpen?"▲":"▼";
   playersWrapper.style.maxHeight = playersOpen ? playersWrapper.scrollHeight+"px" : "0";
 
@@ -3070,7 +2926,7 @@ function renderPlayers(){
 
     let stChunk="Status: "+pl.status.toUpperCase();
     if(pl.status==="cooldown" && gameMode==="rumble"){
-      stChunk+=" ("+pl.cooldownRemaining+(pl.readyToRespawn?"*":"")+")";
+      stChunk+=" ("+pl.cooldownRemaining+")";
     }
     const stSpan=document.createElement("span");
     stSpan.textContent=stChunk;
@@ -3088,16 +2944,10 @@ function renderPlayers(){
     chev.className="other-chevron";
     const isOpen=!!otherOpen[i];
     chev.textContent=isOpen?"▲":"▼";
-    if(isOpen){
-      chev.style.transform="rotate(0deg)";
-    }else{
-      chev.style.transform="rotate(0deg)";
-    }
 
     top.appendChild(topLeft);
     top.appendChild(chev);
 
-    // inner collapsible
     const wrapInner=document.createElement("div");
     wrapInner.className="other-body-wrapper";
     wrapInner.style.maxHeight = isOpen ? "1000px" : "0";
@@ -3256,7 +3106,6 @@ function renderPlayers(){
     playersBody.appendChild(block);
   });
 
-  // recalc wrapper height (smooth close/open)
   playersWrapper.style.maxHeight = playersOpen ? playersWrapper.scrollHeight+"px" : "0";
 }
 
@@ -3266,13 +3115,23 @@ function renderAll(){
 
   const cur=players[turnIndex]||{};
   const nm=cur.name||("Player "+(turnIndex+1));
-  turnBanner.textContent="▶ "+nm.toUpperCase()+"'S TURN ◀";
+
+  if(cur.status==="cooldown"){
+    if(cur.cooldownRemaining>0){
+      turnBanner.textContent="⛔ "+nm.toUpperCase()+" COOLDOWN ("+cur.cooldownRemaining+" LEFT) ⛔";
+    }else{
+      turnBanner.textContent="💥 "+nm.toUpperCase()+" RESPAWNING 💥";
+    }
+  }else if(cur.status==="eliminated"){
+    turnBanner.textContent="✖ "+nm.toUpperCase()+" ELIMINATED ✖";
+  }else{
+    turnBanner.textContent="▶ "+nm.toUpperCase()+"'S TURN ◀";
+  }
 
   renderHUD();
   renderPlayers();
   renderGlobalTimerBanner();
 
-  // update themeSelect to match
   const bodyClass = document.body.classList.contains("theme-neon")
     ?"theme-neon"
     :document.body.classList.contains("theme-dark")
@@ -3283,7 +3142,6 @@ function renderAll(){
     bodyClass==="theme-neon" ? "Neon" :
     bodyClass==="theme-dark" ? "Dark" : "Light";
 
-  // update tools accordion height + chevron
   toolsChevron.textContent = toolsOpen?"▲":"▼";
   toolsWrapper.style.maxHeight = toolsOpen ? toolsWrapper.scrollHeight+"px" : "0";
 }
@@ -3305,7 +3163,6 @@ function resetGameStateKeepMode(){
     renderIntervalId=null;
   }
 
-  // reset globals
   currentPlaneName   ="";
   currentPlaneText   ="";
   currentPlaneImg    ="";
@@ -3357,7 +3214,17 @@ manualStartBtn.addEventListener("click",()=>{
 function startGameWith(nPlayers){
   players=[];
   for(let i=0;i<nPlayers;i++){
-    players.push(makePlayer("Player "+(i+1)));
+    // extend each player with per-player dungeon/emblem fields so HUD sync doesn't explode
+    const pl = makePlayer("Player "+(i+1));
+    pl.dungeonLookupName="";
+    pl.dungeonPreviewText="";
+    pl.dungeonPreviewImg="";
+    pl.dungeonProgress="";
+    pl.emblemLookupName="";
+    pl.emblemPreviewText="";
+    pl.emblemPreviewImg="";
+    pl.emblemsText="";
+    players.push(pl);
   }
 
   turnIndex=0;
